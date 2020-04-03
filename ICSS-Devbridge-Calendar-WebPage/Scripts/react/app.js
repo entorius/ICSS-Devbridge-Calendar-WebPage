@@ -1,7 +1,13 @@
-﻿import React from 'react';
+﻿import React, { Component } from 'react';
+import Application from "./Application";
 import ReactDOM from 'react-dom';
+import { BrowserRouter } from "react-router-dom";
+
+
 
 ReactDOM.render(
-    <h1>Hello, world</h1>,
+    <BrowserRouter history={history}>
+        <Application />
+    </BrowserRouter>,
     document.getElementById('root')
 );

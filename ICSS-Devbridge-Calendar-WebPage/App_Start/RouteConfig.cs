@@ -18,6 +18,12 @@ namespace ICSS_Devbridge_Calendar_WebPage
                 url: "{controller}/{action}/{id}",
                 defaults: new { controller = "Home", action = "Index", id = UrlParameter.Optional }
             );
+            routes.MapRoute(
+                name: "Base",
+                url: "{controller}/{action}/{id}",
+                defaults: new { controller = "Directory", action = "Contact", id = UrlParameter.Optional }
+            );
+
         }
     }
 }

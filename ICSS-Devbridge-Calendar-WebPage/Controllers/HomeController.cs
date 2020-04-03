@@ -13,6 +13,11 @@ namespace ICSS_Devbridge_Calendar_WebPage.Controllers
             return View();
         }
 
+        public ActionResult Directory()
+        {
+            return View();
+        }
+
         public ActionResult About()
         {
             ViewBag.Message = "Your application description page.";

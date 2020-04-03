@@ -4,7 +4,9 @@
   "description": "ICSS Devbridge calendar project",
   "main": "app.js",
   "scripts": {
-    "webpack": "webpack",
+    "devNoServererver": "webpack --d --watch",
+    "dev": "webpack-dev-server --mode development --hot --inline --content-base=dist --history-api-fallback",
+    "build": "webpack -p",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "author": "I can't see sharp",
@@ -18,12 +20,15 @@
     "@material-ui/icons": "^4.9.1",
     "babel-loader": "^8.0.6",
     "file-loader": "^5.1.0",
+    "html-webpack-plugin": "^4.0.4",
+    "path": "^0.12.7",
     "react": "^16.12.0",
     "react-bootstrap": "^1.0.0-beta.16",
     "react-dom": "^16.12.0",
     "react-router": "^5.1.2",
     "react-router-dom": "^5.1.2",
-    "webpack": "^4.41.6"
+    "webpack": "^4.41.6",
+    "webpack-dev-server": "^3.10.3"
   },
   "devDependencies": {
     "webpack-cli": "^3.3.11"
