@@ -1,4 +1,7 @@
-﻿module.exports = {
+﻿var HtmlWebpackPlugin = require('html-webpack-plugin');
+var path = require('path');
+
+module.exports = {
     context: __dirname,
     entry: "./app.js",
     output: {
@@ -44,5 +47,13 @@
 
         ]
 
+    },
+    plugins: [
+        new HtmlWebpackPlugin()
+    ],
+     devServer: {
+         historyApiFallback: true,
+         contentBase: './',
+         hot: true
     }
 }

@@ -121,6 +121,7 @@
     <Compile Include="App_Start\FilterConfig.cs" />
     <Compile Include="App_Start\RouteConfig.cs" />
     <Compile Include="Controllers\HomeController.cs" />
+    <Compile Include="Controllers\MainController.cs" />
     <Compile Include="Global.asax.cs">
       <DependentUpon>Global.asax</DependentUpon>
     </Compile>
@@ -149,7 +150,11 @@
     <Content Include="Scripts\jquery.validate.unobtrusive.min.js" />
     <Content Include="Scripts\modernizr-2.8.3.js" />
     <Content Include="Scripts\react\app.js" />
-    <Content Include="Scripts\react\dist\bundle.js" />
+    <Content Include="Scripts\react\Application.js" />
+    <Content Include="Scripts\react\components\Directory.js" />
+    <Content Include="Scripts\react\components\Home.js" />
+    <Content Include="Scripts\react\components\Login.js" />
+    <Content Include="Scripts\react\components\SideBar.js" />
     <Content Include="Scripts\react\webpack.config.js" />
     <Content Include="Web.config" />
     <Content Include="Web.Debug.config">
@@ -166,11 +171,17 @@
     <Content Include="Views\Home\Contact.cshtml" />
     <Content Include="Views\Home\Index.cshtml" />
     <Content Include="Scripts\react\package.json" />
+    <Content Include="Views\Main\Home.cshtml" />
+    <Content Include="Views\Main\Calendar.cshtml" />
+    <Content Include="Views\Main\Team.cshtml" />
+    <Content Include="Views\Main\LearningTree.cshtml" />
+    <Content Include="Views\Main\Topics.cshtml" />
+    <Content Include="Views\Main\Settings.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="App_Data\" />
     <Folder Include="Models\" />
-    <Folder Include="Scripts\react\components\" />
+    <Folder Include="Scripts\react\dist\" />
   </ItemGroup>
   <ItemGroup>
     <Content Include="fonts\glyphicons-halflings-regular.woff2" />

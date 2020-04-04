@@ -18,6 +18,42 @@ namespace ICSS_Devbridge_Calendar_WebPage
                 url: "{controller}/{action}/{id}",
                 defaults: new { controller = "Home", action = "Index", id = UrlParameter.Optional }
             );
+            routes.MapRoute(
+                name: "Base",
+                url: "{controller}/{action}/{id}",
+                defaults: new { controller = "Directory", action = "Contact", id = UrlParameter.Optional }
+            );
+            routes.MapRoute(
+                name: "Home",
+                url: "{controller}/{action}/{id}",
+                defaults: new { controller = "Main", action = "Home", id = UrlParameter.Optional }
+            );
+            routes.MapRoute(
+                name: "LearningTree",
+                url: "{controller}/{action}/{id}",
+                defaults: new { controller = "Main", action = "LearningTree", id = UrlParameter.Optional }
+            );
+            routes.MapRoute(
+                name: "Calendar",
+                url: "{controller}/{action}/{id}",
+                defaults: new { controller = "Main", action = "Calendar", id = UrlParameter.Optional }
+            );
+            routes.MapRoute(
+                name: "Settings",
+                url: "{controller}/{action}/{id}",
+                defaults: new { controller = "Main", action = "Settings", id = UrlParameter.Optional }
+            );
+            routes.MapRoute(
+               name: "Team",
+               url: "{controller}/{action}/{id}",
+               defaults: new { controller = "Main", action = "Team", id = UrlParameter.Optional }
+           );
+            routes.MapRoute(
+               name: "Topics",
+               url: "{controller}/{action}/{id}",
+               defaults: new { controller = "Main", action = "Topics", id = UrlParameter.Optional }
+           );
+
         }
     }
 }
