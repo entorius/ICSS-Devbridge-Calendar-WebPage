@@ -3,7 +3,7 @@
 import ReactDOM from 'react-dom';
 import SideBar from "./components/SideBar";
 import Home from "./components/Home";
-import Directory from "./components/Directory";
+import Login from "./components/Login";
 import { Switch, Route } from "react-router-dom";
 
 
@@ -17,8 +17,13 @@ class Application extends React.Component {
                 <h1>Welcome to our browser component new</h1>
                 
                     <Switch>
-                        <Route exact path="/" component={Home} />
-                        <Route exact path="/Directory" exact component={Directory} />
+                        <Route exact path="/" component={Login} />
+                        <Route exact path="/Main/Home" component={Home} />
+                        <Route exact path="/Main/Calendar" component={Home} />
+                        <Route exact path="/Main/LearningTree" component={Home} />
+                        <Route exact path="/Main/Settings" component={Home} />
+                        <Route exact path="/Main/Team" component={Home} />
+                        <Route exact path="/Main/Topics" component={Home} />
                     </Switch>
                 
             </div>
