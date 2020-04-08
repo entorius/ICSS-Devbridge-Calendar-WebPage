@@ -1,7 +1,4 @@
-﻿var HtmlWebpackPlugin = require('html-webpack-plugin');
-var path = require('path');
-
-module.exports = {
+﻿module.exports = {
     context: __dirname,
     entry: "./app.js",
     output: {
@@ -12,19 +9,6 @@ module.exports = {
     watch: true,
     module: {
         rules: [
-            {
-                test: /\.js$/,
-                exclude: /{node_modules}/,
-                use: {
-
-                    loader: 'babel-loader',
-                    options: {
-                        presets: ['@babel/preset-env', '@babel/preset-react'],
-                        plugins: ["@babel/plugin-proposal-object-rest-spread"]
-                    }
-                }
-            },
-
             {
                 exclude: [
                     /\.html$/,
@@ -43,17 +27,45 @@ module.exports = {
                     name: 'static/media/[name].[hash:8].[ext]',
                 },
             },
+            {
+                test: /\.js$/,
+                exclude: /{node_modules}/,
+                use: {
 
-
+                    loader: 'babel-loader',
+                    options: {
+                        presets: ['@babel/preset-env', '@babel/preset-react'],
+                        plugins: ["@babel/plugin-proposal-object-rest-spread"]
+                    }
+                }
+            },
+            {
+                test: /\.css$/i,
+                use: [
+                    'style-loader',
+                    {
+                        loader: 'css-loader',
+                       
+                    }
+                ], 
+            },
+            {
+                test: /\.(gif|png|jpe?g|svg)$/i,
+                use: [
+                    'file-loader',
+                    {
+                        loader: 'image-webpack-loader',
+                        options: {
+                            bypassOnDebug: true, 
+                            disable: true, 
+                        },
+                    },
+                ],
+            }
         ]
-
     },
-    plugins: [
-        new HtmlWebpackPlugin()
-    ],
-     devServer: {
-         historyApiFallback: true,
-         contentBase: './',
-         hot: true
+    performance: {
+        maxEntrypointSize: 400000,
+        maxAssetSize: 10000000
     }
 }
