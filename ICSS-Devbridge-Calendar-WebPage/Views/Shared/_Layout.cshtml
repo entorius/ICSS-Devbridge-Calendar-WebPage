@@ -7,18 +7,20 @@
     @RenderSection("head", required: false)
     <link href="~/Content/bootstrap.min.css" rel="stylesheet" />
     <link href="~/Content/Site.css" rel="stylesheet" />
+
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Roboto:300,400,500,700&display=swap" />
+    <link rel="stylesheet" href="https://fonts.googleapis.com/icon?family=Material+Icons" />
 </head>
 <body>
-    
-    <div class="container body-content">
+
+    <div class="container body-content defaultPageStyle">
         @RenderBody()
-        <hr />
-        <footer>
-            <p>&copy; @DateTime.Now.Year - DevBridge Application</p>
-        </footer>
+
+
     </div>
     <script src="~/Scripts/jquery-3.4.1.min.js"></script>
     <script src="~/Scripts/bootstrap.min.js"></script>
+    
     @RenderSection("scripts", required: true)
 </body>
 </html>
