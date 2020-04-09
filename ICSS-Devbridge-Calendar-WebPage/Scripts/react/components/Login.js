@@ -1,5 +1,7 @@
-﻿import React, { Component } from 'react';
-
+﻿
+//React components
+import React, { Component } from 'react';
+import { Link } from "react-router-dom";
 
 //Styles providers
 import { createMuiTheme, withStyles, makeStyles, ThemeProvider } from '@material-ui/core/styles';
@@ -96,7 +98,9 @@ const styles = theme => ({
         alignSelf: 'center',
         width: '300px',
         height: '40px',
-        color: 'white !important'
+        color: 'white !important',
+        marginLeft: 'auto',
+        marginRight: 'auto'
     },
     textBoxIcon: {
         fontSize:'25px'
@@ -210,9 +214,11 @@ class Login extends React.Component {
                                 className={classes.checkBoxRememberMe}
                             />
                             <ThemeProvider theme={theme}>
-                                <Button variant="contained" color="primary" className={classes.loginButton}>
-                                    Sign in
-                                </Button>
+                                <Link to="/Main/Home">
+                                    <Button variant="contained" color="primary" className={classes.loginButton}>
+                                            Sign in
+                                    </Button>
+                                </Link>
                             </ThemeProvider>
                         </Typography>
                     </Container>
