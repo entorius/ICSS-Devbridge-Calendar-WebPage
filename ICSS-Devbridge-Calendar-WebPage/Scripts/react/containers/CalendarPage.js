@@ -1,12 +1,20 @@
 ﻿import React, { Component } from 'react';
 import Calendar from "../components/Calendar/Calendar";
 import Grid from '@material-ui/core/Grid';
+import SideBar from "./SideBar";
+import CalendarSideBar from "../components/CalanderSideBar";
+import Typography from '@material-ui/core/Typography';
+
 
 import { withStyles } from '@material-ui/core/styles';
 
 const styles = theme => ({
-    calendar: {
-        width: '90%'
+    root: {
+        minHeight: '100vh',
+        display: 'flex'
+    },
+    pageTitle: {
+        margin: '15px'
     }
 });
 
@@ -17,16 +25,31 @@ class CalendarPage extends Component {
     render() {
         const { classes } = this.props;
         return (
-            <Grid
-                container
-                spacing={0}
-                direction="column"
-                alignItems="center"
-                justify="center"
-                style={{ minHeight: '100vh' }}
-            >
-                    <Calendar className={classes.calendar} />
-            </Grid>
+            <div className={classes.root}>
+
+                <SideBar />
+                <Grid
+                    container
+                    direction="column"
+                    alignItems="flex-start"
+                >
+                    <Typography
+                        variant="h2"
+                        className={classes.pageTitle}
+                    >
+                        CALENDAR
+                    </Typography>
+                    <Grid
+                        container
+                        direction="column"
+                        alignItems="center"
+                        justify="center"
+                    >
+                        <Calendar />
+                    </Grid>
+                </Grid>
+                <CalendarSideBar />
+            </div  >
         );
     }
 }

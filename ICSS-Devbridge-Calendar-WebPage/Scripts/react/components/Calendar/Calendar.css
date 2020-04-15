@@ -114,9 +114,10 @@ main {
 /* Calendar */
 
 .calendar {
-    width: 80%;
+    width: 90%;
     background: var(--neutral-color);
     border: 1px solid var(--border-color);
+    margin: 8px;
 }
 
     .calendar .header {
