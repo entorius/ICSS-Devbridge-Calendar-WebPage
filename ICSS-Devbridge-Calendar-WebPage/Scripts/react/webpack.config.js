@@ -15,6 +15,7 @@
                     /\.(js|jsx)$/,
                     /\.css$/,
                     /\.scss$/,
+                    /\.less$/,
                     /\.json$/,
                     /\.bmp$/,
                     /\.gif$/,
@@ -40,14 +41,18 @@
                 }
             },
             {
-                test: /\.css$/i,
+                test: /\.(c|le)ss$/,
                 use: [
-                    'style-loader',
+                    "style-loader",
                     {
                         loader: 'css-loader',
-                       
-                    }
-                ], 
+                        options: {
+                            modules: true,
+                            
+                        },
+                    },
+                    "less-loader"
+                ]
             },
             {
                 test: /\.(gif|png|jpe?g|svg)$/i,

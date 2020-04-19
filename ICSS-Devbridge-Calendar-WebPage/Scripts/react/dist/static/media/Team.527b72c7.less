@@ -1,0 +1,21 @@
+var api = require("!../Scripts/react/node_modules/style-loader/dist/runtime/injectStylesIntoStyleTag.js");
+            var content = require("!!../Scripts/react/node_modules/css-loader/dist/cjs.js!../Scripts/react/node_modules/less-loader/dist/cjs.js!./Team.less");
+
+            content = content.__esModule ? content.default : content;
+
+            if (typeof content === 'string') {
+              content = [[module.id, content, '']];
+            }
+
+var options = {};
+
+options.insert = "head";
+options.singleton = false;
+
+var update = api(content, options);
+
+var exported = content.locals ? content.locals : {};
+
+
+
+module.exports = exported;
