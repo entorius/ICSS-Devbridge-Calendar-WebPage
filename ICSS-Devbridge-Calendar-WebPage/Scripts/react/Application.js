@@ -2,6 +2,7 @@
 import { withStyles } from '@material-ui/core/styles';
 import Home from "./components/Home";
 import Login from "./components/Login";
+import Team from "./components/Team";
 import { Switch, Route } from "react-router-dom";
 
 const styles = theme => ({
@@ -24,7 +25,7 @@ class Application extends React.Component {
                     <Route exact path="/Main/Calendar" component={Home} />
                     <Route exact path="/Main/LearningTree" component={Home} />
                     <Route exact path="/Main/Settings" component={Home} />
-                    <Route exact path="/Main/Team" component={Home} />
+                    <Route exact path="/Main/Team" component={Team} />
                     <Route exact path="/Main/Topics" component={Home} />
                 </Switch>
             </div>
