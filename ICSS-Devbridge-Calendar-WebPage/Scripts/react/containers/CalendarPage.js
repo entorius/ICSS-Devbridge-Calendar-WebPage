@@ -4,8 +4,6 @@ import Grid from '@material-ui/core/Grid';
 import SideBar from "./SideBar";
 import CalendarSideBar from "../components/CalanderSideBar";
 import Typography from '@material-ui/core/Typography';
-
-
 import { withStyles } from '@material-ui/core/styles';
 
 const styles = theme => ({
