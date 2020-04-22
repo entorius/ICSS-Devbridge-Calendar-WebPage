@@ -15,7 +15,7 @@ import toDate from "date-fns/toDate";
 import addMonths from "date-fns/addMonths";
 import subMonths from "date-fns/subMonths";
 import { withStyles } from '@material-ui/core/styles';
-import { indigo } from '@material-ui/core/colors';
+import { indigo, green, blue } from '@material-ui/core/colors';
 
 
 const styles = theme => ({
@@ -47,10 +47,17 @@ const styles = theme => ({
     card: {
         height: "30px",
         width: "100px",
-        padding: "0px"
+        padding: "0px",
+        textAlign: 'left'
+    },
+    blueColor: {
+        backgroundColor: blue[500],
+    },
+    greenColor: {
+        backgroundColor: green[500],
     },
     action: {
-        padding: "0px",
+        padding: "2px",
         margin: "0px",
         height: "30px",
         width: "100px",
@@ -58,9 +65,10 @@ const styles = theme => ({
     table: {
         padding: "10px",
         display: 'grid',
-        gridTemplateColumns: 'repeat(autofit, minmax(100px, 1fr))' 
+        gridTemplateColumns: 'repeat(autofit, minmax(100px, 1fr))'
     }
 });
+
 
 class Calendar extends Component {
     constructor(props) {
@@ -69,7 +77,8 @@ class Calendar extends Component {
             currentMonth: new Date(),
             selectedDate: new Date(),
             learningDays: [
-                { date: '2020-04-25', topic: 'topic1' }
+                { date: new Date('2020-04-25'), topic: 'topic1', createdBy: "Me" },
+                { date: new Date('2020-04-05'), topic: 'subtopic1', createdBy: "Employee1" }
             ]
         }
     }
@@ -109,11 +118,37 @@ class Calendar extends Component {
         let days = [];
         let day = startDate;
         let formattedDate = "";
+        let learningDay = null;;
+        var learningDayInfo = null;
 
         while (day <= endDate) {
             for (let i = 0; i < 7; i++) {
                 formattedDate = format(day, dayFormat);
-                const cloneDay = day;
+
+                learningDay = this.state.learningDays.find(learningDay => learningDay.date.toDateString() === day.toDateString())
+                if (learningDay != null) {
+                    if (learningDay.createdBy == "Me" && this.props.showPersonalCalender) {
+                        learningDayInfo = <Card className={[classes.greenColor, classes.card].join(' ')}>
+                            <CardActionArea className={classes.action}>
+                                <Typography component="h5" variant="h5">
+                                    {learningDay.topic}
+                                </Typography>
+                            </CardActionArea>
+                        </Card>
+                    }
+                    if (learningDay.createdBy != "Me" && this.props.showTeamCalender) {
+                        learningDayInfo = <Card className={[classes.blueColor, classes.card].join(' ')}>
+                            <CardActionArea className={classes.action}>
+                                <Typography component="h5" variant="h5">
+                                    {learningDay.topic}
+                                </Typography>
+                            </CardActionArea>
+                        </Card>
+                    }
+                }
+                else {
+                    learningDayInfo = null
+                }
                 days.push(
                     <TableCell
                         align="right"
@@ -121,13 +156,7 @@ class Calendar extends Component {
                         key={day}
                     >
                         {formattedDate}
-                        <Card className={classes.card}>
-                            <CardActionArea className={classes.action}>
-                                <Typography component="h5" variant="h5">
-                                    Test
-                                 </Typography>
-                            </CardActionArea>
-                        </Card>
+                        {learningDayInfo}
                     </TableCell>
                 );
                 day = addDays(day, 1);
@@ -168,7 +197,7 @@ class Calendar extends Component {
                         </TableRow>
                     </TableHead>
                     <TableBody>{rows}</TableBody>
-                 </Table>
+                </Table>
             </Paper>
         );
     }
