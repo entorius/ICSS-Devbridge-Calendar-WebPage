@@ -18,7 +18,7 @@ import SettingsIcon from '@material-ui/icons/Settings';
 import ExitToAppIcon from '@material-ui/icons/ExitToApp';
 
 const styles = theme => ({
- 
+
     sideBarDiv: {
         width: '20%',
         display: 'flex',
@@ -42,7 +42,7 @@ const styles = theme => ({
         color: '#ffffff'
     },
     logoGroup: {
-        display:'flex'
+        display: 'flex'
     },
     circle: {
         width: '80px',
@@ -95,46 +95,46 @@ class SideBar extends React.Component {
                 <div className={classes.links}>
                     <Link to="/Main/Home" className={classes.link}>
                         <Button className={classes.linkButton} classes={{ label: classes.linkButtonLabel }}>
-                            <HomeIcon className={classes.linkButtonPicture}/>
+                            <HomeIcon className={classes.linkButtonPicture} />
                             HOME
                             </Button>
                     </Link>
                     <Link to="/Main/Team" className={classes.link}>
                         <Button className={classes.linkButton} classes={{ label: classes.linkButtonLabel }}>
-                            <GroupIcon className={classes.linkButtonPicture}/>
+                            <GroupIcon className={classes.linkButtonPicture} />
                             TEAM
                             </Button>
                     </Link>
                     <Link to="/Main/Topics" className={classes.link}>
                         <Button className={classes.linkButton} classes={{ label: classes.linkButtonLabel }}>
-                            <AssignmentIcon className={classes.linkButtonPicture}/>
+                            <AssignmentIcon className={classes.linkButtonPicture} />
                             TOPICS
                             </Button>
                     </Link>
                     <Link to="/Main/Calendar" className={classes.link}>
                         <Button className={classes.linkButton} classes={{ label: classes.linkButtonLabel }}>
-                            <EventIcon className={classes.linkButtonPicture}/>
+                            <EventIcon className={classes.linkButtonPicture} />
                             CALENDAR
                             </Button>
                     </Link>
                     <Link to="/Main/LearningTree" className={classes.link}>
                         <Button className={classes.linkButton} classes={{ label: classes.linkButtonLabel }}>
-                            <AccountTreeIcon className={classes.linkButtonPicture}/>
+                            <AccountTreeIcon className={classes.linkButtonPicture} />
                             LEARNING TREE
                             </Button>
                     </Link>
                     <Link to="/Main/Settings" className={classes.link}>
                         <Button className={classes.linkButton} classes={{ label: classes.linkButtonLabel }}>
-                            <SettingsIcon className={classes.linkButtonPicture}/>
+                            <SettingsIcon className={classes.linkButtonPicture} />
                             SETTINGS
                             </Button>
                     </Link>
                     <Link to="/" className={classes.link}>
                         <Button className={classes.linkButton} classes={{ label: classes.linkButtonLabel }}>
-                            <ExitToAppIcon className={classes.linkButtonPicture}/>
+                            <ExitToAppIcon className={classes.linkButtonPicture} />
                             LOGOUT
                             </Button>
-                        </Link>
+                    </Link>
                 </div>
             </div>
         );

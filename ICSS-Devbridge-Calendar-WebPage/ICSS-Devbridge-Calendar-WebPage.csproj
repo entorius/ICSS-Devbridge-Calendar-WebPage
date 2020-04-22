@@ -155,12 +155,14 @@
     <Content Include="Scripts\modernizr-2.8.3.js" />
     <Content Include="Scripts\react\app.js" />
     <Content Include="Scripts\react\Application.js" />
-    <Content Include="Scripts\react\components\Directory.js" />
-    <Content Include="Scripts\react\components\Home.js" />
-    <Content Include="Scripts\react\components\Login.js" />
+    <Content Include="Scripts\react\components\Calendar.js" />
+    <Content Include="Scripts\react\containers\CalendarPage.js" />
+    <Content Include="Scripts\react\containers\Directory.js" />
+    <Content Include="Scripts\react\containers\Home.js" />
+    <Content Include="Scripts\react\containers\Login.js" />
     <Content Include="Scripts\react\components\SideBar.js" />
     <Content Include="Assets\conference.jpg" />
-    <Content Include="Scripts\react\components\Team.js" />
+    <Content Include="Scripts\react\containers\Team.js" />
     <Content Include="Scripts\react\webpack.config.js" />
     <Content Include="Web.config" />
     <Content Include="Web.Debug.config">
@@ -183,6 +185,7 @@
     <Content Include="Views\Main\LearningTree.cshtml" />
     <Content Include="Views\Main\Topics.cshtml" />
     <Content Include="Views\Main\Settings.cshtml" />
+    <Content Include="Scripts\react\node_modules\babel-plugin-dynamic-import-node\.babelrc" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="App_Data\" />
