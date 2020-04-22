@@ -1,7 +1,7 @@
 ﻿import React, { Component } from 'react';
-import Calendar from "../components/Calendar/Calendar";
+import Calendar from "../components/Calendar";
 import Grid from '@material-ui/core/Grid';
-import SideBar from "./SideBar";
+import SideBar from "../components/SideBar";
 import Typography from '@material-ui/core/Typography';
 import { withStyles, createMuiTheme, MuiThemeProvider } from '@material-ui/core/styles';
 import CssBaseline from '@material-ui/core/CssBaseline';

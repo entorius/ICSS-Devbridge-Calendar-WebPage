@@ -21,7 +21,6 @@ const styles = theme => ({
 
     sideBarDiv: {
         width: '20%',
-        height: '100%',
         display: 'flex',
         flexWrap: 'wrap',
         backgroundColor: '#555555',

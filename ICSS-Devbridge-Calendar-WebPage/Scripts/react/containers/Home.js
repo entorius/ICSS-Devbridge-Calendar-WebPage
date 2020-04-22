@@ -1,5 +1,5 @@
 ﻿import React, { Component } from 'react';
-import SideBar from "./SideBar";
+import SideBar from "../components/SideBar";
 import { withStyles } from '@material-ui/core/styles';
 //Material UI components
 import Button from '@material-ui/core/Button';

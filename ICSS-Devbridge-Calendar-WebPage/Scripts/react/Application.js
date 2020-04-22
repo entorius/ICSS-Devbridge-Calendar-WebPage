@@ -2,6 +2,7 @@
 import { withStyles } from '@material-ui/core/styles';
 import Home from "./containers/Home";
 import Login from "./containers/Login";
+import Team from "./containers/Team";
 import CalendarPage from "./containers/CalendarPage";
 import { Switch, Route } from "react-router-dom";
 
@@ -25,7 +26,7 @@ class Application extends React.Component {
                     <Route exact path="/Main/Calendar" component={CalendarPage} />
                     <Route exact path="/Main/LearningTree" component={Home} />
                     <Route exact path="/Main/Settings" component={Home} />
-                    <Route exact path="/Main/Team" component={Home} />
+                    <Route exact path="/Main/Team" component={Team} />
                     <Route exact path="/Main/Topics" component={Home} />
                 </Switch>
             </div>

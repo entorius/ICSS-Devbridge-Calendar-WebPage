@@ -1,0 +1,346 @@
+﻿
+//**************
+//TEAM MAIN PAGE
+//**************
+
+.mainPage {
+    display: flex;
+    min-height: 1100px;
+}
+.teamPageStyle {
+    width: 80%; 
+    display: flex
+}
+.mainContent {
+    width: 80%;
+    display: flex;
+    flex-wrap: wrap;
+    flex-direction: column;
+    min-width: 980px !important;
+}
+
+
+.title {
+    width: 100%; 
+    text-align: center; 
+    font-size: 30px; 
+    margin-top: 30px
+}
+
+
+.popUpButtonsAndTeamMembers {
+    display: flex; 
+    margin-top: 30px; 
+    min-height: 450px
+}
+
+
+.teamInfo {
+    width: 60%; 
+    border-right: solid; 
+    margin-left: 5%; 
+    display: flex; 
+    flex-wrap: wrap; 
+    flex-direction: row; 
+    align-content: flex-start
+}
+
+
+.teamTitle {
+    width: 100%;
+    margin-bottom: 40px;
+    font-size: 20px;
+    text-align: center;
+}
+
+
+.teamMembersTree {
+    width: 50%
+}
+
+
+.treeItem {
+    font-size: 15px !important
+}
+
+
+.popUpButtonLabel {
+    font-size: 12px !important
+}
+
+
+.popUpButtonsGroup {
+    width: 40%
+}
+
+//Buttons
+.popUpButton {
+    width: 40%;
+    min-width: 220px !important;
+    height: 60px;
+    color: #FFFFFF !important;
+    margin-left: 15px !important;
+    margin-bottom: 15px !important;
+}
+
+
+.changeRestrictionButton {
+    .popUpButton;
+    border: solid #536DFE !important;
+    background-color: #6200EA !important;
+}
+.addNewMemberButton {
+    .popUpButton;
+    border: solid #00B7B1 !important;
+    background-color: #13BC75 !important;
+}
+.removeMemberButton {
+    .popUpButton;
+    border: solid #FF004D !important;
+    background-color: #FF004D !important;
+}
+.reassignMemberButton {
+    .popUpButton;
+    border: solid #42A5F6 !important;
+    background-color: #169BD5 !important;
+}
+.popUpButtonPicture {
+    font-size: 20px !important;
+    margin-left: 5px;
+}
+
+.restrictions {
+    display: flex
+}
+
+
+.teamRestrictions {
+    width: 48%; 
+    margin-left: 5%
+}
+
+
+.globalRestrictions {
+    width: 47%
+}
+
+
+.restrictionsHeader {
+    font-size: 20px;
+    text-align: center;
+    margin-bottom: 15px;
+}
+
+
+.restrictionsBody {
+    display: flex;
+    flex-wrap: wrap;
+    width: 50%;
+}
+
+
+.restriction {
+    width: 100%;
+    display: flex;
+    margin-bottom: 10px;
+}
+
+
+.restrictionLabel {
+    width: 150px;
+}
+.restrictionTextField{
+    width:100px;
+}
+.restrictionFieldRoot {
+    font-size: 15px !important;
+}
+.restrictionButton {
+    height: 60px !important;
+    width: 200px;
+    border: solid #13BC75 !important;
+    background-color: #00B7B1 !important;
+    color: #FFFFFF !important;
+    margin-left: 20px !important;
+}
+.rightSidebar {
+    width: 20%;
+    background-color: #304ffe;
+}
+.titleSidebar {
+    .title;
+    color:#FFFFFF;
+    margin-bottom: 20px;
+}
+.sideBarTeamsTree {
+    margin-left: 20px !important;
+}
+.sidebarTreeItem{
+    font-size:15px !important;
+    color:#FFFFFF !important
+}
+
+
+//************************************
+//CHANGE RESTRICTION FOR TEAM MEMBER
+//************************************
+.changeRestrictionsRestrictionsBody{
+    .restrictionsBody;
+    width:100%;
+}
+.changeRestrictionsRestriction {
+    .restriction;
+    justify-content: center;
+}
+.changeRestrictionTitle {
+    border-bottom: solid 2px #808080;
+    margin-bottom: 15px !important;
+    background-color: #6200ea;
+    color: #FFFFFF;
+    font-size: 25px;
+    text-align: center;
+}
+
+.changeRestrictionBody{
+    margin-left:15px;
+}
+.changeRestrictionSelectTeamMember{
+    width:300px;
+}
+.changeRestrictionRestrictionsHeader {
+    text-align:center;
+    font-size: 20px;
+    margin-top: 10px;
+    margin-bottom: 15px;
+}
+.changeRestrictionTeamMemberSelection {
+    width: 100%;
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+}
+.changeRestrictionTeamMemberSelectionTitle {
+    width: 100%;
+    text-align: center;
+    font-size: 20px;
+    margin-bottom: 10px;
+}
+.changeRestrictionButtons {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: space-evenly;
+}
+
+//************************************
+//ADD TEAM MEMBER
+//************************************
+.addMemberDialog{
+    width:500px;
+}
+.addTeamMemberTitle {
+    border-bottom: solid 2px #808080;
+    margin-bottom: 15px !important;
+    background-color: #13BC75;
+    color: #FFFFFF;
+    font-size: 25px;
+    text-align: center;
+}
+.addMemberBody {
+    display: flex;
+    flex-wrap: wrap;
+    margin-left: 20px;
+    margin-bottom: 20px;
+}
+.addMemberButtons {
+    justify-content: space-around;
+    display: flex;
+}
+.addMemberEmail{
+    width:250px;
+}
+.resize {
+    font-size: 15px !important;
+}
+
+//************************************
+//REMOVE TEAM MEMBER
+//************************************
+.deleteMemberTitle {
+    border-bottom: solid 2px #808080;
+    margin-bottom: 15px !important;
+    background-color: #FF004D;
+    color: #FFFFFF;
+    font-size: 25px;
+    text-align: center;
+}
+.deleteMemberBody {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+    margin-bottom:15px;
+}
+.deleteMemberButtons {
+    justify-content: space-around;
+    display: flex;
+}
+.deleteMemberTeamMemberTitle {
+    text-align: center;
+    font-size: 20px;
+    margin-top: 10px;
+    margin-bottom: 15px;
+    width:100%;
+}
+.deleteMemberSelectTeamMember {
+    width:250px;
+}
+
+//************************************
+//REMOVE TEAM MEMBER
+//************************************
+.reassignMemberHeader {
+    border-bottom: solid 2px #808080;
+    margin-bottom: 15px !important;
+    background-color: #169BD5;
+    color: #FFFFFF;
+    font-size: 25px;
+    text-align: center;
+}
+
+.reassignTeamTitle {
+    text-align: center;
+    font-size: 20px;
+    margin-top: 10px;
+    margin-bottom: 15px;
+    width: 100%;
+}
+.reassignTeamBody {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+    margin-bottom: 15px;
+}
+.reassignTeamButtons {
+    justify-content: space-around;
+    display: flex;
+}
+//************************************
+//Popups mutual styles
+//************************************
+.popUpDialogButton {
+    width: 40%;
+    min-width: 220px !important;
+    height: 60px;
+    margin-bottom: 15px !important;
+}
+.cancelButton {
+    .popUpDialogButton;
+    color: #808080 !important;
+    border: solid #808080 !important;
+    background-color: #FFFFFF !important;
+}
+.actionButton {
+    .popUpDialogButton;
+    color: #FFFFFF !important;
+    border: solid #6200ea !important;
+    background-color: #3d5afe !important;
+}
