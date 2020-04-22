@@ -99,6 +99,9 @@ class SideBar extends React.Component {
                             HOME
                             </Button>
                     </Link>
+                    {/*TODO: on click load this leader team memebers and their restrictions, global restrictions (if this is the admin),
+                     * all teams restrictions (team, for which this member is leading and all lower level teams) and somehow represent in json
+                     * the levels of teams and members (which member belongs to which team and which team is leading to lower teams)*/}
                     <Link to="/Main/Team" className={classes.link}>
                         <Button className={classes.linkButton} classes={{ label: classes.linkButtonLabel }}>
                             <GroupIcon className={classes.linkButtonPicture} />

@@ -117,6 +117,7 @@ const theme = createMuiTheme({
 class Login extends React.Component {
     constructor(props) {
         super(props);
+        {/*TODO: state parameters for login: email and password*/ }
         this.state = {
             email: "",
             password:"",
@@ -196,6 +197,7 @@ class Login extends React.Component {
                                             }}
                                             label="Password"
                                             name="password"
+                                            type="password"
                                             onChange={this.handleChange}
                                             className={classes.inputTextBox} />
                                     </Grid>
@@ -215,7 +217,9 @@ class Login extends React.Component {
                             />
                             <ThemeProvider theme={theme}>
                                 <Link to="/Main/Home">
+                                    {/*TODO: add ajax request for login button*/}
                                     <Button variant="contained" color="primary" className={classes.loginButton}>
+                                        
                                             Sign in
                                     </Button>
                                 </Link>

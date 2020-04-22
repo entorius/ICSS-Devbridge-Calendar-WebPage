@@ -29,7 +29,7 @@ import AddIcon from '@material-ui/icons/Add';
 import CloseIcon from '@material-ui/icons/Close';
 import CompareArrowsIcon from '@material-ui/icons/CompareArrows';
 import PersonIcon from '@material-ui/icons/Person';
-
+{/* TODO: example how you could return teams*/ }
 const data = {
     id: 'root',
     name: 'Your Team',
@@ -560,6 +560,8 @@ class ChangeRestrictionForTeamMemberDialog extends React.Component {
     constructor(props) {
         super(props);
         console.log(props);
+        {/* TODO: state for changing member restrictions. Anywhere else to get state write this.state.<parameter> where parameter in this case 
+         can be email , name*/ }
         this.state = {
             open: props.open,
             justOpened: false,
@@ -574,7 +576,7 @@ class ChangeRestrictionForTeamMemberDialog extends React.Component {
         this.handleChange = this.handleChange.bind(this);
     }
     handleChange(evt) {
-        // check it out: we get the evt.target.name (which will be either "email" or "password")
+        // check it out: we get the evt.target.name 
         // and use it to target the key on our `state` object with the same name, using bracket syntax
         this.setState({ [evt.target.name]: evt.target.value });
     }
@@ -737,7 +739,7 @@ class ChangeRestrictionForTeamMemberDialog extends React.Component {
                         onClick={() => handleListItemClick(this.email)}>
                         Cancel
                     </Button>
-
+                    {/* TODO: Add action to change selected member restriction*/}
                     <Button
                         className={classes.actionButton}
                         classes={{ label: classes.popUpButtonLabel }}
@@ -753,6 +755,7 @@ class AddNewTeamMemberDialog extends React.Component {
     constructor(props) {
         super(props);
         console.log(props);
+        {/* TODO: state for adding team member*/ }
         this.state = {
             open: props.open,
             email: "some@gmail.com"
@@ -760,7 +763,7 @@ class AddNewTeamMemberDialog extends React.Component {
         this.handleChange = this.handleChange.bind(this);
     }
     handleChange(evt) {
-        // check it out: we get the evt.target.name (which will be either "email" or "password")
+        // check it out: we get the evt.target.name 
         // and use it to target the key on our `state` object with the same name, using bracket syntax
         this.setState({ [evt.target.name]: evt.target.value });
     }
@@ -824,7 +827,7 @@ class AddNewTeamMemberDialog extends React.Component {
                         onClick={() => handleListItemClick(this.email)}>
                         Cancel
                     </Button>
-
+                    {/* TODO: add action to send invitation to email*/}
                     <Button
                         className={classes.actionButton}
                         classes={{ label: classes.popUpButtonLabel }}
@@ -841,6 +844,7 @@ class DeleteTeamMemberDialog extends React.Component {
     constructor(props) {
         super(props);
         console.log(props);
+        {/* TODO: parameters for deleting member:   member- member name*/ }
         this.state = {
             open: props.open,
             member: ""
@@ -848,7 +852,7 @@ class DeleteTeamMemberDialog extends React.Component {
         this.handleChange = this.handleChange.bind(this);
     }
     handleChange(evt) {
-        // check it out: we get the evt.target.name (which will be either "email" or "password")
+        // check it out: we get the evt.target.name 
         // and use it to target the key on our `state` object with the same name, using bracket syntax
         this.setState({ [evt.target.name]: evt.target.value });
     }
@@ -921,7 +925,7 @@ class DeleteTeamMemberDialog extends React.Component {
                         onClick={() => handleListItemClick(this.email)}>
                         Cancel
                     </Button>
-
+                    {/* TODO: add action to delete member from the team*/}
                     <Button
                         className={classes.actionButton}
                         classes={{ label: classes.popUpButtonLabel }}
@@ -938,6 +942,7 @@ class ReassignTeamMemberDialog extends React.Component {
     constructor(props) {
         super(props);
         console.log(props);
+        {/* TODO: state parameters for reassigning team member: member- member name, team- team name*/ }
         this.state = {
             open: props.open,
             member: "",
@@ -946,7 +951,7 @@ class ReassignTeamMemberDialog extends React.Component {
         this.handleChange = this.handleChange.bind(this);
     }
     handleChange(evt) {
-        // check it out: we get the evt.target.name (which will be either "email" or "password")
+        // check it out: we get the evt.target.name 
         // and use it to target the key on our `state` object with the same name, using bracket syntax
         this.setState({ [evt.target.name]: evt.target.value });
     }
@@ -1050,7 +1055,7 @@ class ReassignTeamMemberDialog extends React.Component {
                         onClick={() => handleListItemClick(this.email)}>
                         Cancel
                     </Button>
-
+                    {/* TODO: add action to reassign team member to another team*/}
                     <Button
                         className={classes.actionButton}
                         classes={{ label: classes.popUpButtonLabel }}
@@ -1066,7 +1071,7 @@ class ReassignTeamMemberDialog extends React.Component {
 class Team extends React.Component {
     constructor(props) {
         super(props);
-        
+        {/* TODO: state parameters for changin team , global restrictions, */ }
         this.state = {
             teamRestrictionConsecutiveDays: 0,
             teamRestrictionDaysPerWeek: 0,
@@ -1076,7 +1081,6 @@ class Team extends React.Component {
             globalRestrictionDaysPerWeek: 0,
             globalRestrictionDaysPerMonth: 0,
             globalRestrictionDaysPerYear: 0,
-            password: "",
             checkedRememberMe: true,
             openChangeRestrictionForTeamMemberDialog: false,
             openAddTeamMemberDialog: false,
@@ -1087,7 +1091,7 @@ class Team extends React.Component {
         this.handleOpenDialog = this.handleOpenDialog.bind(this);
     }
     handleChange(evt) {
-        // check it out: we get the evt.target.name (which will be either "email" or "password")
+        // check it out: we get the evt.target.name 
         // and use it to target the key on our `state` object with the same name, using bracket syntax
         this.setState({ [evt.target.name]: evt.target.value });
     }
@@ -1274,6 +1278,7 @@ class Team extends React.Component {
                                             />
                                         </div>
                                     </div>
+                                    {/*TODO: Add action to change restrictions for all team members according to state parameters*/}
                                     <Button className={classes.restrictionButton} classes={{ label: classes.popUpButtonLabel }}>
                                         Change restrictions
                                         for your team
@@ -1378,6 +1383,7 @@ class Team extends React.Component {
                                             />
                                         </div>
                                     </div>
+                                    {/*TODO: Add action to change restrictions globaly for all members according to state parameters*/}
                                     <Button className={classes.restrictionButton} classes={{ label: classes.popUpButtonLabel }}>
                                         Change restrictions globaly
                                     <CreateIcon className={classes.popUpButtonPicture} />
