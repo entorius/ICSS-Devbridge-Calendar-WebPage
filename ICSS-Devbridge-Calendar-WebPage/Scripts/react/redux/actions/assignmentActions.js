@@ -1,4 +1,4 @@
-﻿import { FETCH_POSTS, NEW_POST } from "./types";
+﻿import { FETCH_ASSIGNMENTS, NEW_ASSIGNMENT } from "./types";
 import { connectionString } from "../connectionStrings";
 import axios from "axios";
 
@@ -10,7 +10,7 @@ export const fetchAssignments = () => dispatch => {
         .then(assignments => {
             const jsonAssignments = assignments.data;
             dispatch({
-                type: FETCH_POSTS,
+                type: FETCH_ASSIGNMENTS,
                 payload: jsonAssignments
             })
         });

@@ -5,7 +5,7 @@ import classes from "../../../Content/Team.less";
 
 //Redux
 import { connect } from 'react-redux';
-import { fetchAssignments } from '../components/redux/actions/assignmentActions';
+import { fetchAssignments } from '../redux/actions/assignmentActions';
 import PropTypes from 'prop-types';
 
 
@@ -1096,7 +1096,7 @@ class Team extends React.Component {
         this.handleOpenDialog = this.handleOpenDialog.bind(this);
     }
     componentWillMount() {
-        //this.props.fetchAssignments();
+        this.props.fetchAssignments();
     }
     
     handleChange(evt) {
@@ -1426,13 +1426,13 @@ class Team extends React.Component {
     }
 }
 
-/*Team.propTypes = {
+Team.propTypes = {
     fetchAssignments: PropTypes.func.isRequired,
     assignments: PropTypes.array.isRequired,
-}*/
+}
 
 const mapStateToProps = state => ({
-    /*assignments: state.assignments*/
+    assignments: state.assignments
 })
 
 export default connect(mapStateToProps, { fetchAssignments })(Team);
