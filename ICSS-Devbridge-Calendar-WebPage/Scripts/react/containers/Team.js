@@ -1,7 +1,12 @@
 ﻿import React, { Component } from 'react';
 import SideBar from "../components/SideBar";
 import { withStyles } from '@material-ui/core/styles';
-import classes from "../../../Content/Team.less"
+import classes from "../../../Content/Team.less";
+
+//Redux
+import { connect } from 'react-redux';
+import { fetchAssignments } from '../redux/actions/assignmentActions';
+import PropTypes from 'prop-types';
 
 
 // Material UI components
@@ -1090,6 +1095,10 @@ class Team extends React.Component {
         this.handleChange = this.handleChange.bind(this);
         this.handleOpenDialog = this.handleOpenDialog.bind(this);
     }
+    componentWillMount() {
+        this.props.fetchAssignments();
+    }
+    
     handleChange(evt) {
         // check it out: we get the evt.target.name 
         // and use it to target the key on our `state` object with the same name, using bracket syntax
@@ -1417,4 +1426,13 @@ class Team extends React.Component {
     }
 }
 
-export default Team;
+Team.propTypes = {
+    fetchAssignments: PropTypes.func.isRequired,
+    assignments: PropTypes.array.isRequired,
+}
+
+const mapStateToProps = state => ({
+    assignments: state.assignments
+})
+
+export default connect(mapStateToProps, { fetchAssignments })(Team);
