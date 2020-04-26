@@ -157,10 +157,12 @@
     <Content Include="Scripts\react\Application.js" />
     <Content Include="Scripts\react\components\Calendar.js" />
     <Content Include="Scripts\react\redux\actions\assignmentActions.js" />
+    <Content Include="Scripts\react\redux\actions\loginActions.js" />
     <Content Include="Scripts\react\redux\actions\types.js" />
     <Content Include="Scripts\react\redux\connectionStrings.js" />
     <Content Include="Scripts\react\redux\reducers\index.js" />
     <Content Include="Scripts\react\redux\reducers\assignmentReducer.js" />
+    <Content Include="Scripts\react\redux\reducers\loginReducer.js" />
     <Content Include="Scripts\react\redux\store.js" />
     <Content Include="Scripts\react\containers\CalendarPage.js" />
     <Content Include="Scripts\react\containers\Directory.js" />
