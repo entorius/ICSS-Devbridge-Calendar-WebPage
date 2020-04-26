@@ -1096,7 +1096,7 @@ class Team extends React.Component {
         this.handleOpenDialog = this.handleOpenDialog.bind(this);
     }
     componentWillMount() {
-        this.props.fetchAssignments();
+        this.props.fetchAssignments(this.props.token.token.accessToken);
     }
     
     handleChange(evt) {
@@ -1432,7 +1432,8 @@ Team.propTypes = {
 }
 
 const mapStateToProps = state => ({
-    assignments: state.assignments
+    assignments: state.assignments,
+    token: state.login
 })
 
 export default connect(mapStateToProps, { fetchAssignments })(Team);

@@ -1,7 +1,7 @@
 ﻿
 //React components
 import React, { Component } from 'react';
-import { Link } from "react-router-dom";
+import { Link, useHistory } from "react-router-dom";
 
 //Redux
 import { connect } from 'react-redux';
@@ -151,7 +151,12 @@ class Login extends React.Component {
         }
 
         console.log('clicked');
-        this.props.getToken(userData);
+        this.props.getToken(userData)
+            .then(
+                () => this.props.history.push('/Main/Home')
+            );
+
+        // TODO: add a message if login fails
     }
     render() {
         const { classes } = this.props;
