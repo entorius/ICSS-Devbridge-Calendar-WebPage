@@ -9,6 +9,8 @@ export const getToken = (userData) => dispatch => {
     data.append('username', userData.username);
     data.append('password', userData.password);
 
+    // TODO: add error handling
+
     return axios.post(connectionString + `/token`, data)
         .then(response => {
             const token = response.data.access_token;
