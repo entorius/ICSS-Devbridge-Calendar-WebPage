@@ -4,6 +4,7 @@ import Home from "./containers/Home";
 import Login from "./containers/Login";
 import Team from "./containers/Team";
 import CalendarPage from "./containers/CalendarPage";
+import LearningTree from "./containers/LearningTree"
 import { Switch, Route } from "react-router-dom";
 
 const styles = theme => ({
@@ -24,7 +25,7 @@ class Application extends React.Component {
                     <Route exact path="/" component={Login} />
                     <Route exact path="/Main/Home" component={Home} />
                     <Route exact path="/Main/Calendar" component={CalendarPage} />
-                    <Route exact path="/Main/LearningTree" component={Home} />
+                    <Route exact path="/Main/LearningTree" component={LearningTree} />
                     <Route exact path="/Main/Settings" component={Home} />
                     <Route exact path="/Main/Team" component={Team} />
                     <Route exact path="/Main/Topics" component={Home} />

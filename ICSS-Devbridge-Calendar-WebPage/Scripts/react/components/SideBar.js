@@ -16,6 +16,7 @@ import EventIcon from '@material-ui/icons/Event';
 import AccountTreeIcon from '@material-ui/icons/AccountTree';
 import SettingsIcon from '@material-ui/icons/Settings';
 import ExitToAppIcon from '@material-ui/icons/ExitToApp';
+import Avatar from '@material-ui/core/Avatar';
 
 const styles = theme => ({
 
@@ -48,11 +49,8 @@ const styles = theme => ({
         width: '80px',
         height: '80px',
         background: '#D9001B',
-        borderRadius: '50%',
         marginRight: 'auto',
         marginLeft: 'auto',
-        padding: '22px',
-        color: '#ffffff',
         fontWeight: 'bold',
         marginTop: '50px',
         fontSize: '25px'
@@ -91,7 +89,7 @@ class SideBar extends React.Component {
                     <div className={classes.logo} />
                     <div className={classes.logoName}>DEVBRIDGE</div>
                 </div>
-                <div className={classes.circle} > SG </div>
+                <Avatar className={classes.circle}>N</Avatar>
                 <div className={classes.links}>
                     <Link to="/Main/Home" className={classes.link}>
                         <Button className={classes.linkButton} classes={{ label: classes.linkButtonLabel }}>

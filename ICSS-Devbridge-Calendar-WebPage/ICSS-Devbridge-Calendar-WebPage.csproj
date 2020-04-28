@@ -142,6 +142,7 @@
     <Content Include="Scripts\bootstrap.js" />
     <Content Include="Scripts\bootstrap.min.js" />
     <Content Include="Content\Team.less" />
+    <Content Include="Content\LearningTree.less" />
     <None Include="Scripts\jquery-3.4.1.intellisense.js" />
     <Content Include="Scripts\jquery-3.4.1.js" />
     <Content Include="Scripts\jquery-3.4.1.min.js" />
@@ -156,6 +157,7 @@
     <Content Include="Scripts\react\app.js" />
     <Content Include="Scripts\react\Application.js" />
     <Content Include="Scripts\react\components\Calendar.js" />
+    <Content Include="Scripts\react\containers\LearningTree.js" />
     <Content Include="Scripts\react\redux\actions\assignmentActions.js" />
     <Content Include="Scripts\react\redux\actions\types.js" />
     <Content Include="Scripts\react\redux\connectionStrings.js" />
