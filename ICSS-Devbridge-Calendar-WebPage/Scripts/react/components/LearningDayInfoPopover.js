@@ -1,12 +1,12 @@
 ﻿import React, { Component } from 'react';
-import PropTypes from 'prop-types'
 import { withStyles } from '@material-ui/core/styles'
 import Typography from '@material-ui/core/Typography'
 import Button from '@material-ui/core/Button'
 import PopupState, { bindTrigger, bindMenu } from 'material-ui-popup-state';
 import StopRoundedIcon from '@material-ui/icons/StopRounded';
 import Popover from '@material-ui/core/Popover';
-import { Card, CardActionArea, CardContent, createMuiTheme, Paper, Grid } from '@material-ui/core';
+import { Card, CardActionArea, Grid } from '@material-ui/core';
+import EditLearningDayDialog from "./EditLearningDayDialog";
 
 const styles = theme => ({
     card: {
@@ -25,8 +25,17 @@ class LearningDayInfoPopover extends Component {
         this.state = {
             topic: this.props.topic,
             date: this.props.date,
+            openEditLearningDayDialog: false
         };
     }
+
+    handleOpenDialog = () => {
+        this.setState({ openEditLearningDayDialog: true })
+    };
+
+    handleCloseDialog = () => {
+        this.setState({ openEditLearningDayDialog: false })
+    };
 
     render() {
         const { classes } = this.props;
@@ -73,6 +82,7 @@ class LearningDayInfoPopover extends Component {
                                     {this.state.date}
                                 </Typography>
                                 <Button
+                                    onClick={this.handleOpenDialog}
                                     variant="contained"
                                     color="secondary">
                                     Edit
@@ -80,6 +90,9 @@ class LearningDayInfoPopover extends Component {
                             </Grid>
                         </Grid>
                     </Popover>
+                    <EditLearningDayDialog
+                        open={this.state.openEditLearningDayDialog}
+                        onClose={this.handleCloseDialog} />
                 </React.Fragment>
             )}
         </PopupState>
