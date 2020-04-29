@@ -155,6 +155,7 @@
     <Content Include="Scripts\modernizr-2.8.3.js" />
     <Content Include="Scripts\react\app.js" />
     <Content Include="Scripts\react\Application.js" />
+    <Content Include="Scripts\react\components\AddLearningDayDialog.js" />
     <Content Include="Scripts\react\components\Calendar.js" />
     <Content Include="Scripts\react\redux\actions\assignmentActions.js" />
     <Content Include="Scripts\react\redux\actions\types.js" />
