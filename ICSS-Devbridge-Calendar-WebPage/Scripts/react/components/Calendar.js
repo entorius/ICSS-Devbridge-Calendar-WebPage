@@ -33,7 +33,7 @@ const styles = theme => ({
     },
     weekdaytableCell: {
         height: "25px",
-        width: "150px",
+        width: "160px",
         border: '1px solid grey',
         margin: "0px",
         backgroundColor: indigo[900],
@@ -42,16 +42,17 @@ const styles = theme => ({
     },
     tableCell: {
         height: "120px",
-        width: "150px",
+        width: "160px",
         border: '1px solid grey',
         margin: "0px",
         verticalAlign: 'top',
-        fontSize: "12px"
+        fontSize: "14px"
     },
     card: {
         height: "30px",
         width: "120px",
         margin: "0px",
+        padding: "0px",
         textAlign: 'left'
     },
     blueColor: {
@@ -70,6 +71,9 @@ const styles = theme => ({
         padding: "10px",
         display: 'grid',
         gridTemplateColumns: 'repeat(autofit, minmax(100px, 1fr))'
+    },
+    greyTableCellTextColor: {
+        color: "grey !important"
     }
 });
 
@@ -117,9 +121,9 @@ class Calendar extends Component {
         const endDate = endOfWeek(monthEnd);
 
         const dayFormat = "d";
-        const rows = [];
 
         let days = [];
+        let weeks = [];
         let day = startDate;
         let formattedDate = "";
         let learningDay = null;
@@ -152,25 +156,16 @@ class Calendar extends Component {
                 else {
                     learningDayInfo = null
                 }
-                days.push(
-                    <TableCell
-                        align="right"
-                        className={classes.tableCell}
-                        key={day}
-                    >
-                        {formattedDate}
-                        {learningDayInfo}
-                    </TableCell>
-                );
+                let dayObj = { 'date': formattedDate, 'learningDayCard': learningDayInfo, 'belongsToThisMonth': isSameMonth(day, monthStart) };
+                days.push(dayObj)
                 day = addDays(day, 1);
             }
-            rows.push(
-                <TableRow className="row" key={day}>
-                    {days}
-                </TableRow>
-            );
+            weeks.push(days)
             days = [];
+            days = []
         }
+
+        console.log(weeks)
 
 
         return (
@@ -199,7 +194,23 @@ class Calendar extends Component {
                             })}
                         </TableRow>
                     </TableHead>
-                    <TableBody>{rows}</TableBody>
+                    <TableBody>
+                        {weeks.map(week => {
+                            return (
+                                <TableRow>
+                                    {week.map(day =>
+                                        <TableCell
+                                            align="right"
+                                            className={!day.belongsToThisMonth ? [classes.tableCell, classes.greyTableCellTextColor].join(' ') : classes.tableCell}
+                                            key={day}>
+                                            {day.date}
+                                            {day.learningDayCard}
+                                        </TableCell>)}
+                                </TableRow>
+                                )
+                           })
+                        }
+                    </TableBody>
                 </Table>
             </Paper>
         );

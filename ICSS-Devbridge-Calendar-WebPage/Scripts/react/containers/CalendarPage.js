@@ -25,7 +25,7 @@ const styles = theme => ({
     },
     calendarSideBar: {
         minHeight: '100vh',
-        width: '220px',
+        width: '240px',
         backgroundColor: grey[200]
     },
     calendarIcon: {
@@ -36,7 +36,7 @@ const styles = theme => ({
         fontSize: '2rem'
     },
     addLearningDayButton: {
-        fontSize: '14px',
+        fontSize: '12px',
         margin: '7px',
         color: "white !important"
     },

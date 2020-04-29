@@ -29,8 +29,8 @@ const styles = theme => ({
         fontSize: 25,
     },
     bookIcon: {
-        width: '5%',
-        height: '5%'
+        width: '30px',
+        height: '30px'
     },
     form: {
         '& .MuiTextField-root': {
