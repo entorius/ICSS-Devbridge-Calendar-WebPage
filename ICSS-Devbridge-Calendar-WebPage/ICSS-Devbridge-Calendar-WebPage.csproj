@@ -156,6 +156,8 @@
     <Content Include="Scripts\react\app.js" />
     <Content Include="Scripts\react\Application.js" />
     <Content Include="Scripts\react\components\Calendar.js" />
+    <Content Include="Scripts\react\components\Topic.js" />
+    <Content Include="Scripts\react\containers\Topics.js" />
     <Content Include="Scripts\react\redux\actions\assignmentActions.js" />
     <Content Include="Scripts\react\redux\actions\types.js" />
     <Content Include="Scripts\react\redux\connectionStrings.js" />
