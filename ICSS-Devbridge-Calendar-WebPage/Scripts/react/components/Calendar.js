@@ -15,6 +15,11 @@ import addMonths from "date-fns/addMonths";
 import subMonths from "date-fns/subMonths";
 import { withStyles } from '@material-ui/core/styles';
 import { indigo, green, blue } from '@material-ui/core/colors';
+import Menu from '@material-ui/core/Menu';
+import PopupState, { bindTrigger, bindMenu } from 'material-ui-popup-state';
+import StopRoundedIcon from '@material-ui/icons/StopRounded';
+import Popover from '@material-ui/core/Popover';
+import LearningDayInfoPopover from './LearningDayInfoPopover';
 
 
 const styles = theme => ({
@@ -45,8 +50,8 @@ const styles = theme => ({
     },
     card: {
         height: "30px",
-        width: "100px",
-        padding: "0px",
+        width: "120px",
+        margin: "0px",
         textAlign: 'left'
     },
     blueColor: {
@@ -117,7 +122,7 @@ class Calendar extends Component {
         let days = [];
         let day = startDate;
         let formattedDate = "";
-        let learningDay = null;;
+        let learningDay = null;
         var learningDayInfo = null;
 
         while (day <= endDate) {
@@ -127,22 +132,21 @@ class Calendar extends Component {
                 learningDay = this.state.learningDays.find(learningDay => learningDay.date.toDateString() === day.toDateString())
                 if (learningDay != null) {
                     if (learningDay.createdBy == "Me" && this.props.showPersonalCalender) {
-                        learningDayInfo = <Card className={[classes.greenColor, classes.card].join(' ')}>
-                            <CardActionArea className={classes.action}>
-                                <Typography component="h5" variant="h5">
-                                    {learningDay.topic}
-                                </Typography>
-                            </CardActionArea>
-                        </Card>
+                        learningDayInfo =
+                            <LearningDayInfoPopover
+                                topic={learningDay.topic}
+                                date={format(learningDay.date, "MM/dd/yyyy")}
+                                color={green[500]}
+                            />
                     }
                     if (learningDay.createdBy != "Me" && this.props.showTeamCalender) {
-                        learningDayInfo = <Card className={[classes.blueColor, classes.card].join(' ')}>
-                            <CardActionArea className={classes.action}>
-                                <Typography component="h5" variant="h5">
-                                    {learningDay.topic}
-                                </Typography>
-                            </CardActionArea>
-                        </Card>
+                        learningDayInfo =
+                            <LearningDayInfoPopover
+                            topic={learningDay.topic}
+                            date={format(learningDay.date, "MM/dd/yyyy")}
+                            color={blue[500]}
+                        />
+                            
                     }
                 }
                 else {

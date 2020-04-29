@@ -29,6 +29,7 @@
     "history": "^4.10.1",
     "html-webpack-plugin": "^4.0.4",
     "less": "^3.11.1",
+    "material-ui-popup-state": "^1.5.4",
     "moment": "^2.24.0",
     "path": "^0.12.7",
     "react": "^16.12.0",
