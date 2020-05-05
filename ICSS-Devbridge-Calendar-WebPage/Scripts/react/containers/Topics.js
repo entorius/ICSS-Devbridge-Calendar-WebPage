@@ -39,36 +39,38 @@ import PersonIcon from '@material-ui/icons/Person';
 const styles = theme => ({
     root: {
         minHeight: '100vh',
-        display: 'flex'
+        display: 'flex',
+        flexGrowth: 1
     },
-    GridContainerStyle: {
+    GridContainer: {
         direction: 'row',
-        justify: 'space-evenly',
+        justify: 'space-around',
         alignItems: 'flex-start'
-    },
-    GridItemStyle: {
-        xs: '3'
     }
 });
+const GridContainerStyle = {
+    margin: 0
+}
 
 class Topics extends React.Component {
     state = {
         topics: [
             { id: 0, name: "item0" },
-            { id: 1, name: "item1" }
+            { id: 1, name: "item1" },
+            { id: 2, name: "item2" }
         ]
     };
 
     AddTopics() {
-        var topics = this.state.topics;
-        for (var i = 1; i < 5; i++)
+        let topics = this.state.topics;
+        for (let i = 1; i < 15; i++)
             topics.push({ id: i, name: i + " item" });
         this.setState({ topics });
     };
 
     componentDidMount() {
         // ask for topics from server
-        //this.AddTopics(); 
+        this.AddTopics();
     }
 
     render() {
@@ -76,11 +78,10 @@ class Topics extends React.Component {
         return (
             <div className={classes.root}>
                 <SideBar />
-                <Grid container className={classes.GridContainerType}>
+                <Grid container direction="row" justify="space-around" spacing="8" style={GridContainerStyle}>
                     {this.state.topics.map(topic =>
-                        <Grid container item xs="3">
-                            <Topic />
-                        </Grid>)}
+                        <Topic name={topic.name} topicID={topic.id} />
+                    )}
                 </Grid>
             </div>
             );
