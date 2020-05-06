@@ -236,7 +236,7 @@ class RegisterWithPassword extends React.Component {
                 />
                 <ThemeProvider theme={theme}>
                     <Link to="/Main/Home">
-                      
+                        {/* TODO: add action to register User (add password to database)*/}
                         <Button variant="contained" color="primary" className={classes.registerButton}>
 
                             Register
@@ -302,8 +302,9 @@ class Registered extends React.Component {
 class Register extends React.Component {
     constructor(props) {
         super(props);
-        {/*TODO: state parameters for login: email and password*/ }
+        {/*TODO: when loading get state if user registered and user itself and his email*/ }
         this.state = {
+            email: "",
             password: "",
             repeatPassword:"",
             checkedRememberMe: true,

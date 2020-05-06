@@ -578,10 +578,11 @@ class Team extends React.Component {
         await this.props.fetchMyTeamTree(1);
     }
     componentDidUpdate() {
-       
+        {/* TODO: Check if this did not reset this.state.selectedTeamId*/ }
         if (this.state.selectedTeamId != this.props.teamTree.items.$id) {
             this.setState({ selectedTeamId: this.props.teamTree.items.$id })
         }
+    }
     componentWillMount() {
         this.props.fetchAssignments(this.props.token.token.accessToken);
     }
@@ -595,10 +596,15 @@ class Team extends React.Component {
         var value = !this.state[evt.currentTarget.name];
         this.setState({ [evt.currentTarget.name]: value });
     }
+    
+    
     findSelectedTeamNode(nodes, nodeId) {
+        {/* TODO: correct the function to find child with nodeId*/ }
         return nodes.$id == nodeId ? nodes : Array.isArray(nodes.Children)? nodes.Children.map((node) => this.findSelectedTeamNode(node, nodeId)):null;
     }
+   //Function that set selectedTeamId
     onTeamClick(node) {
+       
         console.log("Clicked");
         console.log(node);
         //this.setState({ selectedTeamId: node.$id });
