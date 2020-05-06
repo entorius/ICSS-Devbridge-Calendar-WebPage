@@ -19,6 +19,7 @@ import {
     MuiPickersUtilsProvider,
     KeyboardDatePicker,
 } from '@material-ui/pickers';
+import AddLearningDayTopicsDialog from "./AddLearningDayTopicsDialog";
 
 const styles = theme => ({
     root: {
@@ -55,7 +56,8 @@ class AddLearningDayDialog extends Component {
             date: new Date(),
             comment: "",
             links: "",
-            topics: ["topic1", "subtopic1", "subtopic2", "topic2", "subsubtopic1"]
+            topics: ["topic1", "subtopic1", "subtopic2", "topic2", "subsubtopic1"],
+            openAddLearningDayTopicsDialog: false
         }
     }
 
@@ -65,6 +67,14 @@ class AddLearningDayDialog extends Component {
 
     handleFormChange = (name) => (event) => {
         this.setState({ [name]: event.target.value });
+    };
+
+    handleOpenTopicsDialog = () => {
+        this.setState({ openAddLearningDayTopicsDialog: true })
+    };
+
+    handleCloseTopicsDialog = () => {
+        this.setState({ openAddLearningDayTopicsDialog: false })
     };
 
     render() {
@@ -181,12 +191,15 @@ class AddLearningDayDialog extends Component {
                                 justify="flex-end"
                                 style={{marginBottom: 10}}>
                                 <Button
-                                    onClick={this.props.onClose}
+                                    onClick={this.handleOpenTopicsDialog}
                                     variant="contained"
                                     className={[classes.button, classes.buttonWhiteColorText].join(' ')}
                                     color="primary">
                                     Edit topic
                                </Button>
+                                <AddLearningDayTopicsDialog
+                                    open={this.state.openAddLearningDayTopicsDialog}
+                                    onClose={this.handleCloseTopicsDialog} />
                             </Grid>
                             <Grid
                                 container

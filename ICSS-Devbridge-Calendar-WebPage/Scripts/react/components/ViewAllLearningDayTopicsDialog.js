@@ -19,24 +19,6 @@ const styles = theme => ({
         fontSize: 25,
         textAlign: "center"
     },
-    bookIcon: {
-        width: '30px',
-        height: '30px'
-    },
-    form: {
-        '& .MuiTextField-root': {
-            marginBottom: theme.spacing(4),
-            marginTop: 0,
-        },
-        '& .MuiFormControl-root': {
-            marginBottom: theme.spacing(4),
-            marginTop: 0,
-        }
-    },
-    buttonWhiteColorText: {
-        color: "white !important"
-    },
-
 
 });
 
@@ -54,10 +36,6 @@ class ViewAllLearningDayTopicsDialog extends Component {
 
     handleClose = () => {
         this.props.onClose();
-    };
-
-    handleFormChange = (name) => (event) => {
-        this.setState({ [name]: event.target.value });
     };
 
     render() {
