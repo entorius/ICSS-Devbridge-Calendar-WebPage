@@ -12,6 +12,10 @@ namespace ICSS_Devbridge_Calendar_WebPage.Controllers
         {
             return View();
         }
+        public ActionResult Register()
+        {
+            return View();
+        }
 
         public ActionResult Directory()
         {
