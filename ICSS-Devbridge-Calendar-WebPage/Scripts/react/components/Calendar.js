@@ -15,11 +15,10 @@ import addMonths from "date-fns/addMonths";
 import subMonths from "date-fns/subMonths";
 import { withStyles } from '@material-ui/core/styles';
 import { indigo, green, blue } from '@material-ui/core/colors';
-import Menu from '@material-ui/core/Menu';
-import PopupState, { bindTrigger, bindMenu } from 'material-ui-popup-state';
-import StopRoundedIcon from '@material-ui/icons/StopRounded';
-import Popover from '@material-ui/core/Popover';
+import ViewAllLearningDayTopicsDialog from './ViewAllLearningDayTopicsDialog';
 import LearningDayInfoPopover from './LearningDayInfoPopover';
+import Link from '@material-ui/core/Link';
+
 
 
 const styles = theme => ({
@@ -53,7 +52,8 @@ const styles = theme => ({
         width: "120px",
         margin: "0px",
         padding: "0px",
-        textAlign: 'left'
+        textAlign: 'left',
+        marginBottom: "5px"
     },
     blueColor: {
         backgroundColor: blue[500],
@@ -83,18 +83,25 @@ class Calendar extends Component {
         super(props);
         this.state = {
             currentMonth: new Date(),
-            selectedDate: new Date(),
             learningDays: [
-                { date: new Date('2020-04-25'), topic: 'topic1', createdBy: "Me" },
-                { date: new Date('2020-04-05'), topic: 'subtopic1', createdBy: "Employee1" }
-            ]
+                { date: new Date('2020-05-25'), topic: 'topic1', createdBy: "Me" },
+                { date: new Date('2020-05-05'), topic: 'subtopic1', createdBy: "Employee1" },
+                { date: new Date('2020-05-05'), topic: 'topic2', createdBy: "Me" },
+                { date: new Date('2020-05-20'), topic: 'subtopic1', createdBy: "Employee2" },
+                { date: new Date('2020-05-20'), topic: 'topic2', createdBy: "Me" },
+                { date: new Date('2020-05-20'), topic: 'topic1', createdBy: "Me" }
+            ],
+            openShowAllLearningTopics: false,
+            showAllLearningTopicsDate: null
         }
     }
 
-    onDateClick = day => {
-        this.setState({
-            selectedDate: day
-        });
+    handleOpenDialog = (day) => {
+        this.setState({ openShowAllLearningTopics: true, showAllLearningTopicsDate: day })
+    };
+
+    handleCloseDialog = () => {
+        this.setState({ openShowAllLearningTopics: false })
     };
 
     nextMonth = () => {
@@ -114,7 +121,7 @@ class Calendar extends Component {
         const weekdays = [{ id: 1, day: "Sun" }, { id: 2, day: "Mon" }, { id: 3, day: "Tue" }, { id: 4, day: "Wed" }, { id: 5, day: "Thu" }, { id: 6, day: "Fri" }, { id: 7, day: "Sat" }];
         const dateFormat = "MMMM yyyy";
 
-        const { currentMonth, selectedDate } = this.state;
+        const { currentMonth } = this.state;
         const monthStart = startOfMonth(currentMonth);
         const monthEnd = endOfMonth(monthStart);
         const startDate = startOfWeek(monthStart);
@@ -126,47 +133,56 @@ class Calendar extends Component {
         let weeks = [];
         let day = startDate;
         let formattedDate = "";
-        let learningDay = null;
-        var learningDayInfo = null;
+        let learningDayList = [];
+        let learningDayInfo = [];
+        let topicsFitIntoCell;
+        let moreTopicsNumber = 0;
 
         while (day <= endDate) {
             for (let i = 0; i < 7; i++) {
                 formattedDate = format(day, dayFormat);
-
-                learningDay = this.state.learningDays.find(learningDay => learningDay.date.toDateString() === day.toDateString())
-                if (learningDay != null) {
-                    if (learningDay.createdBy == "Me" && this.props.showPersonalCalender) {
-                        learningDayInfo =
-                            <LearningDayInfoPopover
-                                topic={learningDay.topic}
-                                date={format(learningDay.date, "MM/dd/yyyy")}
-                                color={green[500]}
-                            />
-                    }
-                    if (learningDay.createdBy != "Me" && this.props.showTeamCalender) {
-                        learningDayInfo =
-                            <LearningDayInfoPopover
-                            topic={learningDay.topic}
-                            date={format(learningDay.date, "MM/dd/yyyy")}
-                            color={blue[500]}
-                        />
-                            
-                    }
+                learningDayList = this.state.learningDays.filter(learningDay => learningDay.date.toDateString() === day.toDateString())
+                moreTopicsNumber = learningDayList.length - 2;
+                if (learningDayList.length > 2) {
+                    topicsFitIntoCell = false;
+                    learningDayList = learningDayList.slice(0, 2);
                 }
                 else {
-                    learningDayInfo = null
+                    topicsFitIntoCell = true;
                 }
-                let dayObj = { 'date': formattedDate, 'learningDayCard': learningDayInfo, 'belongsToThisMonth': isSameMonth(day, monthStart) };
+
+                if (learningDayList.length > 0) {
+
+                    learningDayList.forEach(learningDay => {
+                        if (learningDay.createdBy == "Me" && this.props.showPersonalCalender) {
+                            learningDayInfo.push(<LearningDayInfoPopover
+                                topic={learningDay.topic}
+                                width="120px"
+                                date={format(learningDay.date, "MM/dd/yyyy")}
+                                color={green[500]}
+                            />)
+                        }
+                        if (learningDay.createdBy != "Me" && this.props.showTeamCalender) {
+                            learningDayInfo.push(<LearningDayInfoPopover
+                                topic={learningDay.topic}
+                                width="120px"
+                                date={format(learningDay.date, "MM/dd/yyyy")}
+                                color={blue[500]}
+                            />)
+
+                        }
+                    })
+                }
+                let dayObj = { 'date': formattedDate, 'learningDayCards': learningDayInfo, 'belongsToThisMonth': isSameMonth(day, monthStart), topicsFitIntoCell: topicsFitIntoCell, moreTopicsNumber: moreTopicsNumber };
                 days.push(dayObj)
                 day = addDays(day, 1);
+                learningDayInfo = []
+                learningDayList = []
             }
             weeks.push(days)
             days = [];
             days = []
         }
-
-        console.log(weeks)
-
 
         return (
             <Paper>
@@ -204,14 +220,29 @@ class Calendar extends Component {
                                             className={!day.belongsToThisMonth ? [classes.tableCell, classes.greyTableCellTextColor].join(' ') : classes.tableCell}
                                             key={day}>
                                             {day.date}
-                                            {day.learningDayCard}
+                                            {day.learningDayCards.map(learningDayCard =>
+                                                learningDayCard
+                                            )}
+                                            {!day.topicsFitIntoCell ?
+                                                <Link
+                                                    component="button"
+                                                    variant="body2"
+                                                    style={{fontSize: "12px", color: indigo[900]}}
+                                                    onClick={() => this.handleOpenDialog(day.date)}
+                                                >{day.moreTopicsNumber} more</Link> :
+                                                null}
                                         </TableCell>)}
                                 </TableRow>
-                                )
-                           })
+                            )
+                        })
                         }
                     </TableBody>
                 </Table>
+                <ViewAllLearningDayTopicsDialog
+                    yearMonth={format(this.state.currentMonth, "yyyy MMMM")}
+                    day={this.state.showAllLearningTopicsDate}
+                    open={this.state.openShowAllLearningTopics}
+                    onClose={this.handleCloseDialog} />
             </Paper>
         );
     }

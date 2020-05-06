@@ -48,7 +48,8 @@ const styles = theme => ({
 const theme = createMuiTheme({
     palette: {
         primary: green,
-        secondary: blue
+        secondary: blue,
+        textPrimary: grey
     }
 });
 

@@ -10,9 +10,8 @@ import EditLearningDayDialog from "./EditLearningDayDialog";
 
 const styles = theme => ({
     card: {
-        height: "30px",
-        width: "120px",
-        margin: "0px",
+        height: "25px",
+        marginBottom: "5px",
         textAlign: 'left',
         justifyContent: "center",
         display: "flex"
@@ -44,7 +43,7 @@ class LearningDayInfoPopover extends Component {
             {(popupState) => (
                 <React.Fragment>
                     <Card className={classes.card}
-                        style={{ backgroundColor: this.props.color }}>
+                        style={{ backgroundColor: this.props.color, width: this.props.width}}>
                         <CardActionArea className={classes.action}  {...bindTrigger(popupState)}>
                             <Typography component="h5" variant="h5">
                                 {this.state.topic}
@@ -63,7 +62,7 @@ class LearningDayInfoPopover extends Component {
                         }}
                         getContentAnchorEl={null}
                         disableAutoFocusItem
-                        PaperProps={{ style: { width: "120px" } }}>
+                        PaperProps={{ style: { width: this.props.width } }}>
                         <Grid
                             container
                             direction="column"

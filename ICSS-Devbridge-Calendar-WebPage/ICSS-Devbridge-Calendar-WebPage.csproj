@@ -159,6 +159,7 @@
     <Content Include="Scripts\react\components\Calendar.js" />
     <Content Include="Scripts\react\components\EditLearningDayDialog.js" />
     <Content Include="Scripts\react\components\LearningDayInfoPopover.js" />
+    <Content Include="Scripts\react\components\ViewAllLearningDayTopicsDialog.js" />
     <Content Include="Scripts\react\redux\actions\assignmentActions.js" />
     <Content Include="Scripts\react\redux\actions\types.js" />
     <Content Include="Scripts\react\redux\connectionStrings.js" />
