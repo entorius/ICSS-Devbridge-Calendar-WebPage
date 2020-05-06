@@ -1,7 +1,12 @@
 ﻿
 //React components
 import React, { Component } from 'react';
-import { Link } from "react-router-dom";
+import { Link, useHistory } from "react-router-dom";
+
+//Redux
+import { connect } from 'react-redux';
+import PropTypes from 'prop-types';
+import { getToken } from '../redux/actions/loginActions';
 
 //Styles providers
 import { createMuiTheme, withStyles, makeStyles, ThemeProvider } from '@material-ui/core/styles';
@@ -133,6 +138,7 @@ class Login extends React.Component {
         };
         this.handleChange = this.handleChange.bind(this);
         this.handleCheckboxChange = this.handleCheckboxChange.bind(this);
+        this.handleClick = this.handleClick.bind(this);
     }
     handleChange(evt) {
         
@@ -144,6 +150,21 @@ class Login extends React.Component {
     handleCheckboxChange(event) {
         
         this.setState({ checkedRememberMe: event.target.checked });
+    }
+
+    handleClick(event) {
+        const userData = {
+            username: this.state.email,
+            password: this.state.password
+        }
+
+        console.log('clicked');
+        this.props.getToken(userData)
+            .then(
+                () => this.props.history.push('/Main/Home')
+            );
+
+        // TODO: add a message if login fails
     }
     render() {
         const { classes } = this.props;
@@ -224,13 +245,13 @@ class Login extends React.Component {
                                 className={classes.checkBoxRememberMe}
                             />
                             <ThemeProvider theme={theme}>
-                                <Link to="/Main/Home">
+                                {/* <Link to="/Main/Home"> */}
                                     {/*TODO: add ajax request for login button*/}
-                                    <Button variant="contained" color="primary" className={classes.loginButton}>
+                                    <Button variant="contained" color="primary" className={classes.loginButton} onClick={this.handleClick}>
                                         
                                             Sign in
                                     </Button>
-                                </Link>
+                                {/* </Link> */}
                             </ThemeProvider>
                             <ThemeProvider theme={theme}>
                                 <Link to="/Home/Register">
@@ -249,4 +270,8 @@ class Login extends React.Component {
     }
 }
 
-export default withStyles(styles)(Login);
+Login.propTypes = {
+    getToken: PropTypes.func.isRequired
+}
+
+export default connect(null, { getToken })(withStyles(styles)(Login));

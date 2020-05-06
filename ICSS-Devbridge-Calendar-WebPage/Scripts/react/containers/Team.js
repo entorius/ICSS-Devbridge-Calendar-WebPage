@@ -582,6 +582,8 @@ class Team extends React.Component {
         if (this.state.selectedTeamId != this.props.teamTree.items.$id) {
             this.setState({ selectedTeamId: this.props.teamTree.items.$id })
         }
+    componentWillMount() {
+        this.props.fetchAssignments(this.props.token.token.accessToken);
     }
     
     handleChange(evt) {
@@ -992,7 +994,9 @@ Team.propTypes = {
 }
 
 const mapStateToProps = state => ({
-    teamTree: state.teamTree
+    teamTree: state.teamTree,
+    assignments: state.assignments,
+    token: state.login
 })
 
 export default connect(mapStateToProps, { fetchMyTeamTree })(Team);
