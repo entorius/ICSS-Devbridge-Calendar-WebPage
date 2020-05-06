@@ -99,7 +99,7 @@ const styles = theme => ({
     },
     loginButton: {
         display: 'flex',
-        marginTop: '40px',
+        marginTop: '20px',
         alignSelf: 'center',
         width: '300px',
         height: '40px',
@@ -109,7 +109,15 @@ const styles = theme => ({
     },
     textBoxIcon: {
         fontSize:'25px'
-    }
+    },
+    registerLink: {
+        color: 'blue !important',
+        marginLeft: 'auto',
+        marginRight: 'auto',
+        marginTop: '20px',
+        textAlign: 'center',
+        fontSize: '12px',
+    },
 
 });
 const theme = createMuiTheme({
@@ -244,6 +252,15 @@ class Login extends React.Component {
                                             Sign in
                                     </Button>
                                 {/* </Link> */}
+                            </ThemeProvider>
+                            <ThemeProvider theme={theme}>
+                                <Link to="/Home/Register">
+                                    {/*TODO: add ajax request for login button*/}
+                                    <div className={classes.registerLink}>
+
+                                        Register
+                                    </div>
+                                </Link>
                             </ThemeProvider>
                         </Typography>
                     </Container>

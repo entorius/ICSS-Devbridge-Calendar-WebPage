@@ -5,7 +5,7 @@ import classes from "../../../Content/Team.less";
 
 //Redux
 import { connect } from 'react-redux';
-import { fetchAssignments } from '../redux/actions/assignmentActions';
+import { fetchMyTeamTree } from '../redux/actions/teamActions';
 import PropTypes from 'prop-types';
 
 
@@ -35,531 +35,8 @@ import CloseIcon from '@material-ui/icons/Close';
 import CompareArrowsIcon from '@material-ui/icons/CompareArrows';
 import PersonIcon from '@material-ui/icons/Person';
 {/* TODO: example how you could return teams*/ }
-const data = {
-    id: 'root',
-    name: 'Your Team',
-    children: [
-        {
-            id: '1',
-            name: 'Liam Team',
-            children: [
-                {
-                    id: '2',
-                    name: 'Caleb team',
-                },
-            ],
-        },
-        {
-            id: '3',
-            name: 'Marisha team'
-        },
-    ],
-};
 
-const teamMembers = {
-    id: 'root',
-    name: 'Team Members',
-    children: [
-        {
-            id: '1',
-            name: 'Laura',
-            children: [
-                {
-                    id: '1.1',
-                    name: 'Consecutive Days: ' + 'N/A',
-                    /*children: [
-                        {
-                            id: '1.1.1',
-                            name: 'Used: ' + '1',
-                        },
-                        {
-                            id: '1.1.2',
-                            name: 'Reserved: ' + '2',
-                        },
-                        {
-                            id: '1.1.3',
-                            name: 'Left: ' + 'N/A',
-                        },
 
-                    ],*/
-                },
-                {
-                    id: '1.2',
-                    name: 'Days per week: ' + 'N/A',
-                    /*children: [
-                        {
-                            id: '1.2.1',
-                            name: 'Used: ' + '1',
-                        },
-                        {
-                            id: '1.2.2',
-                            name: 'Reserved: ' + '2',
-                        },
-                        {
-                            id: '1.2.3',
-                            name: 'Left: ' + 'N/A',
-                        },
-
-                    ],*/
-                },
-                {
-                    id: '1.3',
-                    name: 'Days per month: ' + 'N/A',
-                    /*children: [
-                        {
-                            id: '1.3.1',
-                            name: 'Used: ' + '1',
-                        },
-                        {
-                            id: '1.3.2',
-                            name: 'Reserved: ' + '2',
-                        },
-                        {
-                            id: '1.3.3',
-                            name: 'Left: ' + 'N/A',
-                        },
-
-                    ],*/
-                },
-                {
-                    id: '1.4',
-                    name: 'Days per year: ' + 'N/A',
-                    /*children: [
-                        {
-                            id: '1.4.1',
-                            name: 'Used: ' + '1',
-                        },
-                        {
-                            id: '1.4.2',
-                            name: 'Reserved: ' + '2',
-                        },
-                        {
-                            id: '1.4.3',
-                            name: 'Left: ' + 'N/A',
-                        },
-
-                    ],*/
-                },
-
-            ],
-        },
-        {
-            id: '2',
-            name: 'Marisha',
-            children: [
-                {
-                    id: '2.1',
-                    name: 'Consecutive Days: ' + '5',
-                    /*children: [
-                        {
-                            id: '2.1.1',
-                            name: 'Used: ' + '1',
-                        },
-                        {
-                            id: '2.1.2',
-                            name: 'Reserved: ' + '2',
-                        },
-                        {
-                            id: '2.1.3',
-                            name: 'Left: ' + '2',
-                        },
-
-                    ],*/
-                },
-                {
-                    id: '2.2',
-                    name: 'Days per week: ' + '1',
-                    /*children: [
-                        {
-                            id: '2.2.1',
-                            name: 'Used: ' + '1',
-                        },
-                        {
-                            id: '2.2.2',
-                            name: 'Reserved: ' + '0',
-                        },
-                        {
-                            id: '2.2.3',
-                            name: 'Left: ' + '1',
-                        },
-
-                    ],*/
-                },
-                {
-                    id: '2.3',
-                    name: 'Days per month: ' + '8',
-                    /*children: [
-                        {
-                            id: '2.3.1',
-                            name: 'Used: ' + '1',
-                        },
-                        {
-                            id: '2.3.2',
-                            name: 'Reserved: ' + '2',
-                        },
-                        {
-                            id: '2.3.3',
-                            name: 'Left: ' + '5',
-                        },
-
-                    ],*/
-                },
-                {
-                    id: '2.4',
-                    name: 'Days per year: ' + '25',
-                    /*children: [
-                        {
-                            id: '2.4.1',
-                            name: 'Used: ' + '1',
-                        },
-                        {
-                            id: '2.4.2',
-                            name: 'Reserved: ' + '2',
-                        },
-                        {
-                            id: '2.4.3',
-                            name: 'Left: ' + '22',
-                        },
-
-                    ],*/
-                },
-
-            ],
-        },
-        {
-            id: '3',
-            name: 'Travis',
-            children: [
-                {
-                    id: '3.1',
-                    name: 'Consecutive Days: ' + '25',
-                    /*children: [
-                        {
-                            id: '3.1.1',
-                            name: 'Used: ' + '1',
-                        },
-                        {
-                            id: '3.1.2',
-                            name: 'Reserved: ' + '2',
-                        },
-                        {
-                            id: '3.1.3',
-                            name: 'Left: ' + '22',
-                        },
-
-                    ],*/
-                },
-                {
-                    id: '3.2',
-                    name: 'Days per week: ' + 'N/A',
-                    /*children: [
-                        {
-                            id: '3.2.1',
-                            name: 'Used: ' + '1',
-                        },
-                        {
-                            id: '3.2.2',
-                            name: 'Reserved: ' + '2',
-                        },
-                        {
-                            id: '3.2.3',
-                            name: 'Left: ' + 'N/A',
-                        },
-
-                    ],*/
-                },
-                {
-                    id: '3.3',
-                    name: 'Days per month: ' + '10',
-                    /*children: [
-                        {
-                            id: '3.3.1',
-                            name: 'Used: ' + '1',
-                        },
-                        {
-                            id: '3.3.2',
-                            name: 'Reserved: ' + '2',
-                        },
-                        {
-                            id: '3.3.3',
-                            name: 'Left: ' + '7',
-                        },
-
-                    ],*/
-                },
-                {
-                    id: '3.4',
-                    name: 'Days per year: ' + 'N/A',
-                    /*children: [
-                        {
-                            id: '3.4.1',
-                            name: 'Used: ' + '1',
-                        },
-                        {
-                            id: '3.4.2',
-                            name: 'Reserved: ' + '2',
-                        },
-                        {
-                            id: '3.4.3',
-                            name: 'Left: ' + 'N/A',
-                        },
-
-                    ],*/
-                },
-
-            ],
-        },
-        {
-            id: '4',
-            name: 'Liam',
-            children: [
-                {
-                    id: '4.1',
-                    name: 'Consecutive Days: ' + 'N/A',
-                    /*children: [
-                        {
-                            id: '4.1.1',
-                            name: 'Used: ' + '1',
-                        },
-                        {
-                            id: '4.1.2',
-                            name: 'Reserved: ' + '2',
-                        },
-                        {
-                            id: '4.1.3',
-                            name: 'Left: ' + 'N/A',
-                        },
-
-                    ],*/
-                },
-                {
-                    id: '4.2',
-                    name: 'Days per week: ' + 'N/A',
-                    /*children: [
-                        {
-                            id: '4.2.1',
-                            name: 'Used: ' + '1',
-                        },
-                        {
-                            id: '4.2.2',
-                            name: 'Reserved: ' + '2',
-                        },
-                        {
-                            id: '4.2.3',
-                            name: 'Left: ' + 'N/A',
-                        },
-
-                    ],*/
-                },
-                {
-                    id: '4.3',
-                    name: 'Days per month: ' + '15',
-                    /*children: [
-                        {
-                            id: '4.3.1',
-                            name: 'Used: ' + '1',
-                        },
-                        {
-                            id: '4.3.2',
-                            name: 'Reserved: ' + '2',
-                        },
-                        {
-                            id: '4.3.3',
-                            name: 'Left: ' + '12',
-                        },
-
-                    ],*/
-                },
-                {
-                    id: '4.4',
-                    name: 'Days per year: ' + '100',
-                    /*children: [
-                        {
-                            id: '4.4.1',
-                            name: 'Used: ' + '1',
-                        },
-                        {
-                            id: '4.4.2',
-                            name: 'Reserved: ' + '2',
-                        },
-                        {
-                            id: '4.4.3',
-                            name: 'Left: ' + '97',
-                        },
-
-                    ],*/
-                },
-
-            ],
-        },
-        {
-            id: '5',
-            name: 'Liam',
-            children: [
-                {
-                    id: '5.1',
-                    name: 'Consecutive Days: ' + 'N/A',
-                    /*children: [
-                        {
-                            id: '5.1.1',
-                            name: 'Used: ' + '1',
-                        },
-                        {
-                            id: '5.1.2',
-                            name: 'Reserved: ' + '2',
-                        },
-                        {
-                            id: '5.1.3',
-                            name: 'Left: ' + 'N/A',
-                        },
-
-                    ],*/
-                },
-                {
-                    id: '5.2',
-                    name: 'Days per week: ' + 'N/A',
-                    /*children: [
-                        {
-                            id: '5.2.1',
-                            name: 'Used: ' + '1',
-                        },
-                        {
-                            id: '5.2.2',
-                            name: 'Reserved: ' + '2',
-                        },
-                        {
-                            id: '5.2.3',
-                            name: 'Left: ' + 'N/A',
-                        },
-
-                    ],*/
-                },
-                {
-                    id: '5.3',
-                    name: 'Days per month: ' + '15',
-                    /*children: [
-                        {
-                            id: '5.3.1',
-                            name: 'Used: ' + '1',
-                        },
-                        {
-                            id: '5.3.2',
-                            name: 'Reserved: ' + '2',
-                        },
-                        {
-                            id: '5.3.3',
-                            name: 'Left: ' + '12',
-                        },
-
-                    ],*/
-                },
-                {
-                    id: '5.4',
-                    name: 'Days per year: ' + '100',
-                    /*children: [
-                        {
-                            id: '5.4.1',
-                            name: 'Used: ' + '1',
-                        },
-                        {
-                            id: '5.4.2',
-                            name: 'Reserved: ' + '2',
-                        },
-                        {
-                            id: '5.4.3',
-                            name: 'Left: ' + '97',
-                        },
-
-                    ],*/
-                },
-
-            ],
-        },
-        {
-            id: '6',
-            name: 'Liam',
-            children: [
-                {
-                    id: '6.1',
-                    name: 'Consecutive Days: ' + 'N/A',
-                    /*children: [
-                        {
-                            id: '6.1.1',
-                            name: 'Used: ' + '1',
-                        },
-                        {
-                            id: '6.1.2',
-                            name: 'Reserved: ' + '2',
-                        },
-                        {
-                            id: '6.1.3',
-                            name: 'Left: ' + 'N/A',
-                        },
-
-                    ],*/
-                },
-                {
-                    id: '6.2',
-                    name: 'Days per week: ' + 'N/A',
-                    /*children: [
-                        {
-                            id: '6.2.1',
-                            name: 'Used: ' + '1',
-                        },
-                        {
-                            id: '6.2.2',
-                            name: 'Reserved: ' + '2',
-                        },
-                        {
-                            id: '6.2.3',
-                            name: 'Left: ' + 'N/A',
-                        },
-
-                    ],*/
-                },
-                {
-                    id: '6.3',
-                    name: 'Days per month: ' + '15',
-                    /*children: [
-                        {
-                            id: '6.3.1',
-                            name: 'Used: ' + '1',
-                        },
-                        {
-                            id: '6.3.2',
-                            name: 'Reserved: ' + '2',
-                        },
-                        {
-                            id: '6.3.3',
-                            name: 'Left: ' + '12',
-                        },
-
-                    ],*/
-                },
-                {
-                    id: '6.4',
-                    name: 'Days per year: ' + '100',
-                    /*children: [
-                        {
-                            id: '6.4.1',
-                            name: 'Used: ' + '1',
-                        },
-                        {
-                            id: '6.4.2',
-                            name: 'Reserved: ' + '2',
-                        },
-                        {
-                            id: '6.4.3',
-                            name: 'Left: ' + '97',
-                        },
-
-                    ],*/
-                },
-
-            ],
-        },
-    ],
-};
 
 class ChangeRestrictionForTeamMemberDialog extends React.Component {
     constructor(props) {
@@ -1090,11 +567,21 @@ class Team extends React.Component {
             openChangeRestrictionForTeamMemberDialog: false,
             openAddTeamMemberDialog: false,
             openRemoveTeamMemberDialog: false,
-            openReassignTeamMemberDialog: false
+            openReassignTeamMemberDialog: false,
+            selectedTeamId: this.props.teamTree.items.$id
         };
         this.handleChange = this.handleChange.bind(this);
         this.handleOpenDialog = this.handleOpenDialog.bind(this);
+        console.log(this.props);
     }
+    async componentDidMount() {
+        await this.props.fetchMyTeamTree(1);
+    }
+    componentDidUpdate() {
+       
+        if (this.state.selectedTeamId != this.props.teamTree.items.$id) {
+            this.setState({ selectedTeamId: this.props.teamTree.items.$id })
+        }
     componentWillMount() {
         this.props.fetchAssignments(this.props.token.token.accessToken);
     }
@@ -1108,31 +595,105 @@ class Team extends React.Component {
         var value = !this.state[evt.currentTarget.name];
         this.setState({ [evt.currentTarget.name]: value });
     }
+    findSelectedTeamNode(nodes, nodeId) {
+        return nodes.$id == nodeId ? nodes : Array.isArray(nodes.Children)? nodes.Children.map((node) => this.findSelectedTeamNode(node, nodeId)):null;
+    }
+    onTeamClick(node) {
+        console.log("Clicked");
+        console.log(node);
+        //this.setState({ selectedTeamId: node.$id });
+    }
 
     render() {
         
-        const renderTree = (nodes) => (
-            <TreeItem key={nodes.id}
-                nodeId={nodes.id}
-                label={nodes.name}
-                classes={{
-                    root: classes.treeItem, // class name, e.g. `classes-nesting-root-x`
-                    label: classes.treeItem, // class name, e.g. `classes-nesting-label-x`
-                }}>
-                {Array.isArray(nodes.children) ? nodes.children.map((node) => renderTree(node)) : null}
-            </TreeItem>
-        );
-        const renderSidebarTree = (nodes) => (
-            <TreeItem key={nodes.id}
-                nodeId={nodes.id}
-                label={nodes.name}
-                classes={{
-                    root: classes.sidebarTreeItem, // class name, e.g. `classes-nesting-root-x`
-                    label: classes.sidebarTreeItem, // class name, e.g. `classes-nesting-label-x`
-                }}>
-                {Array.isArray(nodes.children) ? nodes.children.map((node) => renderTree(node)) : null}
-            </TreeItem>
-        );
+        const renderTree = (nodes, nodeId) => {
+            if (nodeId >= 0) {
+                var selectedTeam = this.findSelectedTeamNode(nodes,nodeId);
+                console.log(selectedTeam);
+                return (
+                    <TreeItem key={selectedTeam.$id}
+                        nodeId={selectedTeam.$id}
+                        label={nodes.This.FirstName + " team"}
+                        classes={{
+                            root: classes.treeItem, // class name, e.g. `classes-nesting-root-x`
+                            label: classes.treeItem, // class name, e.g. `classes-nesting-label-x`
+                        }}>
+                        {Array.isArray(nodes.Children) ? nodes.Children.map((node) => renderTeamMember(node)) : null}
+                    </TreeItem>
+
+                );
+            }
+            else {
+                return (
+                    <div>
+                        No team selected
+                    </div>
+                );
+            }
+        };
+        const renderTeamMember = (node) => {
+            console.log(node);
+            return (
+                <TreeItem key={node.This.UserId}
+                    nodeId={node.This.UserId}
+                    label={node.This.FirstName }
+                    classes={{
+                        root: classes.treeItem, // class name, e.g. `classes-nesting-root-x`
+                        label: classes.treeItem, // class name, e.g. `classes-nesting-label-x`
+                    }}>
+                    <TreeItem key={node.This.UserId + " ConsecLimit"}
+                        nodeId={node.This.UserId + " ConsecLimit"}
+                        label={node.This.ConsecLimit === null ? "Consecutive days:  N/A" :"Consecutive days: " + node.This.ConsecLimit.toString() }
+                        classes={{
+                            root: classes.treeItem, // class name, e.g. `classes-nesting-root-x`
+                            label: classes.treeItem, // class name, e.g. `classes-nesting-label-x`
+                        }}>
+                    
+                    </TreeItem>
+                    <TreeItem key={node.This.UserId + " MonthlyLimit"}
+                        nodeId={node.This.UserId + " MonthlyLimit"}
+                        label={node.This.MonthlyLimit === null ? "Days per month:  N/A" : "Days per month: " + node.This.MonthlyLimit.toString()}
+                        classes={{
+                            root: classes.treeItem, // class name, e.g. `classes-nesting-root-x`
+                            label: classes.treeItem, // class name, e.g. `classes-nesting-label-x`
+                        }}>
+                    
+                    </TreeItem>
+                    <TreeItem key={node.This.UserId + " QuaterLimit"}
+                        nodeId={node.This.UserId + " QuaterLimit"}
+                        label={node.This.MonthlyLimit === null ? "Days per quater:  N/A" : "Days per quater: " + node.This.MonthlyLimit.toString()}
+                        classes={{
+                            root: classes.treeItem, // class name, e.g. `classes-nesting-root-x`
+                            label: classes.treeItem, // class name, e.g. `classes-nesting-label-x`
+                        }}>
+                    
+                    </TreeItem>
+                    <TreeItem key={node.This.UserId + " YearlyLimit"}
+                        nodeId={node.This.UserId + " YearlyLimit"}
+                        label={node.This.YearlyLimit === null ? "Days per year:  N/A" : "Days per year: " + node.This.YearlyLimit.toString()}
+                        classes={{
+                            root: classes.treeItem, // class name, e.g. `classes-nesting-root-x`
+                            label: classes.treeItem, // class name, e.g. `classes-nesting-label-x`
+                        }}>
+                    </TreeItem>
+                </TreeItem>
+            );
+        }
+        const renderSidebarTree = (nodes) => {
+            return (
+                <TreeItem key={nodes.length === 0 ? 0 : nodes.This.UserId}
+                    nodeId={nodes.length === 0 ? 0 : nodes.This.UserId}
+                    label={nodes.length === 0 ? "no team" : nodes.This.FirstName + " team"}
+                    onClick={() => { this.onTeamClick(nodes); }}
+                    classes={{
+                        root: classes.sidebarTreeItem, // class name, e.g. `classes-nesting-root-x`
+                        label: classes.sidebarTreeItem, // class name, e.g. `classes-nesting-label-x`
+                    }}>
+                    {Array.isArray(nodes.Children) ? nodes.Children.map((node) => Array.isArray(node.Children)? renderSidebarTree(node):null) : null}
+                </TreeItem>
+
+            )
+        };
 
         return (
             <div className={classes.mainPage} >
@@ -1151,7 +712,7 @@ class Team extends React.Component {
                                     defaultExpanded={['root']}
                                     defaultExpandIcon={<ChevronRightIcon />}
                                 >
-                                    {renderTree(teamMembers, classes.treeItem, classes.treeItem)}
+                                    {renderTree(this.props.teamTree.items, this.state.selectedTeamId)}
                                 </TreeView>
                                 <Button
                                     className={classes.changeRestrictionButton}
@@ -1410,7 +971,8 @@ class Team extends React.Component {
                             defaultExpanded={['root']}
                             defaultExpandIcon={<ChevronRightIcon />}
                         >
-                            {renderSidebarTree(data )}
+                           
+                            {renderSidebarTree(this.props.teamTree.items )}
                         </TreeView>
 
                     </div>
@@ -1427,13 +989,14 @@ class Team extends React.Component {
 }
 
 Team.propTypes = {
-    fetchAssignments: PropTypes.func.isRequired,
-    assignments: PropTypes.array.isRequired,
+    fetchMyTeamTree: PropTypes.func.isRequired,
+    teamTree: PropTypes.array.isRequired,
 }
 
 const mapStateToProps = state => ({
+    teamTree: state.teamTree,
     assignments: state.assignments,
     token: state.login
 })
 
-export default connect(mapStateToProps, { fetchAssignments })(Team);
+export default connect(mapStateToProps, { fetchMyTeamTree })(Team);
