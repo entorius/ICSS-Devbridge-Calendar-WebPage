@@ -70,7 +70,12 @@ class AddLearningDayDialog extends Component {
     };
 
     handleFormChange = (name) => (event) => {
-        this.setState({ [name]: event.target.value });
+        if (name != 'date') {
+            this.setState({ [name]: event.target.value });
+        }
+        else {
+            this.setState({ [name]: event });
+        }
     };
 
     handleOpenTopicsDialog = () => {
