@@ -142,6 +142,7 @@
     <Content Include="Scripts\bootstrap.js" />
     <Content Include="Scripts\bootstrap.min.js" />
     <Content Include="Content\Team.less" />
+    <Content Include="Content\LearningTree.less" />
     <None Include="Scripts\jquery-3.4.1.intellisense.js" />
     <Content Include="Scripts\jquery-3.4.1.js" />
     <Content Include="Scripts\jquery-3.4.1.min.js" />
@@ -161,11 +162,17 @@
     <Content Include="Scripts\react\components\LearningDayInfoPopover.js" />
     <Content Include="Scripts\react\components\AddLearningDayTopicsDialog.js" />
     <Content Include="Scripts\react\components\ViewAllLearningDayTopicsDialog.js" />
+    <Content Include="Scripts\react\containers\LearningTree.js" />
+    <Content Include="Scripts\react\containers\Register.js" />
     <Content Include="Scripts\react\redux\actions\assignmentActions.js" />
+    <Content Include="Scripts\react\redux\actions\teamActions.js" />
+    <Content Include="Scripts\react\redux\actions\loginActions.js" />
     <Content Include="Scripts\react\redux\actions\types.js" />
     <Content Include="Scripts\react\redux\connectionStrings.js" />
     <Content Include="Scripts\react\redux\reducers\index.js" />
     <Content Include="Scripts\react\redux\reducers\assignmentReducer.js" />
+    <Content Include="Scripts\react\redux\reducers\teamReducer.js" />
+    <Content Include="Scripts\react\redux\reducers\loginReducer.js" />
     <Content Include="Scripts\react\redux\store.js" />
     <Content Include="Scripts\react\containers\CalendarPage.js" />
     <Content Include="Scripts\react\containers\Directory.js" />
@@ -197,6 +204,8 @@
     <Content Include="Views\Main\Topics.cshtml" />
     <Content Include="Views\Main\Settings.cshtml" />
     <Content Include="Scripts\react\node_modules\babel-plugin-dynamic-import-node\.babelrc" />
+    <Content Include="Scripts\react\.babelrc.json" />
+    <Content Include="Views\Home\Register.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="App_Data\" />
