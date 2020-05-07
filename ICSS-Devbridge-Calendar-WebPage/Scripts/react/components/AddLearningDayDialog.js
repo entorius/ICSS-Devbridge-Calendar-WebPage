@@ -56,10 +56,14 @@ class AddLearningDayDialog extends Component {
             date: new Date(),
             comment: "",
             links: "",
-            topics: ["topic1", "subtopic1", "subtopic2", "topic2", "subsubtopic1"],
+            topics: ["Topic1", "Subtopic1"],
             openAddLearningDayTopicsDialog: false
         }
     }
+
+    updateTopics = (selectedToptics) => {
+        this.setState({ topics: selectedToptics })
+    };
 
     handleClose = () => {
         this.props.onClose();
@@ -198,6 +202,8 @@ class AddLearningDayDialog extends Component {
                                     Edit topic
                                </Button>
                                 <AddLearningDayTopicsDialog
+                                    updateTopics={this.updateTopics}
+                                    topics={this.state.topics}
                                     open={this.state.openAddLearningDayTopicsDialog}
                                     onClose={this.handleCloseTopicsDialog} />
                             </Grid>

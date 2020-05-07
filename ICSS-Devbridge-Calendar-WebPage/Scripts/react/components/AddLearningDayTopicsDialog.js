@@ -14,6 +14,8 @@ import TreeItem from '@material-ui/lab/TreeItem';
 import Typography from '@material-ui/core/Typography';
 import Checkbox from '@material-ui/core/Checkbox';
 import { indigo, blue } from '@material-ui/core/colors';
+import CheckBoxOutlineBlankIcon from "@material-ui/icons/CheckBoxOutlineBlank";
+import CheckBoxIcon from "@material-ui/icons/CheckBox";
 
 const styles = theme => ({
     root: {
@@ -52,7 +54,7 @@ class AddLearningDayTopicsDialog extends Component {
     constructor(props) {
         super(props);
         this.state = {
-            selectedTopics: [],
+            selectedTopics: this.props.topics,
             topics: {
                 id: 'root',
                 name: 'Topics',
@@ -82,6 +84,13 @@ class AddLearningDayTopicsDialog extends Component {
                 selectedTopics: [...prevState.selectedTopics, name]
             }))
         }
+        else {
+            this.setState({
+                selectedTopics: this.state.selectedTopics.filter(topic => {
+                    return topic !== name
+                })
+            });
+        }
     };
 
 
@@ -104,15 +113,18 @@ class AddLearningDayTopicsDialog extends Component {
         </div>
         const renderTree = (nodes) => (
             <TreeItem key={nodes.id} nodeId={nodes.id}
-                label={<div style={{ display: 'flex', alignItems: 'center' }}>
+                label={nodes.id != 'root' ? <div style={{ display: 'flex', alignItems: 'center' }}>
                     <Checkbox
                         id={`checkbox-${nodes.id}`}
                         color="primary"
+                        checked={this.state.selectedTopics.findIndex(x => x == nodes.name) != -1}
                         onChange={(event, checked) => this.checkBoxClicked(event, checked, nodes.name)}
-                        size="medium"
+                        icon={<CheckBoxOutlineBlankIcon style={{ fontSize: 25 }} />}
+                        checkedIcon={<CheckBoxIcon style={{ fontSize: 25 }} />}
+                        onClick={e => (e.stopPropagation())}
                     />
                     <Typography variant="caption" style={{ fontSize: '15px' }}>{nodes.name}</Typography>
-                </div>}>
+                </div> : <Typography variant="caption" style={{ fontSize: '15px' }}>{nodes.name}</Typography>}>
                 {Array.isArray(nodes.children) ? nodes.children.map((node) => renderTree(node)) : null}
             </TreeItem>
         );
@@ -145,8 +157,9 @@ class AddLearningDayTopicsDialog extends Component {
                     <TreeView
                         className={classes.tree}
                         defaultCollapseIcon={<ExpandMoreIcon />}
-                        defaultExpanded={['root']}
                         defaultExpandIcon={<ChevronRightIcon />}
+                        defaultExpanded={['root']}
+                        multiSelect
                     >
                         {renderTree(this.state.topics)}
                     </TreeView>
@@ -164,7 +177,7 @@ class AddLearningDayTopicsDialog extends Component {
                                 Cancel
                                </Button>
                             <Button
-                                onClick={this.props.onClose}
+                                onClick={() => { this.props.updateTopics(this.state.selectedTopics); this.props.onClose(); }}
                                 variant="contained"
                                 className={[classes.button, classes.buttonWhiteColorText].join(' ')}
                                 color="secondary">
