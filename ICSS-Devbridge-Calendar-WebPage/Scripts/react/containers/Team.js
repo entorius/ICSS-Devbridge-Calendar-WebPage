@@ -6,6 +6,7 @@ import classes from "../../../Content/Team.less";
 //Redux
 import { connect } from 'react-redux';
 import { fetchMyTeamTree } from '../redux/actions/teamActions';
+import { fetchAssignments } from '../redux/actions/assignmentActions';
 import PropTypes from 'prop-types';
 
 
@@ -1005,4 +1006,4 @@ const mapStateToProps = state => ({
     token: state.login
 })
 
-export default connect(mapStateToProps, { fetchMyTeamTree })(Team);
+export default connect(mapStateToProps, { fetchMyTeamTree, fetchAssignments })(Team);
