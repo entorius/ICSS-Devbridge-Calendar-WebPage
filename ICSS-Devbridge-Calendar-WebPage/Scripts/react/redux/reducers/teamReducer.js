@@ -1,8 +1,7 @@
 ﻿import { FETCH_TEAM_TREE } from "../actions/types";
 
 const initialState = {
-    items: [],
-    item: {}
+    items: []
 }
 
 export default function (state = initialState, action) {

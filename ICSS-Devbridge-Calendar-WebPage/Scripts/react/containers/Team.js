@@ -41,7 +41,6 @@ import PersonIcon from '@material-ui/icons/Person';
 class ChangeRestrictionForTeamMemberDialog extends React.Component {
     constructor(props) {
         super(props);
-        console.log(props);
         {/* TODO: state for changing member restrictions. Anywhere else to get state write this.state.<parameter> where parameter in this case 
          can be email , name*/ }
         this.state = {
@@ -236,7 +235,6 @@ class ChangeRestrictionForTeamMemberDialog extends React.Component {
 class AddNewTeamMemberDialog extends React.Component {
     constructor(props) {
         super(props);
-        console.log(props);
         {/* TODO: state for adding team member*/ }
         this.state = {
             open: props.open,
@@ -325,7 +323,6 @@ class AddNewTeamMemberDialog extends React.Component {
 class DeleteTeamMemberDialog extends React.Component {
     constructor(props) {
         super(props);
-        console.log(props);
         {/* TODO: parameters for deleting member:   member- member name*/ }
         this.state = {
             open: props.open,
@@ -423,7 +420,6 @@ class DeleteTeamMemberDialog extends React.Component {
 class ReassignTeamMemberDialog extends React.Component {
     constructor(props) {
         super(props);
-        console.log(props);
         {/* TODO: state parameters for reassigning team member: member- member name, team- team name*/ }
         this.state = {
             open: props.open,
@@ -568,24 +564,24 @@ class Team extends React.Component {
             openAddTeamMemberDialog: false,
             openRemoveTeamMemberDialog: false,
             openReassignTeamMemberDialog: false,
-            selectedTeamId: this.props.teamTree.items.$id
+            selectedTeamId: this.props.teamTree.items.$id,
+            teamMemberTreeContent: null
         };
         this.handleChange = this.handleChange.bind(this);
         this.handleOpenDialog = this.handleOpenDialog.bind(this);
-        console.log(this.props);
     }
-    async componentDidMount() {
-        await this.props.fetchTeamTree(this.props.token.token.accessToken)
-        .then(() => {
-            console.log(this.props.teamTree)
-        })
 
-    }
-    componentDidUpdate() {
-        {/* TODO: Check if this did not reset this.state.selectedTeamId*/ }
+    async componentDidMount() {
+        await this.props.fetchTeamTree(this.props.token.accessToken)
+            .then(() => {
+                console.log(this.props.teamTree)
+            });
+        
         if (this.state.selectedTeamId != this.props.teamTree.items.$id) {
             this.setState({ selectedTeamId: this.props.teamTree.items.$id })
         }
+
+        // this.state.teamMemberTreeContent = this.renderTree(this.props.teamTree.items, 2)
     }
     
     handleChange(evt) {
@@ -597,106 +593,98 @@ class Team extends React.Component {
         var value = !this.state[evt.currentTarget.name];
         this.setState({ [evt.currentTarget.name]: value });
     }
-    
-    
-    findSelectedTeamNode(nodes, nodeId) {
-        {/* TODO: correct the function to find child with nodeId*/ }
-        return nodes.$id == nodeId ? nodes : Array.isArray(nodes.Children)? nodes.Children.map((node) => this.findSelectedTeamNode(node, nodeId)):null;
-    }
-   //Function that set selectedTeamId
-    onTeamClick(node) {
-       
-        console.log("Clicked");
+
+    onTeamClick = (node) => {
         console.log(node);
-        //this.setState({ selectedTeamId: node.$id });
+        this.setState({ selectedTeamId: node.$id });
+        this.setState({ teamMemberTreeContent: this.renderTree(node, node.$id) })
     }
 
-    render() {
-        
-        const renderTree = (nodes, nodeId) => {
-            if (nodeId >= 0) {
-                var selectedTeam = this.findSelectedTeamNode(nodes,nodeId);
-                console.log(selectedTeam);
-                return (
-                    <TreeItem key={selectedTeam.$id}
-                        nodeId={selectedTeam.$id}
-                        label={nodes.This.FirstName + " team"}
-                        classes={{
-                            root: classes.treeItem, // class name, e.g. `classes-nesting-root-x`
-                            label: classes.treeItem, // class name, e.g. `classes-nesting-label-x`
-                        }}>
-                        {Array.isArray(nodes.Children) ? nodes.Children.map((node) => renderTeamMember(node)) : null}
-                    </TreeItem>
-
-                );
-            }
-            else {
-                return (
-                    <div>
-                        No team selected
-                    </div>
-                );
-            }
-        };
-        const renderTeamMember = (node) => {
-            console.log(node);
+    renderTree = (nodes, nodeId) => {
+        console.log(nodeId)
+        if (nodeId >= 0) {
+            // var selectedTeam = this.findSelectedTeamNode(nodes, nodeId);
             return (
-                <TreeItem key={node.This.UserId}
-                    nodeId={node.This.UserId}
-                    label={node.This.FirstName }
+                <TreeItem key={nodeId}
+                    nodeId={nodeId}
+                    label={nodes.This.FirstName + "'s team"}
                     classes={{
                         root: classes.treeItem, // class name, e.g. `classes-nesting-root-x`
                         label: classes.treeItem, // class name, e.g. `classes-nesting-label-x`
                     }}>
-                    <TreeItem key={node.This.UserId + " ConsecLimit"}
-                        nodeId={node.This.UserId + " ConsecLimit"}
-                        label={node.This.ConsecLimit === null ? "Consecutive days:  N/A" :"Consecutive days: " + node.This.ConsecLimit.toString() }
-                        classes={{
-                            root: classes.treeItem, // class name, e.g. `classes-nesting-root-x`
-                            label: classes.treeItem, // class name, e.g. `classes-nesting-label-x`
-                        }}>
-                    
-                    </TreeItem>
-                    <TreeItem key={node.This.UserId + " MonthlyLimit"}
-                        nodeId={node.This.UserId + " MonthlyLimit"}
-                        label={node.This.MonthlyLimit === null ? "Days per month:  N/A" : "Days per month: " + node.This.MonthlyLimit.toString()}
-                        classes={{
-                            root: classes.treeItem, // class name, e.g. `classes-nesting-root-x`
-                            label: classes.treeItem, // class name, e.g. `classes-nesting-label-x`
-                        }}>
-                    
-                    </TreeItem>
-                    <TreeItem key={node.This.UserId + " QuaterLimit"}
-                        nodeId={node.This.UserId + " QuaterLimit"}
-                        label={node.This.MonthlyLimit === null ? "Days per quater:  N/A" : "Days per quater: " + node.This.MonthlyLimit.toString()}
-                        classes={{
-                            root: classes.treeItem, // class name, e.g. `classes-nesting-root-x`
-                            label: classes.treeItem, // class name, e.g. `classes-nesting-label-x`
-                        }}>
-                    
-                    </TreeItem>
-                    <TreeItem key={node.This.UserId + " YearlyLimit"}
-                        nodeId={node.This.UserId + " YearlyLimit"}
-                        label={node.This.YearlyLimit === null ? "Days per year:  N/A" : "Days per year: " + node.This.YearlyLimit.toString()}
-                        classes={{
-                            root: classes.treeItem, // class name, e.g. `classes-nesting-root-x`
-                            label: classes.treeItem, // class name, e.g. `classes-nesting-label-x`
-                        }}>
-                    </TreeItem>
+                    {Array.isArray(nodes.Children) ? nodes.Children.map((node) => this.renderTeamMember(node)) : null}
                 </TreeItem>
             );
         }
+        else {
+            return (
+                <div>
+                    No team selected
+                </div>
+            );
+        }
+    };
+
+    renderTeamMember = (node) => {
+        return (
+            <TreeItem key={node.This.UserId}
+                nodeId={node.This.UserId}
+                label={node.This.FirstName }
+                classes={{
+                    root: classes.treeItem, // class name, e.g. `classes-nesting-root-x`
+                    label: classes.treeItem, // class name, e.g. `classes-nesting-label-x`
+                }}>
+                <TreeItem key={node.This.UserId + " ConsecLimit"}
+                    nodeId={node.This.UserId + " ConsecLimit"}
+                    label={node.This.ConsecLimit === null ? "Consecutive days:  N/A" :"Consecutive days: " + node.This.ConsecLimit.toString() }
+                    classes={{
+                        root: classes.treeItem, // class name, e.g. `classes-nesting-root-x`
+                        label: classes.treeItem, // class name, e.g. `classes-nesting-label-x`
+                    }}>
+                
+                </TreeItem>
+                <TreeItem key={node.This.UserId + " MonthlyLimit"}
+                    nodeId={node.This.UserId + " MonthlyLimit"}
+                    label={node.This.MonthlyLimit === null ? "Days per month:  N/A" : "Days per month: " + node.This.MonthlyLimit.toString()}
+                    classes={{
+                        root: classes.treeItem, // class name, e.g. `classes-nesting-root-x`
+                        label: classes.treeItem, // class name, e.g. `classes-nesting-label-x`
+                    }}>
+                
+                </TreeItem>
+                <TreeItem key={node.This.UserId + " QuaterLimit"}
+                    nodeId={node.This.UserId + " QuaterLimit"}
+                    label={node.This.MonthlyLimit === null ? "Days per quater:  N/A" : "Days per quater: " + node.This.MonthlyLimit.toString()}
+                    classes={{
+                        root: classes.treeItem, // class name, e.g. `classes-nesting-root-x`
+                        label: classes.treeItem, // class name, e.g. `classes-nesting-label-x`
+                    }}>
+                
+                </TreeItem>
+                <TreeItem key={node.This.UserId + " YearlyLimit"}
+                    nodeId={node.This.UserId + " YearlyLimit"}
+                    label={node.This.YearlyLimit === null ? "Days per year:  N/A" : "Days per year: " + node.This.YearlyLimit.toString()}
+                    classes={{
+                        root: classes.treeItem, // class name, e.g. `classes-nesting-root-x`
+                        label: classes.treeItem, // class name, e.g. `classes-nesting-label-x`
+                    }}>
+                </TreeItem>
+            </TreeItem>
+        );
+    }
+
+    render() {
         const renderSidebarTree = (nodes) => {
             return (
                 <TreeItem key={nodes.length === 0 ? 0 : nodes.This.UserId}
-                    nodeId={nodes.length === 0 ? 0 : nodes.This.UserId}
-                    label={nodes.length === 0 ? "no team" : nodes.This.FirstName + " team"}
-                    onClick={() => { this.onTeamClick(nodes); }}
-                    classes={{
+                        nodeId={nodes.length === 0 ? 0 : nodes.This.UserId}
+                        label={nodes.length === 0 ? "no team" : nodes.This.FirstName + "'s team"}
+                        onClick={() => { this.onTeamClick(nodes); }}
+                        classes={{
                         root: classes.sidebarTreeItem, // class name, e.g. `classes-nesting-root-x`
                         label: classes.sidebarTreeItem, // class name, e.g. `classes-nesting-label-x`
                     }}>
-                    {Array.isArray(nodes.Children) ? nodes.Children.map((node) => Array.isArray(node.Children)? renderSidebarTree(node):null) : null}
+                    {Array.isArray(nodes.Children) ? nodes.Children.map(node => Array.isArray(node.Children) ? renderSidebarTree(node) : null) : null}
                 </TreeItem>
 
             )
@@ -715,18 +703,17 @@ class Team extends React.Component {
                                 <div className={classes.teamTitle}>Team members and their restrictions</div>
                                 <TreeView
                                     className={classes.teamMembersTree}
-                                    defaultCollapseIcon={<ExpandMoreIcon />}
+                                    children={this.state.teamMemberTreeContent}
                                     defaultExpanded={['root']}
+                                    defaultCollapseIcon={<ExpandMoreIcon />}
                                     defaultExpandIcon={<ChevronRightIcon />}
-                                >
-                                    {renderTree(this.props.teamTree.items, this.state.selectedTeamId)}
-                                </TreeView>
+                                />
                                 <Button
                                     className={classes.changeRestrictionButton}
                                     classes={{ label: classes.popUpButtonLabel }}
                                     name="openChangeRestrictionForTeamMemberDialog"
                                     onClick={this.handleOpenDialog}>
-                                    Change restrictions for team memember
+                                    Change restrictions for team member
                                      <CreateIcon className={classes.popUpButtonPicture} />
                                 </Button>
 
@@ -1002,8 +989,7 @@ Team.propTypes = {
 
 const mapStateToProps = state => ({
     teamTree: state.teamTree,
-    assignments: state.assignments,
-    token: state.login
+    token: state.login.token
 })
 
 export default connect(mapStateToProps, { fetchTeamTree })(Team);
