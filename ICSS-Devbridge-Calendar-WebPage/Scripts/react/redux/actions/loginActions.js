@@ -1,5 +1,5 @@
 ﻿import { LOGIN } from './types';
-import { connectionString } from '../connectionStrings';
+import { baseApiUrl } from '../config';
 import axios from 'axios';
 
 
@@ -11,7 +11,7 @@ export const getToken = (userData) => dispatch => {
 
     // TODO: add error handling
 
-    return axios.post(connectionString + `/token`, data)
+    return axios.post(baseApiUrl + `/token`, data)
         .then(response => {
             const token = response.data.access_token;
             dispatch({

@@ -5,8 +5,7 @@ import classes from "../../../Content/Team.less";
 
 //Redux
 import { connect } from 'react-redux';
-import { fetchMyTeamTree } from '../redux/actions/teamActions';
-import { fetchAssignments } from '../redux/actions/assignmentActions';
+import { fetchTeamTree } from '../redux/actions/teamActions';
 import PropTypes from 'prop-types';
 
 
@@ -576,16 +575,17 @@ class Team extends React.Component {
         console.log(this.props);
     }
     async componentDidMount() {
-        await this.props.fetchMyTeamTree(1);
+        await this.props.fetchTeamTree(this.props.token.token.accessToken)
+        .then(() => {
+            console.log(this.props.teamTree)
+        })
+
     }
     componentDidUpdate() {
         {/* TODO: Check if this did not reset this.state.selectedTeamId*/ }
         if (this.state.selectedTeamId != this.props.teamTree.items.$id) {
             this.setState({ selectedTeamId: this.props.teamTree.items.$id })
         }
-    }
-    componentWillMount() {
-        this.props.fetchAssignments(this.props.token.token.accessToken);
     }
     
     handleChange(evt) {
@@ -996,7 +996,7 @@ class Team extends React.Component {
 }
 
 Team.propTypes = {
-    fetchMyTeamTree: PropTypes.func.isRequired,
+    fetchTeamTree: PropTypes.func.isRequired,
     teamTree: PropTypes.array.isRequired,
 }
 
@@ -1006,4 +1006,4 @@ const mapStateToProps = state => ({
     token: state.login
 })
 
-export default connect(mapStateToProps, { fetchMyTeamTree, fetchAssignments })(Team);
+export default connect(mapStateToProps, { fetchTeamTree })(Team);

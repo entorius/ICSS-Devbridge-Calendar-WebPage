@@ -1,4 +1,4 @@
-﻿import { FETCH_MY_TEAM_TREE } from "../actions/types";
+﻿import { FETCH_TEAM_TREE } from "../actions/types";
 
 const initialState = {
     items: [],
@@ -7,7 +7,7 @@ const initialState = {
 
 export default function (state = initialState, action) {
     switch (action.type) {
-        case FETCH_MY_TEAM_TREE:
+        case FETCH_TEAM_TREE:
             return {
                 ...state,
                 items: action.payload

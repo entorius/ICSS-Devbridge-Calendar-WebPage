@@ -1,17 +1,21 @@
-﻿import { FETCH_MY_TEAM_TREE,  } from "./types";
-import { connectionString } from "../connectionStrings";
+﻿import { FETCH_TEAM_TREE } from "./types";
+import { baseApiUrl } from "../config";
 import axios from "axios";
 
 
-export const fetchMyTeamTree = (userID) => dispatch => {
-    console.log(connectionString);
-    //connectionString - variable in web.config describing server route( in our case e.t.c https://localhost:44374/)
-    axios.get(connectionString + `/api/users/teamTree/` + userID)
-        .then(myTeamTree => {
-            const jsonMyTeamTree = myTeamTree.data;
+export const fetchTeamTree = (accessToken) => dispatch => {
+    console.log(baseApiUrl);
+
+    var config = {
+        headers: { Authorization: `Bearer ${accessToken}` }
+    }
+
+    return axios.get(baseApiUrl + `/api/users/teamTree`, config)
+        .then(teamTreeResponse => {
+            const teamTree = teamTreeResponse.data;
             dispatch({
-                type: FETCH_MY_TEAM_TREE,
-                payload: jsonMyTeamTree
+                type: FETCH_TEAM_TREE,
+                payload: teamTree
             })
         });
 }
