@@ -5,7 +5,8 @@ import { green, blue, grey, indigo } from '@material-ui/core/colors';
 import Grid from '@material-ui/core/Grid';
 import Paper from '@material-ui/core/Paper';
 import SideBar from "../components/SideBar";
-import TextField from '@material-ui/core/TextField';
+import Snackbar from '@material-ui/core/Snackbar';
+import MuiAlert from '@material-ui/lab/Alert';
 import Button from '@material-ui/core/Button';
 import IconButton from '@material-ui/core/IconButton';
 import Input from '@material-ui/core/Input';
@@ -14,6 +15,7 @@ import Visibility from '@material-ui/icons/Visibility';
 import VisibilityOff from '@material-ui/icons/VisibilityOff';
 import InputLabel from '@material-ui/core/InputLabel';
 import InputAdornment from '@material-ui/core/InputAdornment';
+import FormHelperText from '@material-ui/core/FormHelperText';
 
 const styles = theme => ({
     root: {
@@ -36,6 +38,14 @@ const styles = theme => ({
     },
     inputFontSize: {
         fontSize: 15
+    },
+    alert: {
+        "& .MuiAlert-icon": {
+            fontSize: 25
+        },
+        "& .MuiAlert-message": {
+            fontSize: 15
+        }
     }
 });
 
@@ -52,14 +62,27 @@ class SettingsPage extends Component {
         super(props);
         this.state = {
             password: "",
-            comfirmPassword: "",
+            confirmPassword: "",
             showPassword: false,
-            showConfirmPassword: false
+            showConfirmPassword: false,
+            error: false,
+            errorMessage: " ",
+            showAlertSuccess: false
         }
     }
 
     handleInputFieldChange = (name) => (event) => {
         this.setState({ [name]: event.target.value });
+        console.log("password " + this.state.password + " " + " confirmPass " + this.state.confirmPassword)
+        if (name == 'confirmPassword') {
+            if (this.state.password == event.target.value) {
+                this.setState({ errorMessage: " ", error: false });
+            }
+            else {
+                this.setState({ errorMessage: "passwords do not match", error: true });
+            }
+        }
+
     };
 
     handleClickShowPassword = (name) => {
@@ -71,6 +94,10 @@ class SettingsPage extends Component {
     handleMouseDownPassword = (event) => {
         event.preventDefault();
     };
+
+    handleShowAlert = () => {
+        this.setState(prevState => ({ showAlertSuccess: !prevState.showAlertSuccess }))
+    }
 
     render() {
         const { classes } = this.props;
@@ -148,60 +175,81 @@ class SettingsPage extends Component {
                                         alignItems="center"
                                         style={{ paddingTop: 10}}
                                     >
-                                    <FormControl style={{ marginRight: 20 }} required>
-                                        <InputLabel htmlFor="password"
-                                            className={classes.inputFontSize}>Password</InputLabel>
-                                        <Input
-                                            id="password"
-                                            type={this.state.showPassword ? 'text' : 'password'}
-                                            value={this.state.password}
-                                            onChange={this.handleInputFieldChange('password')}
-                                            endAdornment={
-                                                <InputAdornment position="end">
-                                                    <IconButton
-                                                        aria-label="toggle password visibility"
-                                                        onClick={() => { this.handleClickShowPassword('showPassword') }}
-                                                        onMouseDown={this.handleMouseDownPassword}
-                                                    >
-                                                        {this.state.showPassword ? <Visibility /> : <VisibilityOff />}
-                                                    </IconButton>
-                                                </InputAdornment>
-                                            }
-                                            className={classes.inputFontSize}
-                                        />
-                                    </FormControl>
-                                        <FormControl style={{ marginRight: 40 }} required>
-                                        <InputLabel htmlFor="confirm-passsword"
-                                            className={classes.inputFontSize}>Confirm Password</InputLabel>
-                                        <Input
-                                            id="confirm-passsword"
-                                            type={this.state.showConfirmPassword ? 'text' : 'password'}
-                                            value={this.state.confirmPassword}
-                                            onChange={this.handleInputFieldChange('confirmPassword')}
-                                            endAdornment={
-                                                <InputAdornment position="end">
-                                                    <IconButton
-                                                        aria-label="toggle confirm password visibility"
-                                                        onClick={() => { this.handleClickShowPassword('showConfirmPassword') }}
-                                                        onMouseDown={this.handleMouseDownPassword}
-                                                    >
-                                                        {this.state.showConfirmPassword ? <Visibility /> : <VisibilityOff />}
-                                                    </IconButton>
-                                                </InputAdornment>
-                                            }
-                                            className={classes.inputFontSize}
-                                        />
+                                        <FormControl style={{ marginRight: 20 }} required>
+                                            <InputLabel htmlFor="password"
+                                                className={classes.inputFontSize}>Password</InputLabel>
+                                            <Input
+                                                id="password"
+                                                type={this.state.showPassword ? 'text' : 'password'}
+                                                value={this.state.password}
+                                                onChange={this.handleInputFieldChange('password')}
+                                                endAdornment={
+                                                    <InputAdornment position="end">
+                                                        <IconButton
+                                                            aria-label="toggle password visibility"
+                                                            onClick={() => { this.handleClickShowPassword('showPassword') }}
+                                                            onMouseDown={this.handleMouseDownPassword}
+                                                        >
+                                                            {this.state.showPassword ? <Visibility /> : <VisibilityOff />}
+                                                        </IconButton>
+                                                    </InputAdornment>
+                                                }
+                                                className={classes.inputFontSize}
+                                                aria-describedby="password-error"
+                                            />
+                                        <FormHelperText id="password-error" style={{ fontSize: 12 }}> </FormHelperText>
+                                        </FormControl>
+                                        <FormControl
+                                                style={{ marginRight: 40 }}
+                                                required
+                                                error={this.state.error}>
+                                            <InputLabel htmlFor="confirm-passsword"
+                                                className={classes.inputFontSize}>Confirm Password</InputLabel>
+                                            <Input
+                                                id="confirm-passsword"
+                                                type={this.state.showConfirmPassword ? 'text' : 'password'}
+                                                value={this.state.confirmPassword}
+                                                helperText={this.state.errorMessage}
+                                                onChange={this.handleInputFieldChange('confirmPassword')}
+                                                endAdornment={
+                                                    <InputAdornment position="end">
+                                                        <IconButton
+                                                            aria-label="toggle confirm password visibility"
+                                                            onClick={() => { this.handleClickShowPassword('showConfirmPassword') }}
+                                                            onMouseDown={this.handleMouseDownPassword}
+                                                        >
+                                                            {this.state.showConfirmPassword ? <Visibility /> : <VisibilityOff />}
+                                                        </IconButton>
+                                                    </InputAdornment>
+                                                }
+                                                className={classes.inputFontSize}
+                                                aria-describedby="confirm-password-error"
+                                            />
+                                            <FormHelperText id="confirm-password-error" style={{ fontSize: 12}}>
+                                                {this.state.errorMessage}
+                                            </FormHelperText>
                                         </FormControl>
                                         <Button
                                             variant="contained"
                                             color="secondary"
+                                            onClick={this.handleShowAlert}
                                             style={{ fontSize: 12}}>
-                                            Change password
+                                            Change Password
                                         </Button>
                                     </Grid>
                                 </Grid>
                             </Paper>
                         </Grid>
+                        <Snackbar open={this.state.showAlertSuccess} autoHideDuration={3000} onClose={this.handleShowAlert}>
+                            <MuiAlert
+                                elevation={6}
+                                variant="filled"
+                                onClose={this.handleShowAlert}
+                                severity="success"
+                                className={classes.alert}>
+                                Password successfuly changed
+                            </MuiAlert>
+                        </Snackbar>
                     </Grid>
                 </div>
             </MuiThemeProvider>
