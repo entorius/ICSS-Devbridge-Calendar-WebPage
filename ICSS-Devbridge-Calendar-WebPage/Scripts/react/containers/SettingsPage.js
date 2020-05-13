@@ -1,7 +1,7 @@
 ﻿import React, { Component } from 'react';
 import Typography from '@material-ui/core/Typography';
 import { withStyles, createMuiTheme, MuiThemeProvider } from '@material-ui/core/styles';
-import { green, blue, grey, indigo } from '@material-ui/core/colors';
+import { blue, grey, indigo } from '@material-ui/core/colors';
 import Grid from '@material-ui/core/Grid';
 import Paper from '@material-ui/core/Paper';
 import SideBar from "../components/SideBar";
@@ -80,19 +80,6 @@ class SettingsPage extends Component {
             .required('Please enter a last name')
     });
 
-    handleInputFieldChange = (name) => (event) => {
-        this.setState({ [name]: event.target.value });
-        if (name == 'confirmPassword') {
-            if (this.state.password == event.target.value) {
-                this.setState({ errorMessage: " ", error: false });
-            }
-            else {
-                this.setState({ errorMessage: "passwords do not match", error: true });
-            }
-        }
-
-    };
-
     handleClickShowPassword = (name) => {
         this.setState(prevState => ({
             [name]: !prevState[name]
@@ -107,7 +94,8 @@ class SettingsPage extends Component {
         this.setState(prevState => ({ showAlertSuccess: !prevState.showAlertSuccess }))
     }
 
-    onSubmit = values => {
+    onSubmit = (values, { resetForm }) => {
+        resetForm({})
         this.handleShowAlert()
     }
 
