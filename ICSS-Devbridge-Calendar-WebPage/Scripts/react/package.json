@@ -33,6 +33,7 @@
     "file-loader": "^5.1.0",
     "history": "^4.10.1",
     "html-webpack-plugin": "^4.0.4",
+    "jquery": "^3.5.1",
     "less": "^3.11.1",
     "material-ui-popup-state": "^1.5.4",
     "moment": "^2.24.0",
