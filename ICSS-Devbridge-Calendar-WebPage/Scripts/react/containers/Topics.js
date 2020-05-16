@@ -42,47 +42,76 @@ const styles = theme => ({
         display: 'flex',
         flexGrowth: 1
     },
-    GridContainer: {
+    gridContainer: {
         direction: 'row',
         justify: 'space-around',
         alignItems: 'flex-start'
     }
 });
-const GridContainerStyle = {
+const gridContainerStyle = {
     margin: 0
-}
+};
+const pageNameStyle = {
+    margin: 15,
+    fontWeight: "bold",
+    fontSize: 40,
+    display: 'inline'
+};
+const addButtonStyle = {
+    borderRadius: 30,
+    color: 'red'
+};
+const addTopicTextStyle = {
+    fontSize: 20,
+    textAlign: 'right'
+};
 
 class Topics extends React.Component {
     state = {
-        topics: [
-            { id: 0, name: "item0" },
-            { id: 1, name: "item1" },
-            { id: 2, name: "item2" }
-        ]
+        topics: [ ],
+        pageName: "Main topics",
     };
 
-    AddTopics() {
-        let topics = this.state.topics;
-        for (let i = 1; i < 15; i++)
+    addTopics(n) {
+        let topics = [];
+        for (let i = 1; i < n; i++)
             topics.push({ id: i, name: i + " item" });
         this.setState({ topics });
     };
 
+    handleLoadSubtopics = topicID => {
+        // ask database for topics subtopics
+        this.addTopics(5);
+        this.setState({ pageName: topicID });
+    };
+
     componentDidMount() {
         // ask for topics from server
-        this.AddTopics();
-    }
+        this.addTopics(15);
+    };
 
     render() {
         const { classes } = this.props;
         return (
             <div className={classes.root}>
                 <SideBar />
-                <Grid container direction="row" justify="space-around" spacing="8" style={GridContainerStyle}>
-                    {this.state.topics.map(topic =>
-                        <Topic name={topic.name} topicID={topic.id} />
-                    )}
-                </Grid>
+                <div>
+                    <p style={pageNameStyle}>{this.state.pageName}</p>
+                    <p style={addTopicTextStyle}>Add new topic in this section
+                        <Button style={this.addButtonStyle}>
+                            <AddIcon style={{ fontSize: 40 }} />
+                        </Button>
+                    </p>
+                    <Grid container
+                        direction="row"
+                        justify="space-around"
+                        spacing="8"
+                        style={gridContainerStyle}>
+                        {this.state.topics.map(topic =>
+                            <Topic topic={topic} onLoadSubtopics={this.handleLoadSubtopics} />
+                        )}
+                    </Grid>
+                </div>
             </div>
             );
     }
