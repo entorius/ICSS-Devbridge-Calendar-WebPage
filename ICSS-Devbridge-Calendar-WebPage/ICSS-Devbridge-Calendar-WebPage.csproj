@@ -164,6 +164,7 @@
     <Content Include="Scripts\react\components\ViewAllLearningDayTopicsDialog.js" />
     <Content Include="Scripts\react\containers\LearningTree.js" />
     <Content Include="Scripts\react\containers\Register.js" />
+    <Content Include="Scripts\react\containers\SettingsPage.js" />
     <Content Include="Scripts\react\redux\actions\assignmentActions.js" />
     <Content Include="Scripts\react\redux\actions\teamActions.js" />
     <Content Include="Scripts\react\redux\actions\loginActions.js" />
