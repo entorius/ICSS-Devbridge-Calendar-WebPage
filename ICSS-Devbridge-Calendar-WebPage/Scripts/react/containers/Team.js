@@ -5,7 +5,7 @@ import classes from "../../../Content/Team.less";
 
 //Redux
 import { connect } from 'react-redux';
-import { fetchTeamTree } from '../redux/actions/teamActions';
+import { fetchTeamTree, changeRestrictionsForUser, changeRestrictionsForTeam, changeGlobalRestrictions, addTeamMember, reassignTeamMember } from '../redux/actions/teamActions';
 import PropTypes from 'prop-types';
 
 
@@ -34,75 +34,115 @@ import AddIcon from '@material-ui/icons/Add';
 import CloseIcon from '@material-ui/icons/Close';
 import CompareArrowsIcon from '@material-ui/icons/CompareArrows';
 import PersonIcon from '@material-ui/icons/Person';
-{/* TODO: example how you could return teams*/ }
-
-
 
 class ChangeRestrictionForTeamMemberDialog extends React.Component {
     constructor(props) {
         super(props);
-        {/* TODO: state for changing member restrictions. Anywhere else to get state write this.state.<parameter> where parameter in this case 
-         can be email , name*/ }
         this.state = {
             open: props.open,
             justOpened: false,
             email: "some@gmail.com",
             name: "",
-            restrictionConsecutiveDays: 0,
-            restrictionDaysPerWeek: 0,
-            restrictionDaysPerMonth: 0,
-            restrictionDaysPerYear: 0
-
+            restrictionConsecutiveDays: null,
+            restrictionDaysPerWeek: null,
+            restrictionDaysPerMonth: null,
+            restrictionDaysPerYear: null,
+            users: [],
+            selectedUser: {}
         }
         this.handleChange = this.handleChange.bind(this);
+        this.handleSelectChange = this.handleSelectChange.bind(this);
+        this.handleClose = this.handleClose.bind(this);
+        this.handleListItemClick = this.handleListItemClick.bind(this);
     }
+
     handleChange(evt) {
         // check it out: we get the evt.target.name 
         // and use it to target the key on our `state` object with the same name, using bracket syntax
         this.setState({ [evt.target.name]: evt.target.value });
     }
+
+    handleSelectChange(evt) {
+        console.log('handleSelectChange');
+        const fullName = evt.target.value;
+        const user = this.state.users.find(user => user.FirstName + ' ' + user.LastName == fullName);
+        this.setState({
+            restrictionConsecutiveDays: user.ConsecLimit, 
+            restrictionDaysPerMonth: user.MonthlyLimit,
+            restrictionDaysPerYear: user.YearlyLimit,
+            selectedUser: user
+        })
+    }
+
     componentDidUpdate(prevProps) {
-        //console.log(this.props.open + "Amazing");
-        //console.log(prevProps.open + "Amazing");
-        // Typical usage (don't forget to compare props):
         if (this.props.open !== prevProps.open) {
-           
             this.setState({ open: true });
+
+            const teamMembers = this.getTeam(this.props.teams, this.props.teamId);
+            this.setState({ users: teamMembers.map(member => member.This) });
         }
     }
+
+    handleClose(){
+        this.setState({ 
+            open: false,
+            restrictionConsecutiveDays: null,
+            restrictionDaysPerWeek: null,
+            restrictionDaysPerMonth: null,
+            restrictionDaysPerYear: null
+        });
+    }
+
+    getTeam(teams, teamId){
+        if(teams.$id == teamId){
+            return teams.Children;
+        }
+
+        var children = [];
+        if(teams.children != null){
+            for(let child of teams.Children){
+                if(Array.isArray(child.Children)){
+                    children = this.getTeam(child, teamId);
+                    if(children.length > 0){
+                        break;
+                    }
+                }
+            }
+        }
+
+        return children;
+    }
+
+    handleListItemClick() {
+        this.setState({ open: false });
+
+        const userData = {
+            id: this.state.selectedUser.UserId,
+            consecLimit: this.state.restrictionConsecutiveDays,
+            monthlyLimit: this.state.restrictionDaysPerMonth,
+            yearlyLimit: this.state.restrictionDaysPerYear
+        }
+
+        this.props.patchFunc(this.props.token.accessToken, userData)
+            .then(() => {
+                this.props.updateTreeFunc(this.props.token.accessToken);
+            });
+    };
+
+    closeDialog() {
+        this.setState({ open: false });
+    }
+
     render() {
-        const names = [
-            'Oliver Hansen',
-            'Van Henry',
-            'April Tucker',
-            'Ralph Hubbard',
-            'Omar Alexander',
-            'Carlos Abbott',
-            'Miriam Wagner',
-            'Bradley Wilkerson',
-            'Virginia Andrews',
-            'Kelly Snyder',
-        ];
-        
-        const handleClose = () => {
-            this.setState({ open: false });
-            //console.log(this.state.open + "NotAmazing");
-        };
-
-        const handleListItemClick = (value) => {
-            this.setState({ open: false })
-            //console.log(this.state.open + "NotAmazing");
-        };
-
         return (
-            <Dialog onClose={handleClose} aria-labelledby="simple-dialog-title" open={this.state.open}>
+            <Dialog onClose={this.handleClose} aria-labelledby="simple-dialog-title" open={this.state.open}>
                 <DialogTitle
                     id="change-restriction-dialog-title"
                     disableTypography
                     classes={{ root: classes.changeRestrictionTitle}}>
                     Team member restriction
                     <CreateIcon className={classes.popUpButtonPicture} />
-                    </DialogTitle>
+                </DialogTitle>
                 <div className={classes.changeRestrictionBody}>
                     <div className={classes.changeRestrictionTeamMemberSelection}>
                         <div className={classes.changeRestrictionTeamMemberSelectionTitle}>Team member</div>
@@ -113,10 +153,10 @@ class ChangeRestrictionForTeamMemberDialog extends React.Component {
                             className={classes.changeRestrictionSelectTeamMember}
                             name="member"
                             input={<Input />}
-                            onChange={this.handleChange}>
-                        >{names.map((name) => (
-                            <MenuItem key={name} value={name} >
-                                {name}
+                            onChange={this.handleSelectChange}>
+                        >{this.state.users.map(user => (
+                            <MenuItem key={user.FirstName + ' ' + user.LastName} value={user.FirstName + ' ' + user.LastName} >
+                                {user.FirstName + ' ' + user.LastName}
                             </MenuItem>
                         ))}
                         </Select>
@@ -217,14 +257,14 @@ class ChangeRestrictionForTeamMemberDialog extends React.Component {
                     <Button
                         className={classes.cancelButton}
                         classes={{ label: classes.popUpButtonLabel }}
-                        onClick={() => handleListItemClick(this.email)}>
+                        onClick={() => {this.closeDialog()}}>
                         Cancel
                     </Button>
                     {/* TODO: Add action to change selected member restriction*/}
                     <Button
                         className={classes.actionButton}
                         classes={{ label: classes.popUpButtonLabel }}
-                        onClick={() => handleListItemClick(this.email)}>
+                        onClick={this.handleListItemClick}>
                         Change member restrictions
                     </Button>
                 </div>
@@ -232,6 +272,7 @@ class ChangeRestrictionForTeamMemberDialog extends React.Component {
         );
     }
 }
+
 class AddNewTeamMemberDialog extends React.Component {
     constructor(props) {
         super(props);
@@ -254,16 +295,21 @@ class AddNewTeamMemberDialog extends React.Component {
             this.setState({ open: true });
         }
     }
+
+    handleListItemClick = (email) => {
+        this.props.addFunc(this.props.token.accessToken, email, this.props.currentUser.UserId);
+        this.setState({ open: false })
+    };
+
+    closeDialog = () => {
+        this.setState({ open: false })
+    }
+
     render() {
        
         //event to handle close (closes dialog)
         const handleClose = () => {
             this.setState({ open: false });
-        };
-
-        //event to handle close (closes dialog)
-        const handleListItemClick = (value) => {
-            this.setState({ open: false })
         };
 
         return (
@@ -304,14 +350,14 @@ class AddNewTeamMemberDialog extends React.Component {
                     <Button
                         className={classes.cancelButton}
                         classes={{ label: classes.popUpButtonLabel }}
-                        onClick={() => handleListItemClick(this.email)}>
+                        onClick={() => this.closeDialog(this.state.email)}>
                         Cancel
                     </Button>
                     {/* TODO: add action to send invitation to email*/}
                     <Button
                         className={classes.actionButton}
                         classes={{ label: classes.popUpButtonLabel }}
-                        onClick={() => handleListItemClick(this.email)}>
+                        onClick={() => this.handleListItemClick(this.state.email)}>
                         Send invitation
                     </Button>
                 </div>
@@ -424,9 +470,12 @@ class ReassignTeamMemberDialog extends React.Component {
         this.state = {
             open: props.open,
             member: "",
-            team: ""
+            team: "",
+            teams: [],
+            teamMembers: []
         }
         this.handleChange = this.handleChange.bind(this);
+        this.handleListItemClick = this.handleListItemClick.bind(this);
     }
     handleChange(evt) {
         // check it out: we get the evt.target.name 
@@ -436,42 +485,95 @@ class ReassignTeamMemberDialog extends React.Component {
     componentDidUpdate(prevProps) {
         //if props for this class updated open dialog
         if (this.props.open !== prevProps.open) {
-
             this.setState({ open: true });
+
+            const teamMembers = this.getTeam(this.props.teams, this.props.teamId);
+            this.setState({ teamMembers: teamMembers.map(member => member.This) });
+            this.getAllTeams(this.props.teams);
         }
     }
+
+    getTeam(teams, teamId){
+        if(teams.$id == teamId){
+            return teams.Children;
+        }
+
+        var children = [];
+        if(teams.Children != null){
+            for(let child of teams.Children){
+                if(Array.isArray(child.Children)){
+                    children = this.getTeam(child, teamId);
+                    if(children.length > 0){
+                        break;
+                    }
+                }
+            }
+        }
+        return children;
+    }
+
+    getAllTeams(teamTree) {
+        this.state.teams.push(teamTree);
+
+        if(Array.isArray(teamTree.Children)){
+            teamTree.Children.forEach(child => {
+                this.getAllTeams(child);
+            })
+        }
+    }
+
+    
+    updateUser(teams, user) {
+        if(teams.This.UserId == user.UserId){
+            teams.This = user;
+            return teams;
+        }
+
+        if(teams.Children != null){
+            for(let child of teams.Children){
+                let updatedChild = this.updateUser(child, user);
+                teams.Children[teams.Children.indexOf(child)] = updatedChild;
+            }
+        }
+
+        return teams;
+    }
+    
+    handleClose() {
+        this.setState({ open: false, teams: [] });
+    };
+
+    handleListItemClick(evt) {
+        if(this.state.team != "" && this.state.member != ""){
+            const user = this.state.teamMembers.find(user => user.FirstName + ' ' + user.LastName == this.state.member);
+            const manager = this.state.teams.find(team => team.This.FirstName + ' ' + team.This.LastName == this.state.team);
+    
+            const data = { userId: user.UserId, managerId: manager.This.UserId }
+    
+            this.props.reassignFunc(this.props.token.accessToken, data).then(() => {
+                if(this.props.error === null) {
+                    //update the state
+                    this.props.updateTreeFunc(this.props.token.accessToken);
+
+                    this.handleClose();
+                }
+                else {
+                    console.log('lole');
+                    console.log(this.props.error);
+                    for(let error of this.props.error){
+                        if(error.Code == 4){
+                            // TODO: Add a message about circular relationships
+                        }
+                    }
+                    this.props.error = [];
+                }
+            });
+        }
+    };
+
     render() {
-        const names = [
-            'Oliver Hansen',
-            'Van Henry',
-            'April Tucker',
-            'Ralph Hubbard',
-            'Omar Alexander',
-            'Carlos Abbott',
-            'Miriam Wagner',
-            'Bradley Wilkerson',
-            'Virginia Andrews',
-            'Kelly Snyder',
-        ];
-        const teams = [
-            'Your team',
-            'Liam team',
-            'Caleb team',
-            'Marisha team'
-        ];
-        //event to handle close (closes dialog)
-        
-        const handleClose = () => {
-            this.setState({ open: false });
-        };
-
-        //event to handle close (closes dialog)
-        const handleListItemClick = (value) => {
-            this.setState({ open: false })
-        };
-
         return (
-            <Dialog onClose={handleClose}
+            <Dialog onClose={() => this.handleClose}
                 aria-labelledby="simple-dialog-title"
                 open={this.state.open}
                 classes={{ paper: classes.addMemberDialog }}>
@@ -494,21 +596,15 @@ class ReassignTeamMemberDialog extends React.Component {
                         name="member"
                         input={<Input/>}
                         onChange={this.handleChange}>
-                        {names.map((name) => (
-                            <MenuItem key={name} value={name} >
-                                {name}
-                            </MenuItem>
-                        ))}
-                        {teams.map((team) => (
-                            <MenuItem key={team} value={team} >
-                                {team}
+                        {this.state.teamMembers.map((member) => (
+                            <MenuItem key={member.FirstName + ' ' + member.LastName} value={member.FirstName + ' ' + member.LastName} >
+                                {member.FirstName + ' ' + member.LastName}
                             </MenuItem>
                         ))}
                     </Select>
 
                 </div>
                 <div className={classes.deleteMemberBody}>
-
                     <div className={classes.reassignTeamTitle}>Select team</div>
                     <Select
                         labelId="team-select-label"
@@ -518,9 +614,9 @@ class ReassignTeamMemberDialog extends React.Component {
                         name="team"
                         input={<Input />}
                         onChange={this.handleChange}>
-                        {teams.map((team) => (
-                            <MenuItem key={team} value={team} >
-                                {team}
+                        {this.state.teams.map((team) => (
+                            <MenuItem key={team.$id} value={team.This.FirstName + ' ' + team.This.LastName}>
+                                {team.This.FirstName + ' ' + team.This.LastName + '\'s team'}
                             </MenuItem>
                         ))}
                     </Select>
@@ -530,15 +626,14 @@ class ReassignTeamMemberDialog extends React.Component {
                     <Button
                         className={classes.cancelButton}
                         classes={{ label: classes.popUpButtonLabel }}
-                        onClick={() => handleListItemClick(this.email)}>
+                        onClick={() => {this.handleClose()}}>
                         Cancel
                     </Button>
-                    {/* TODO: add action to reassign team member to another team*/}
                     <Button
                         className={classes.actionButton}
                         classes={{ label: classes.popUpButtonLabel }}
-                        onClick={() => handleListItemClick(this.email)}>
-                        Ressign team member
+                        onClick={this.handleListItemClick}>
+                        Reassign team member
                     </Button>
                 </div>
             </Dialog>
@@ -565,6 +660,7 @@ class Team extends React.Component {
             openRemoveTeamMemberDialog: false,
             openReassignTeamMemberDialog: false,
             selectedTeamId: this.props.teamTree.items.$id,
+            selectedTeamManagerId: 0,
             teamMemberTreeContent: null
         };
         this.handleChange = this.handleChange.bind(this);
@@ -578,10 +674,10 @@ class Team extends React.Component {
             });
         
         if (this.state.selectedTeamId != this.props.teamTree.items.$id) {
-            this.setState({ selectedTeamId: this.props.teamTree.items.$id })
+            this.setState({ selectedTeamId: this.props.teamTree.items.$id, selectedTeamManagerId: this.props.teamTree.items.This.UserId })
         }
 
-        // this.state.teamMemberTreeContent = this.renderTree(this.props.teamTree.items, 2)
+        this.setState({ teamMemberTreeContent: this.renderTree(this.props.teamTree.items, this.props.teamTree.items.$id) });
     }
     
     handleChange(evt) {
@@ -596,8 +692,35 @@ class Team extends React.Component {
 
     onTeamClick = (node) => {
         console.log(node);
-        this.setState({ selectedTeamId: node.$id });
+        this.setState({ selectedTeamId: node.$id, selectedTeamManagerId: node.This.UserId });
         this.setState({ teamMemberTreeContent: this.renderTree(node, node.$id) })
+    }
+
+    changeTeamRestrictions() {
+        var data = {
+            managerId: this.state.selectedTeamManagerId,
+            consecLimit: this.state.teamRestrictionConsecutiveDays,
+            monthlyLimit: this.state.teamRestrictionDaysPerMonth,
+            yearlyLimit: this.state.teamRestrictionDaysPerYear
+        };
+
+        this.props.changeRestrictionsForTeam(this.props.token.accessToken, data)
+            .then(() => {
+                this.props.fetchTeamTree(this.props.token.accessToken);
+            });
+    }
+
+    changeGlobalRestrictions() {
+        var data = {
+            consecLimit: this.state.globalRestrictionConsecutiveDays,
+            monthlyLimit: this.state.globalRestrictionDaysPerMonth,
+            yearlyLimit: this.state.globalRestrictionDaysPerYear
+        };
+
+        this.props.changeGlobalRestrictions(this.props.token.accessToken, data)
+            .then(() => {
+                this.props.fetchTeamTree(this.props.token.accessToken);
+            });
     }
 
     renderTree = (nodes, nodeId) => {
@@ -612,6 +735,7 @@ class Team extends React.Component {
                         root: classes.treeItem, // class name, e.g. `classes-nesting-root-x`
                         label: classes.treeItem, // class name, e.g. `classes-nesting-label-x`
                     }}>
+                    {/* BUGGED */}
                     {Array.isArray(nodes.Children) ? nodes.Children.map((node) => this.renderTeamMember(node)) : null}
                 </TreeItem>
             );
@@ -842,8 +966,7 @@ class Team extends React.Component {
                                             />
                                         </div>
                                     </div>
-                                    {/*TODO: Add action to change restrictions for all team members according to state parameters*/}
-                                    <Button className={classes.restrictionButton} classes={{ label: classes.popUpButtonLabel }}>
+                                    <Button className={classes.restrictionButton} classes={{ label: classes.popUpButtonLabel }} onClick={() => {this.changeTeamRestrictions()}}>
                                         Change restrictions
                                         for your team
                                     <CreateIcon className={classes.popUpButtonPicture} />
@@ -948,8 +1071,8 @@ class Team extends React.Component {
                                         </div>
                                     </div>
                                     {/*TODO: Add action to change restrictions globaly for all members according to state parameters*/}
-                                    <Button className={classes.restrictionButton} classes={{ label: classes.popUpButtonLabel }}>
-                                        Change restrictions globaly
+                                    <Button className={classes.restrictionButton} classes={{ label: classes.popUpButtonLabel }} onClick={() => {this.changeGlobalRestrictions()}}>
+                                        Change restrictions globally
                                     <CreateIcon className={classes.popUpButtonPicture} />
                                     </Button>
                                 </div>
@@ -973,10 +1096,10 @@ class Team extends React.Component {
 
 
                 </div>
-                <ChangeRestrictionForTeamMemberDialog open={this.state.openChangeRestrictionForTeamMemberDialog} />
-                <AddNewTeamMemberDialog open={this.state.openAddTeamMemberDialog} />
+                <ChangeRestrictionForTeamMemberDialog open={this.state.openChangeRestrictionForTeamMemberDialog} patchFunc={this.props.changeRestrictionsForUser} token={this.props.token} teams={this.props.teamTree.items} teamId={this.state.selectedTeamId} updateTreeFunc={this.props.fetchTeamTree} />
+                <AddNewTeamMemberDialog open={this.state.openAddTeamMemberDialog} addFunc={this.props.addTeamMember} currentUser={this.props.teamTree.items.This} token={this.props.token} />
                 <DeleteTeamMemberDialog open={this.state.openRemoveTeamMemberDialog} />
-                <ReassignTeamMemberDialog open={this.state.openReassignTeamMemberDialog} />
+                <ReassignTeamMemberDialog open={this.state.openReassignTeamMemberDialog} reassignFunc={this.props.reassignTeamMember} teams={this.props.teamTree.items} teamId={this.state.selectedTeamId} error={this.props.teamTree.error} updateTreeFunc={this.props.fetchTeamTree} token={this.props.token} />
             </div>
         );
     }
@@ -985,6 +1108,11 @@ class Team extends React.Component {
 Team.propTypes = {
     fetchTeamTree: PropTypes.func.isRequired,
     teamTree: PropTypes.array.isRequired,
+    changeRestrictionsForUser: PropTypes.func.isRequired,
+    changeRestrictionsForTeam: PropTypes.func.isRequired,
+    changeGlobalRestrictions: PropTypes.func.isRequired,
+    addTeamMember: PropTypes.func.isRequired,
+    reassignTeamMember: PropTypes.func.isRequired
 }
 
 const mapStateToProps = state => ({
@@ -992,4 +1120,14 @@ const mapStateToProps = state => ({
     token: state.login.token
 })
 
-export default connect(mapStateToProps, { fetchTeamTree })(Team);
+export default connect(
+    mapStateToProps, 
+    { 
+        fetchTeamTree, 
+        changeRestrictionsForUser, 
+        changeRestrictionsForTeam, 
+        changeGlobalRestrictions,
+        addTeamMember,
+        reassignTeamMember
+    }
+)(Team);

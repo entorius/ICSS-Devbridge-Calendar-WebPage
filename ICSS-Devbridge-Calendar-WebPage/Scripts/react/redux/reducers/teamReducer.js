@@ -1,7 +1,9 @@
-﻿import { FETCH_TEAM_TREE } from "../actions/types";
+﻿import { FETCH_TEAM_TREE, UPDATE_MANAGER } from "../actions/types";
 
 const initialState = {
-    items: []
+    items: [],
+    user: {},
+    error: []
 }
 
 export default function (state = initialState, action) {
@@ -10,6 +12,12 @@ export default function (state = initialState, action) {
             return {
                 ...state,
                 items: action.payload
+            }
+        case UPDATE_MANAGER:
+            return {
+                ...state,
+                user: action.payload,
+                error: action.error
             }
         default:
             return state;
