@@ -558,7 +558,6 @@ class ReassignTeamMemberDialog extends React.Component {
                     this.handleClose();
                 }
                 else {
-                    console.log('lole');
                     console.log(this.props.error);
                     for(let error of this.props.error){
                         if(error.Code == 4){
@@ -736,7 +735,7 @@ class Team extends React.Component {
                         label: classes.treeItem, // class name, e.g. `classes-nesting-label-x`
                     }}>
                     {/* BUGGED */}
-                    {Array.isArray(nodes.Children) ? nodes.Children.map((node) => this.renderTeamMember(node)) : null}
+                    { nodes.Children.map((node) => this.renderTeamMember(node)) }
                 </TreeItem>
             );
         }
@@ -1089,7 +1088,7 @@ class Team extends React.Component {
                             defaultExpandIcon={<ChevronRightIcon />}
                         >
                            
-                            {renderSidebarTree(this.props.teamTree.items )}
+                            {renderSidebarTree(this.props.teamTree.items)}
                         </TreeView>
 
                     </div>
