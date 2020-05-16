@@ -5,6 +5,9 @@ import Login from "./containers/Login";
 import Team from "./containers/Team";
 import CalendarPage from "./containers/CalendarPage";
 import Topics from "./containers/Topics";
+import LearningTree from "./containers/LearningTree";
+import Register from "./containers/Register";
+import SettingsPage from "./containers/SettingsPage";
 import { Switch, Route } from "react-router-dom";
 
 const styles = theme => ({
@@ -23,10 +26,11 @@ class Application extends React.Component {
             <div className={classes.main_div}>
                 <Switch>
                     <Route exact path="/" component={Login} />
+                    <Route exact path="/Home/Register" component={Register} />
                     <Route exact path="/Main/Home" component={Home} />
                     <Route exact path="/Main/Calendar" component={CalendarPage} />
-                    <Route exact path="/Main/LearningTree" component={Home} />
-                    <Route exact path="/Main/Settings" component={Home} />
+                    <Route exact path="/Main/LearningTree" component={LearningTree} />
+                    <Route exact path="/Main/Settings" component={SettingsPage} />
                     <Route exact path="/Main/Team" component={Team} />
                     <Route exact path="/Main/Topics" component={Topics} />
                 </Switch>

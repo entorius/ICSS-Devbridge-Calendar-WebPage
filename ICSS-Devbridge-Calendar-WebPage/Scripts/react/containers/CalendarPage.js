@@ -2,6 +2,7 @@
 import Calendar from "../components/Calendar";
 import Grid from '@material-ui/core/Grid';
 import SideBar from "../components/SideBar";
+import AddLearningDayDialog from "../components/AddLearningDayDialog";
 import Typography from '@material-ui/core/Typography';
 import { withStyles, createMuiTheme, MuiThemeProvider } from '@material-ui/core/styles';
 import CssBaseline from '@material-ui/core/CssBaseline';
@@ -24,18 +25,18 @@ const styles = theme => ({
     },
     calendarSideBar: {
         minHeight: '100vh',
-        width: '220px',
+        width: '240px',
         backgroundColor: grey[200]
     },
     calendarIcon: {
-        width: '30%',
-        height: '30px'
+        width: '20%',
+        height: '20%'
     },
     checkboxLabel: {
         fontSize: '2rem'
     },
     addLearningDayButton: {
-        fontSize: '14px',
+        fontSize: '12px',
         margin: '7px',
         color: "white !important"
     },
@@ -47,7 +48,8 @@ const styles = theme => ({
 const theme = createMuiTheme({
     palette: {
         primary: green,
-        secondary: blue
+        secondary: blue,
+        textPrimary: grey
     }
 });
 
@@ -56,15 +58,22 @@ class CalendarPage extends Component {
         super(props);
         this.state = {
             showTeamCalender: true,
-            showPersonalCalender: true
+            showPersonalCalender: true,
+            openAddLearningDayDialog: false
         };
         this.selectCalendar = this.selectCalendar.bind(this);
     }
 
     selectCalendar = (event) => {
-        this.setState({
-            [event.target.name]: event.target.checked,
-        });
+        this.setState({ [event.target.name]: event.target.checked });
+    };
+
+    handleOpenDialog = () => {
+        this.setState({ openAddLearningDayDialog: true })
+    };
+
+    handleCloseDialog = () => {
+        this.setState({ openAddLearningDayDialog: false })
     };
 
     render() {
@@ -144,9 +153,16 @@ class CalendarPage extends Component {
                                     />
                                 </FormGroup>
                             </Grid>
-                            <Button className={classes.addLearningDayButton} variant="contained" color="primary">
+                            <Button
+                                className={classes.addLearningDayButton}
+                                onClick={this.handleOpenDialog}
+                                variant="contained"
+                                color="primary">
                                 Add learning day
                             </Button>
+                            <AddLearningDayDialog
+                                open={this.state.openAddLearningDayDialog}
+                                onClose={this.handleCloseDialog} />
                         </Grid>
                     </div>
                 </div >

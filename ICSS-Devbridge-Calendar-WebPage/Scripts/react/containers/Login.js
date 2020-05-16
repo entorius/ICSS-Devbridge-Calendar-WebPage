@@ -1,7 +1,13 @@
-﻿
+﻿//Jquery
+import $ from 'jquery';
 //React components
 import React, { Component } from 'react';
-import { Link } from "react-router-dom";
+import { Link, useHistory } from "react-router-dom";
+
+//Redux
+import { connect } from 'react-redux';
+import PropTypes from 'prop-types';
+import { getToken } from '../redux/actions/loginActions';
 
 //Styles providers
 import { createMuiTheme, withStyles, makeStyles, ThemeProvider } from '@material-ui/core/styles';
@@ -17,6 +23,8 @@ import FormControlLabel from '@material-ui/core/FormControlLabel';
 import Checkbox from '@material-ui/core/Checkbox';
 import Button from '@material-ui/core/Button';
 import TextField from '@material-ui/core/TextField';
+import Snackbar from '@material-ui/core/Snackbar';
+import MuiAlert from '@material-ui/lab/Alert';
 
 //Colors
 import { green, purple } from '@material-ui/core/colors';
@@ -24,6 +32,10 @@ import { green, purple } from '@material-ui/core/colors';
 //Icons
 import AccountCircle from '@material-ui/icons/AccountCircle';
 import LockIcon from '@material-ui/icons/Lock';
+
+function Alert(props) {
+    return <MuiAlert elevation={6} variant="filled" {...props} />;
+}
 
 //Styles(Css)
 const styles = theme => ({
@@ -94,7 +106,7 @@ const styles = theme => ({
     },
     loginButton: {
         display: 'flex',
-        marginTop: '40px',
+        marginTop: '20px',
         alignSelf: 'center',
         width: '300px',
         height: '40px',
@@ -104,7 +116,15 @@ const styles = theme => ({
     },
     textBoxIcon: {
         fontSize:'25px'
-    }
+    },
+    registerLink: {
+        color: 'blue !important',
+        marginLeft: 'auto',
+        marginRight: 'auto',
+        marginTop: '20px',
+        textAlign: 'center',
+        fontSize: '12px',
+    },
 
 });
 const theme = createMuiTheme({
@@ -121,10 +141,17 @@ class Login extends React.Component {
         this.state = {
             email: "",
             password:"",
-            checkedRememberMe: true
+            checkedRememberMe: true,
+            errorMessage: "",
+            openSuccessSnackbar: false,
+            openErrorSnackbar: false,
+            signInDisabled: false
         };
         this.handleChange = this.handleChange.bind(this);
         this.handleCheckboxChange = this.handleCheckboxChange.bind(this);
+        this.handleSignInClick = this.handleSignInClick.bind(this);
+        this.handleErrorSnackBarClose = this.handleErrorSnackBarClose.bind(this);
+        this.handleSuccessSnackBarClose = this.handleSuccessSnackBarClose.bind(this);
     }
     handleChange(evt) {
         
@@ -136,6 +163,35 @@ class Login extends React.Component {
     handleCheckboxChange(event) {
         
         this.setState({ checkedRememberMe: event.target.checked });
+    }
+
+    async handleSignInClick(event) {
+        const userData = {
+            username: this.state.email,
+            password: this.state.password
+        }
+
+        $("html").attr("style", "cursor: progress !important");
+        this.setState({ signInDisabled: true });
+        await this.props.getToken(userData);
+        $("html").attr("style", "cursor: default !important");
+        this.setState({ signInDisabled: false });
+        if (this.props.login.error != null) {
+            this.setState({
+                openErrorSnackbar: true,
+                errorMessage:this.props.login.error.message
+            })
+        }
+        else {
+            this.props.history.push('/Main/Home')
+        }
+       
+    }
+    handleErrorSnackBarClose(evt) {
+        this.setState({ openErrorSnackbar : false });
+    }
+    handleSuccessSnackBarClose(evt) {
+        this.setState({ openSuccessSnackbar: false });
     }
     render() {
         const { classes } = this.props;
@@ -216,20 +272,47 @@ class Login extends React.Component {
                                 className={classes.checkBoxRememberMe}
                             />
                             <ThemeProvider theme={theme}>
-                                <Link to="/Main/Home">
+                                {/* <Link to="/Main/Home"> */}
                                     {/*TODO: add ajax request for login button*/}
-                                    <Button variant="contained" color="primary" className={classes.loginButton}>
+                                <Button variant="contained" color="primary" className={classes.loginButton} onClick={this.handleSignInClick} disabled={this.state.signInDisabled}>
                                         
                                             Sign in
                                     </Button>
+                                {/* </Link> */}
+                            </ThemeProvider>
+                            <ThemeProvider theme={theme}>
+                                <Link to="/Home/Register">
+                                    {/*TODO: add ajax request for login button*/}
+                                    <div className={classes.registerLink}>
+
+                                        Register
+                                    </div>
                                 </Link>
                             </ThemeProvider>
                         </Typography>
                     </Container>
                 </React.Fragment>
+
+                <Snackbar open={this.state.openSuccessSnackbar} autoHideDuration={6000} name="openSuccessSnackbar" onClose={this.handleSuccessSnackBarClose} >
+                    <Alert onClose={this.handleSuccessSnackBarClose} name="openSuccessSnackbar" severity="success">
+                        This is a success message!
+                    </Alert>
+                </Snackbar>
+                <Snackbar open={this.state.openErrorSnackbar} autoHideDuration={6000} name="openErrorSnackbar" onClose={this.handleErrorSnackBarClose}>
+                    <Alert onClose={this.handleErrorSnackBarClose} name="openErrorSnackbar" severity="error">
+                        {this.state.errorMessage}
+                    </Alert>
+                </Snackbar>
             </div>
         );
     }
 }
 
-export default withStyles(styles)(Login);
+Login.propTypes = {
+    getToken: PropTypes.func.isRequired
+}
+const mapStateToProps = state => ({
+    login: state.login
+})
+
+export default connect(mapStateToProps, { getToken })(withStyles(styles)(Login));
