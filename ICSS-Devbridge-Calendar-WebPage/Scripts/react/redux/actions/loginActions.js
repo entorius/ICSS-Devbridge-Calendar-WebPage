@@ -17,7 +17,7 @@ export const getToken = (userData) =>  {
         });
         try {
             let postResponse = null;
-            await axios.post(connectionString + `/token`, data)
+            await axios.post(baseApiUrl + `/token`, data)
                 .then(response => {
                 postResponse = response;
             }).catch(error => {
