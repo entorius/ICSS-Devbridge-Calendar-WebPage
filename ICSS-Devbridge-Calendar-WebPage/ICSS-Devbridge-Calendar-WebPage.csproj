@@ -158,10 +158,8 @@
     <Content Include="Scripts\react\Application.js" />
     <Content Include="Scripts\react\components\AddLearningDayDialog.js" />
     <Content Include="Scripts\react\components\Calendar.js" />
-<<<<<<< HEAD
     <Content Include="Scripts\react\components\Topic.js" />
     <Content Include="Scripts\react\containers\Topics.js" />
-=======
     <Content Include="Scripts\react\components\EditLearningDayDialog.js" />
     <Content Include="Scripts\react\components\LearningDayInfoPopover.js" />
     <Content Include="Scripts\react\components\AddLearningDayTopicsDialog.js" />
@@ -169,7 +167,6 @@
     <Content Include="Scripts\react\containers\LearningTree.js" />
     <Content Include="Scripts\react\containers\Register.js" />
     <Content Include="Scripts\react\containers\SettingsPage.js" />
->>>>>>> master
     <Content Include="Scripts\react\redux\actions\assignmentActions.js" />
     <Content Include="Scripts\react\redux\actions\teamActions.js" />
     <Content Include="Scripts\react\redux\actions\loginActions.js" />
