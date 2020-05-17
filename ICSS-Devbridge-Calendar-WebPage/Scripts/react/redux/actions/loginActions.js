@@ -1,5 +1,5 @@
 ﻿import { LOGIN } from './types';
-import { connectionString } from '../connectionStrings';
+import { baseApiUrl } from '../config';
 import axios from 'axios';
 
 
