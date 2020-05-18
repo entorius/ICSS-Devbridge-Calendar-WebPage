@@ -4,6 +4,7 @@ import Home from "./containers/Home";
 import Login from "./containers/Login";
 import Team from "./containers/Team";
 import CalendarPage from "./containers/CalendarPage";
+import Topics from "./containers/Topics";
 import LearningTree from "./containers/LearningTree";
 import Register from "./containers/Register";
 import SettingsPage from "./containers/SettingsPage";
@@ -31,7 +32,7 @@ class Application extends React.Component {
                     <Route exact path="/Main/LearningTree" component={LearningTree} />
                     <Route exact path="/Main/Settings" component={SettingsPage} />
                     <Route exact path="/Main/Team" component={Team} />
-                    <Route exact path="/Main/Topics" component={Home} />
+                    <Route exact path="/Main/Topics" component={Topics} />
                 </Switch>
             </div>
         );

@@ -9,7 +9,8 @@ export default function (state = initialState, action) {
         case LOGIN:
             return {
                 ...state,
-                token: action.payload
+                token: action.payload,
+                error: action.error
             }
         default:
             return state;
