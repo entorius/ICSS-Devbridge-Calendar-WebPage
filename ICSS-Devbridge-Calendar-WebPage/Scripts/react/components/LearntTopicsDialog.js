@@ -16,6 +16,10 @@ import TableRow from '@material-ui/core/TableRow';
 import Paper from '@material-ui/core/Paper';
 import { indigo, grey } from '@material-ui/core/colors';
 
+import { connect } from 'react-redux';
+import { fetchEmployeesByTopic } from '../redux/actions/learntTopicsActions';
+import PropTypes from 'prop-types';
+
 const styles = theme => ({
     appBar: {
         position: 'relative',
@@ -59,6 +63,14 @@ class LearntTopicsDialog extends Component {
             }
         }
     }
+
+    async componentDidMount() {
+        await this.props.fetchEmployeesByTopic(this.props.token.accessToken)
+            .then(() => {
+                console.log("employeesByTopic: " + this.props.employeesByTopic)
+            });
+    }
+
     render() {
         const { classes } = this.props;
         return (
@@ -81,7 +93,7 @@ class LearntTopicsDialog extends Component {
                             <CloseIcon className={classes.closeIcon} />
                         </IconButton>
                         <Typography variant="h3" className={classes.title}>
-                            Employees
+                            Employees By Topic
                         </Typography>
                     </Toolbar>
                 </AppBar>
@@ -92,7 +104,7 @@ class LearntTopicsDialog extends Component {
                     alignItems="center"
                 >
                     <Typography variant="h4" style={{ marginTop: 20, marginBottom: 15, }}>
-                        Topic
+                        {this.props.topic}
                     </Typography>
                     <Typography variant="h5" style={{ marginTop: 10, marginBottom: 15, }}>
                         Employees
@@ -100,17 +112,19 @@ class LearntTopicsDialog extends Component {
                     <TableContainer component={Paper} className={classes.table}>
                         <Table >
                             <TableHead style={{ backgroundColor: indigo[500] }} className={classes.tableHead}>
-                                {this.state.employeesData.columns.map(c => {
-                                    return <TableCell>{c}</TableCell>
-                                })}
+                                <TableCell>First name</TableCell>
+                                <TableCell>Last name</TableCell>
+                                <TableCell>Role</TableCell>
                             </TableHead>
                             <TableBody className={classes.tableBody}>
-                                {this.state.employeesData.data.map(d => {
-                                    return <TableRow>
-                                        {this.state.employeesData.columns.map(c => {
-                                            return <TableCell>{d[c]}</TableCell>
-                                        })}
-                                    </TableRow>
+                                {this.props.employeesByTopic.map(employee => {
+                                    return (
+                                        <TableRow>
+                                            <TableCell>{employee.FirstName}</TableCell>
+                                            <TableCell>{employee.LastName}</TableCell>
+                                            <TableCell>{employee.Role}</TableCell>
+                                        </TableRow>
+                                    )
                                 })}
                             </TableBody>
                         </Table>
@@ -121,4 +135,15 @@ class LearntTopicsDialog extends Component {
     }
 }
 
-export default withStyles(styles)(LearntTopicsDialog);
+LearntTopicsDialog.propTypes = {
+    fetchEmployeesByTopic: PropTypes.func.isRequired,
+}
+
+const mapStateToProps = state => ({
+    employeesByTopic: state.learntTopics.employeesByTopic,
+    token: state.login.token
+})
+
+const LearntTopicsDialogStyled = withStyles(styles)(LearntTopicsDialog);
+
+export default connect(mapStateToProps, { fetchEmployeesByTopic })(LearntTopicsDialogStyled);

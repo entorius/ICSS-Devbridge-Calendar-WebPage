@@ -2,9 +2,11 @@
 import assignmentReducer from "./assignmentReducer";
 import teamReducer from "./teamReducer";
 import loginReducer from "./loginReducer";
+import learntTopicsReducer from "./learntTopicsReducer";
 
 export default combineReducers({
     assignments: assignmentReducer,
     teamTree: teamReducer,
-    login: loginReducer
+    login: loginReducer,
+    learntTopics: learntTopicsReducer
 })

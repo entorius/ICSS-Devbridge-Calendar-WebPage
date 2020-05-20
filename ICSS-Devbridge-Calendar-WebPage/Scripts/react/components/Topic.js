@@ -82,7 +82,10 @@ class Topic extends React.Component {
                         Teams
                         </Button>
                 </Grid>
-                <LearntTopicsDialog open={this.state.openLearntTopicsDialog} onClose={this.handleCloseDialog} />
+                <LearntTopicsDialog
+                    open={this.state.openLearntTopicsDialog}
+                    onClose={this.handleCloseDialog}
+                    topic="Topic title" />
                 <Button onClick={() => this.props.onLoadSubtopics(this.props.topic.id)}>
                     Open subtopics
                 </Button>
