@@ -21,6 +21,20 @@ const gridItemStyle = {
 };
 
 class Topic extends React.Component {
+    state = {
+        regex: /((?:(?:http|ftp|https):\/\/)*(?:[\w_-]+(?:(?:\.[\w_-]+)+))([\w.,@?^=%&:~+#-]*[\w@?^=%&~+#-])?)/g
+    };
+
+    renderText(text) {
+        let parts = text.split(new RegExp(this.state.regex));
+        for (let i = 1; i < parts.length; i += 3) {
+            if (!(parts[i].includes("http://") || parts[i].includes("https://") || parts[i].includes("ftp://")))
+                parts[i] = "http://" + parts[i];
+            parts[i] = <a href={parts[i]}>{parts[i]}</a>
+        }
+        return parts
+    }
+
     render() {
         return (
             <Grid container item
@@ -29,13 +43,7 @@ class Topic extends React.Component {
                 style={gridItemStyle}>
                 <p style={topicNameStyle}>{this.props.topic.name}</p>
                 <ColoredLine color="white" />
-                <p>
-                    Description: Lorem ipsum dolor sit amet, consectetur
-                    adipisicing elit, sed do eiusmod tempor incididunt
-                    ut labore et dolore magna aliqua. Ut enim ad minim
-                    veniam, quis nostrud exercitation ullamco laboris
-                    nisi ut aliquip ex ea commodo consequat.
-                </p>
+                <p>{this.renderText(this.props.topic.description)}</p>
                 <ColoredLine color="white" />
                 <Button onClick={() => this.props.onLoadSubtopics(this.props.topic.id)}>
                     Open subtopics

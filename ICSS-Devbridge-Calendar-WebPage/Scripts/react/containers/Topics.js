@@ -75,7 +75,11 @@ class Topics extends React.Component {
     addTopics(n) {
         let topics = [];
         for (let i = 1; i < n; i++)
-            topics.push({ id: i, name: i + " item" });
+            topics.push({
+                id: i,
+                name: i + " item",
+                description: "Description: Lorem ipsum dolor sit amet, consectetur adipisicing elit. https://www.stackoverflow.com, www.google.com"
+            });
         this.setState({ topics });
     };
 
