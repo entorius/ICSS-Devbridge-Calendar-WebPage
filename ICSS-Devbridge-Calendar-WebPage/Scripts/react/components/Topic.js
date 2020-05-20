@@ -2,6 +2,9 @@
 
 import Grid from '@material-ui/core/Grid';
 import Button from '@material-ui/core/Button';
+import LearntTopicsDialog from './LearntTopicsDialog';
+import { indigo } from "@material-ui/core/colors";
+import Typography from '@material-ui/core/Typography';
 
 const topicNameStyle = {
     fontSize: 20,
@@ -20,7 +23,27 @@ const gridItemStyle = {
     marginRight: 5
 };
 
+const buttons = {
+    color: indigo[900],
+    fontSize: '12px',
+}
+
 class Topic extends React.Component {
+    constructor(props) {
+        super(props);
+        this.state = {
+            openLearntTopicsDialog: false
+        }
+    }
+
+    handleOpenDialog = () => {
+        this.setState({ openLearntTopicsDialog: true })
+    };
+
+    handleCloseDialog = () => {
+        this.setState({ openLearntTopicsDialog: false })
+    };
+
     render() {
         return (
             <Grid container item
@@ -37,10 +60,33 @@ class Topic extends React.Component {
                     nisi ut aliquip ex ea commodo consequat.
                 </p>
                 <ColoredLine color="white" />
+                <Grid
+                    container
+                    direction="row"
+                    justify="flex-start"
+                    alignItems="center"
+                >
+                    <Typography variant="h5">
+                        Learnt by
+                        </Typography>
+                    <Grid
+                        container
+                        direction="row"
+                        style={{ width: 40 }}
+                    >
+                    </Grid>
+                    <Button onClick={this.handleOpenDialog} style={buttons}>
+                        Employees
+                        </Button>
+                    <Button onClick={this.handleOpenDialog} style={buttons}>
+                        Teams
+                        </Button>
+                </Grid>
+                <LearntTopicsDialog open={this.state.openLearntTopicsDialog} onClose={this.handleCloseDialog} />
                 <Button onClick={() => this.props.onLoadSubtopics(this.props.topic.id)}>
                     Open subtopics
                 </Button>
-            </Grid>
+            </Grid >
         );
     }
 }
