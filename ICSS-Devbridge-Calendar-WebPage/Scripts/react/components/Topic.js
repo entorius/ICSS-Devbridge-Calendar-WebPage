@@ -25,7 +25,7 @@ class Topic extends React.Component {
         regex: /((?:(?:http|ftp|https):\/\/)*(?:[\w_-]+(?:(?:\.[\w_-]+)+))([\w.,@?^=%&:~+#-]*[\w@?^=%&~+#-])?)/g
     };
 
-    renderText(text) {
+    convertLinksInText(text) {
         let parts = text.split(new RegExp(this.state.regex));
         for (let i = 1; i < parts.length; i += 3) {
             if (!(parts[i].includes("http://") || parts[i].includes("https://") || parts[i].includes("ftp://")))
@@ -43,7 +43,7 @@ class Topic extends React.Component {
                 style={gridItemStyle}>
                 <p style={topicNameStyle}>{this.props.topic.name}</p>
                 <ColoredLine color="white" />
-                <p>{this.renderText(this.props.topic.description)}</p>
+                <p>{this.convertLinksInText(this.props.topic.description)}</p>
                 <ColoredLine color="white" />
                 <Button onClick={() => this.props.onLoadSubtopics(this.props.topic.id)}>
                     Open subtopics
