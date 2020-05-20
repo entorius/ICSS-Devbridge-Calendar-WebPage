@@ -1,4 +1,4 @@
-﻿import React, { Component } from 'react';
+import React, { Component } from 'react';
 import Dialog from '@material-ui/core/Dialog';
 import { withStyles } from '@material-ui/core/styles';
 import Grid from '@material-ui/core/Grid';
@@ -17,7 +17,7 @@ import Paper from '@material-ui/core/Paper';
 import { indigo, grey } from '@material-ui/core/colors';
 
 import { connect } from 'react-redux';
-import { fetchEmployeesByTopic } from '../redux/actions/learntTopicsActions';
+import { fetchTeamsByTopic } from '../redux/actions/learntTopicsActions';
 import PropTypes from 'prop-types';
 
 const styles = theme => ({
@@ -49,25 +49,15 @@ const styles = theme => ({
     }
 });
 
-class LearntTopicsDialog extends Component {
+class TeamsByTopicDialog extends Component {
     constructor(props) {
         super(props);
-        this.state = {
-            employeesData: {
-                columns: ["firstname", "lastname", "role"],
-                data: [
-                    { "firstname": "name1", "lastname": "last1", "role": "role1" },
-                    { "firstname": "name2", "lastname": "last2", "role": "role2" },
-                    { "firstname": "name3", "lastname": "last3", "role": "role3" },
-                ]
-            }
-        }
     }
 
     async componentDidMount() {
-        await this.props.fetchEmployeesByTopic(this.props.token.accessToken)
+        await this.props.fetchTeamsByTopic(this.props.token.accessToken)
             .then(() => {
-                console.log("employeesByTopic: " + this.props.employeesByTopic)
+                console.log("teamsTopic: " + this.props.teamsByTopic)
             });
     }
 
@@ -93,7 +83,7 @@ class LearntTopicsDialog extends Component {
                             <CloseIcon className={classes.closeIcon} />
                         </IconButton>
                         <Typography variant="h3" className={classes.title}>
-                            Employees By Topic
+                            Teams By Topic
                         </Typography>
                     </Toolbar>
                 </AppBar>
@@ -107,22 +97,20 @@ class LearntTopicsDialog extends Component {
                         {this.props.topic}
                     </Typography>
                     <Typography variant="h5" style={{ marginTop: 10, marginBottom: 15, }}>
-                        Employees
+                        Teams
                     </Typography>
                     <TableContainer component={Paper} className={classes.table}>
                         <Table >
                             <TableHead style={{ backgroundColor: indigo[500] }} className={classes.tableHead}>
-                                <TableCell>First name</TableCell>
-                                <TableCell>Last name</TableCell>
-                                <TableCell>Role</TableCell>
+                                <TableCell>Team manager</TableCell>
+                                <TableCell>Number of employees that learnt this topic</TableCell>
                             </TableHead>
                             <TableBody className={classes.tableBody}>
-                                {this.props.employeesByTopic.map(employee => {
+                                {this.props.teamsByTopic.map(team => {
                                     return (
                                         <TableRow>
-                                            <TableCell>{employee.FirstName}</TableCell>
-                                            <TableCell>{employee.LastName}</TableCell>
-                                            <TableCell>{employee.Role}</TableCell>
+                                            <TableCell>{team.TeamManager.FirstName}</TableCell>
+                                            <TableCell>{team.MemberCount}</TableCell>
                                         </TableRow>
                                     )
                                 })}
@@ -135,15 +123,15 @@ class LearntTopicsDialog extends Component {
     }
 }
 
-LearntTopicsDialog.propTypes = {
-    fetchEmployeesByTopic: PropTypes.func.isRequired,
+TeamsByTopicDialog.propTypes = {
+    fetchTeamsByTopic: PropTypes.func.isRequired,
 }
 
 const mapStateToProps = state => ({
-    employeesByTopic: state.learntTopics.employeesByTopic,
+    teamsByTopic: state.learntTopics.teamsByTopic,
     token: state.login.token
 })
 
-const LearntTopicsDialogStyled = withStyles(styles)(LearntTopicsDialog);
+const TeamsByTopicDialogStyled = withStyles(styles)(TeamsByTopicDialog);
 
-export default connect(mapStateToProps, { fetchEmployeesByTopic })(LearntTopicsDialogStyled);
+export default connect(mapStateToProps, { fetchTeamsByTopic })(TeamsByTopicDialogStyled);

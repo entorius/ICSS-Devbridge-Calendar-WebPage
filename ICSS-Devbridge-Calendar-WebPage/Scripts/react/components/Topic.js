@@ -2,7 +2,8 @@
 
 import Grid from '@material-ui/core/Grid';
 import Button from '@material-ui/core/Button';
-import LearntTopicsDialog from './LearntTopicsDialog';
+import EmployeesByTopicDialog from './EmployeesByTopicDialog';
+import TeamsByTopicDialog from './TeamsByTopicDialog';
 import { indigo } from "@material-ui/core/colors";
 import Typography from '@material-ui/core/Typography';
 
@@ -32,17 +33,27 @@ class Topic extends React.Component {
     constructor(props) {
         super(props);
         this.state = {
-            openLearntTopicsDialog: false
+            openEmployeesByTopicDialog: false,
+            openTeamsByTopicDialog: false
         }
     }
 
-    handleOpenDialog = () => {
-        this.setState({ openLearntTopicsDialog: true })
+    handleOpenEmployeesDialog = () => {
+        this.setState({ openEmployeesByTopicDialog: true })
     };
 
-    handleCloseDialog = () => {
-        this.setState({ openLearntTopicsDialog: false })
+    handleCloseEmployeesDialog = () => {
+        this.setState({ openEmployeesByTopicDialog: false })
     };
+
+    handleOpenTeamsDialog = () => {
+        this.setState({ openTeamsByTopicDialog: true })
+    };
+
+    handleCloseTeamsDialog = () => {
+        this.setState({ openTeamsByTopicDialog: false })
+    };
+
 
     render() {
         return (
@@ -75,16 +86,20 @@ class Topic extends React.Component {
                         style={{ width: 40 }}
                     >
                     </Grid>
-                    <Button onClick={this.handleOpenDialog} style={buttons}>
+                    <Button onClick={this.handleOpenEmployeesDialog} style={buttons}>
                         Employees
                         </Button>
-                    <Button onClick={this.handleOpenDialog} style={buttons}>
+                    <Button onClick={this.handleOpenTeamsDialog} style={buttons}>
                         Teams
                         </Button>
                 </Grid>
-                <LearntTopicsDialog
-                    open={this.state.openLearntTopicsDialog}
-                    onClose={this.handleCloseDialog}
+                <EmployeesByTopicDialog
+                    open={this.state.openEmployeesByTopicDialog}
+                    onClose={this.handleCloseEmployeesDialog}
+                    topic="Topic title" />
+                <TeamsByTopicDialog
+                    open={this.state.openTeamsByTopicDialog}
+                    onClose={this.handleCloseTeamsDialog}
                     topic="Topic title" />
                 <Button onClick={() => this.props.onLoadSubtopics(this.props.topic.id)}>
                     Open subtopics
