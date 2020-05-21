@@ -3,3 +3,6 @@ export const NEW_ASSIGNMENT = "NEW_ASSIGNMENT";
 export const FETCH_TEAM_TREE = "FETCH_TEAM_TREE";
 export const LOGIN = "LOGIN";
 export const UPDATE_MANAGER = "UPDATE_MANAGER";
+//Learning tree
+export const LEARNING_TREE = "LEARNING_TREE";
+export const LEARNING_SELECTED_USERS = "LEARNING_SELECTED_USERS";

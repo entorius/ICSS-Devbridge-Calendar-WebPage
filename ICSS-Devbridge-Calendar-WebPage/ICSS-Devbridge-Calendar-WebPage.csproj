@@ -168,12 +168,13 @@
     <Content Include="Scripts\react\containers\Register.js" />
     <Content Include="Scripts\react\containers\SettingsPage.js" />
     <Content Include="Scripts\react\redux\actions\assignmentActions.js" />
+    <Content Include="Scripts\react\redux\actions\learningTreeActions.js" />
     <Content Include="Scripts\react\redux\actions\teamActions.js" />
     <Content Include="Scripts\react\redux\actions\loginActions.js" />
     <Content Include="Scripts\react\redux\actions\types.js" />
-    <Content Include="Scripts\react\redux\connectionStrings.js" />
     <Content Include="Scripts\react\redux\reducers\index.js" />
     <Content Include="Scripts\react\redux\reducers\assignmentReducer.js" />
+    <Content Include="Scripts\react\redux\reducers\learningTreeReducer.js" />
     <Content Include="Scripts\react\redux\reducers\teamReducer.js" />
     <Content Include="Scripts\react\redux\reducers\loginReducer.js" />
     <Content Include="Scripts\react\redux\store.js" />
