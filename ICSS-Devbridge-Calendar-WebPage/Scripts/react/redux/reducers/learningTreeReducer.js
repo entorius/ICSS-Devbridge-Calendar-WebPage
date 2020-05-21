@@ -1,9 +1,12 @@
-﻿import { LEARNING_TREE } from "../actions/types";
+﻿import { LEARNING_TREE, LEARNING_SELECTED_USERS, LEARNING_DIALOG_OPEN } from "../actions/types";
 
 const initialState = {
     learningTree: {
         nodes: [{ id: 'Root', x: 500, y: 500, level: 'true', symbolType: 'square', color: 'lightgreen', parent: null }],
-        links: []}
+        links: []
+    },
+    learningTreeSelectedUsers: [],
+    learningTreeDialogOpen: false
 }
 
 export default function (state = initialState, action) {
@@ -12,6 +15,11 @@ export default function (state = initialState, action) {
             return {
                 ...state,
                 learningTree: action.payload
+            }
+        case LEARNING_SELECTED_USERS:
+            return {
+                ...state,
+                learningTreeSelectedUsers: action.payload
             }
         default:
             return state;

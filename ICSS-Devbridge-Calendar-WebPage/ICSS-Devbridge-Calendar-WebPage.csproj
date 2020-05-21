@@ -172,7 +172,6 @@
     <Content Include="Scripts\react\redux\actions\teamActions.js" />
     <Content Include="Scripts\react\redux\actions\loginActions.js" />
     <Content Include="Scripts\react\redux\actions\types.js" />
-    <Content Include="Scripts\react\redux\connectionStrings.js" />
     <Content Include="Scripts\react\redux\reducers\index.js" />
     <Content Include="Scripts\react\redux\reducers\assignmentReducer.js" />
     <Content Include="Scripts\react\redux\reducers\learningTreeReducer.js" />
