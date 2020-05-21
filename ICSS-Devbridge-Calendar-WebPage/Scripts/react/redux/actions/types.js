@@ -2,5 +2,5 @@
 export const NEW_ASSIGNMENT = "NEW_ASSIGNMENT";
 export const FETCH_TEAM_TREE = "FETCH_TEAM_TREE";
 export const LOGIN = "LOGIN";
-export const LEARNING_TREE = "LEARNING_TREE"
 export const UPDATE_MANAGER = "UPDATE_MANAGER";
+export const LEARNING_TREE = "LEARNING_TREE"
