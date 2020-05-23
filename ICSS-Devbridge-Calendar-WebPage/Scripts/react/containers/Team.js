@@ -99,7 +99,7 @@ class ChangeRestrictionForTeamMemberDialog extends React.Component {
         }
 
         var children = [];
-        if(teams.children != null){
+        if(teams.Children != null){
             for(let child of teams.Children){
                 if(Array.isArray(child.Children)){
                     children = this.getTeam(child, teamId);
