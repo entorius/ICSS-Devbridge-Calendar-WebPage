@@ -38,20 +38,14 @@ class Topic extends React.Component {
         }
     }
 
-    handleOpenEmployeesDialog = () => {
-        this.setState({ openEmployeesByTopicDialog: true })
-    };
+    handleOpenDialog = (e) => {
+        var name = e.currentTarget.name;
+        console.log(name)
+        this.setState(prevState => ({ [name]: !prevState[name] }));
+    }
 
-    handleCloseEmployeesDialog = () => {
-        this.setState({ openEmployeesByTopicDialog: false })
-    };
-
-    handleOpenTeamsDialog = () => {
-        this.setState({ openTeamsByTopicDialog: true })
-    };
-
-    handleCloseTeamsDialog = () => {
-        this.setState({ openTeamsByTopicDialog: false })
+    handleCloseDialog = (name) => {
+        this.setState({ [name]: false })
     };
 
 
@@ -86,21 +80,23 @@ class Topic extends React.Component {
                         style={{ width: 40 }}
                     >
                     </Grid>
-                    <Button onClick={this.handleOpenEmployeesDialog} style={buttons}>
+                    <Button onClick={this.handleOpenDialog} style={buttons} name="openEmployeesByTopicDialog">
                         Employees
                         </Button>
-                    <Button onClick={this.handleOpenTeamsDialog} style={buttons}>
+                    <Button onClick={this.handleOpenDialog} style={buttons} name="openTeamsByTopicDialog">
                         Teams
-                        </Button>
+                    </Button>
                 </Grid>
                 <EmployeesByTopicDialog
                     open={this.state.openEmployeesByTopicDialog}
-                    onClose={this.handleCloseEmployeesDialog}
-                    topic="Topic title" />
+                    onClose={() => this.handleCloseDialog("openEmployeesByTopicDialog")}
+                    topic="Topic title"
+                    topicId={6} />
                 <TeamsByTopicDialog
                     open={this.state.openTeamsByTopicDialog}
-                    onClose={this.handleCloseTeamsDialog}
-                    topic="Topic title" />
+                    onClose={() => this.handleCloseDialog("openTeamsByTopicDialog")}
+                    topic="Topic title"
+                    topicId={6} />
                 <Button onClick={() => this.props.onLoadSubtopics(this.props.topic.id)}>
                     Open subtopics
                 </Button>

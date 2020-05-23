@@ -54,11 +54,13 @@ class TeamsByTopicDialog extends Component {
         super(props);
     }
 
-    async componentDidMount() {
-        await this.props.fetchTeamsByTopic(this.props.token.accessToken)
-            .then(() => {
-                console.log("teamsTopic: " + this.props.teamsByTopic)
-            });
+    async componentDidUpdate(prevProps) {
+        if (this.props.open !== prevProps.open) {
+            await this.props.fetchTeamsByTopic(this.props.token.accessToken, this.props.topicId)
+                .then(() => {
+                    console.log("teamsTopic: " + this.props.teamsByTopic)
+                });
+        }
     }
 
     render() {
@@ -102,14 +104,18 @@ class TeamsByTopicDialog extends Component {
                     <TableContainer component={Paper} className={classes.table}>
                         <Table >
                             <TableHead style={{ backgroundColor: indigo[500] }} className={classes.tableHead}>
-                                <TableCell>Team manager</TableCell>
-                                <TableCell>Number of employees that learnt this topic</TableCell>
+                                <TableCell>Manager's first name </TableCell>
+                                <TableCell>Manager's last name </TableCell>
+                                <TableCell>Manager's role </TableCell>
+                                <TableCell style={{ width: "20%" }}>Number of employees that learnt this topic</TableCell>
                             </TableHead>
                             <TableBody className={classes.tableBody}>
                                 {this.props.teamsByTopic.map(team => {
                                     return (
                                         <TableRow>
                                             <TableCell>{team.TeamManager.FirstName}</TableCell>
+                                            <TableCell>{team.TeamManager.LastName}</TableCell>
+                                            <TableCell>{team.TeamManager.Role}</TableCell>
                                             <TableCell>{team.MemberCount}</TableCell>
                                         </TableRow>
                                     )

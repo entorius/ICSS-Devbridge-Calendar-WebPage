@@ -54,11 +54,13 @@ class EmployeesByTopicDialog extends Component {
         super(props);
     }
 
-    async componentDidMount() {
-        await this.props.fetchEmployeesByTopic(this.props.token.accessToken)
-            .then(() => {
-                console.log("employeesByTopic: " + this.props.employeesByTopic)
-            });
+    async componentDidUpdate(prevProps) {
+        if (this.props.open !== prevProps.open) {
+            await this.props.fetchEmployeesByTopic(this.props.token.accessToken, this.props.topicId)
+                .then(() => {
+                    console.log("employeesByTopic: " + this.props.employeesByTopic)
+                });
+        }
     }
 
     render() {
@@ -66,7 +68,7 @@ class EmployeesByTopicDialog extends Component {
         return (
             <Dialog fullScreen
                 open={this.props.open}
-                onClose={this.props.onClose}
+                onClose={() => this.props.onClose("openEmployeesByTopicDialog")}
                 PaperProps={{
                     style: {
                         backgroundColor: grey[100]
@@ -77,7 +79,7 @@ class EmployeesByTopicDialog extends Component {
                         <IconButton
                             edge="start"
                             color="inherit"
-                            onClick={this.props.onClose}
+                            onClick={() => this.props.onClose("openEmployeesByTopicDialog")}
                             aria-label="close"
                         >
                             <CloseIcon className={classes.closeIcon} />
