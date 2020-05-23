@@ -15,6 +15,7 @@ import TableHead from '@material-ui/core/TableHead';
 import TableRow from '@material-ui/core/TableRow';
 import Paper from '@material-ui/core/Paper';
 import { indigo, grey } from '@material-ui/core/colors';
+import CircularProgress from '@material-ui/core/CircularProgress';
 
 import { connect } from 'react-redux';
 import { fetchLearntTopicsByTeam, fetchPlannedTopicsByTeam } from '../redux/actions/learntTopicsActions';
@@ -53,21 +54,25 @@ class TeamsByTopicDialog extends Component {
     constructor(props) {
         super(props);
         this.state = {
-            open: this.props.open
+            open: this.props.open,
+            isLoadingLearntTopics: false,
+            isLoadingPlannedTopics: false
         }
     }
 
     async componentDidUpdate(prevProps) {
         if (this.props.open !== prevProps.open) {
-            this.setState({ open: true });
+            this.setState({ open: true, isLoadingLearntTopics: true, isLoadingPlannedTopics: true });
             await this.props.fetchLearntTopicsByTeam(this.props.token.accessToken, this.props.managerId)
                 .then(() => {
                     console.log("learntTopicsByTeam: " + this.props.learntTopicsByTeam)
+                    this.setState({ isLoadingLearntTopics: false });
                 });
 
             await this.props.fetchPlannedTopicsByTeam(this.props.token.accessToken, this.props.managerId)
                 .then(() => {
                     console.log("plannedTopicsByTeam: " + this.props.plannedTopicsByTeam)
+                    this.setState({ isLoadingPlannedTopics: false });
                 });
         }
     }
@@ -119,52 +124,56 @@ class TeamsByTopicDialog extends Component {
                         direction="column"
                         justify="flex-start"
                         alignItems="center">
-                        <TableContainer component={Paper} className={classes.table}>
-                            <Table >
-                                <TableHead style={{ backgroundColor: indigo[500] }} className={classes.tableHead}>
-                                    <TableCell>First name</TableCell>
-                                    <TableCell>Last name</TableCell>
-                                    <TableCell>Role</TableCell>
-                                    <TableCell style={{ width: "35%" }}>Learnt topics</TableCell>
-                                    <TableCell style={{ width: "35%" }}>Planned topics</TableCell>
-                                </TableHead>
-                                <TableBody className={classes.tableBody}>
-                                    {this.props.learntTopicsByTeam.map(learntTopic => {
-                                        return (
-                                            <TableRow>
-                                                <TableCell>{learntTopic.User.FirstName}</TableCell>
-                                                <TableCell>{learntTopic.User.LastName}</TableCell>
-                                                <TableCell>{learntTopic.User.Role}</TableCell>
-                                                <TableCell>
-                                                    {
 
-                                                        learntTopic.Topics.map(topic => {
-                                                            return (topic.Name)
-                                                        }).join("; ")
+                        {
+                            this.state.isLoadingLearntTopics || this.state.isLoadingPlannedTopics
+                                ? <CircularProgress /> : <TableContainer component={Paper} className={classes.table}>
+                                    <Table >
+                                        <TableHead style={{ backgroundColor: indigo[500] }} className={classes.tableHead}>
+                                            <TableCell>First name</TableCell>
+                                            <TableCell>Last name</TableCell>
+                                            <TableCell>Role</TableCell>
+                                            <TableCell style={{ width: "35%" }}>Learnt topics</TableCell>
+                                            <TableCell style={{ width: "35%" }}>Planned topics</TableCell>
+                                        </TableHead>
+                                        <TableBody className={classes.tableBody}>
+                                            {this.props.learntTopicsByTeam.map(learntTopic => {
+                                                return (
+                                                    <TableRow>
+                                                        <TableCell>{learntTopic.User.FirstName}</TableCell>
+                                                        <TableCell>{learntTopic.User.LastName}</TableCell>
+                                                        <TableCell>{learntTopic.User.Role}</TableCell>
+                                                        <TableCell>
+                                                            {
 
-                                                    }
+                                                                learntTopic.Topics.map(topic => {
+                                                                    return (topic.Name)
+                                                                }).join("; ")
 
-                                                </TableCell>
-                                                <TableCell>
-                                                    {
-                                                        (() => {
-                                                            let t = this.props.plannedTopicsByTeam.find(plannedTopic =>
-                                                                plannedTopic.User.UserId === learntTopic.User.UserId)
-                                                            if (t != null) {
-                                                                return <React.Fragment>{t.Topics.map(topic => {
-                                                                    let name = topic.Topic.Name
-                                                                    return name
-                                                                }).join("; ")} </React.Fragment>
                                                             }
-                                                        })()
-                                                    }
-                                                </TableCell>
-                                            </TableRow>
-                                        )
-                                    })}
-                                </TableBody>
-                            </Table>
-                        </TableContainer>
+
+                                                        </TableCell>
+                                                        <TableCell>
+                                                            {
+                                                                (() => {
+                                                                    let t = this.props.plannedTopicsByTeam.find(plannedTopic =>
+                                                                        plannedTopic.User.UserId === learntTopic.User.UserId)
+                                                                    if (t != null) {
+                                                                        return <React.Fragment>{t.Topics.map(topic => {
+                                                                            let name = topic.Topic.Name
+                                                                            return name
+                                                                        }).join("; ")} </React.Fragment>
+                                                                    }
+                                                                })()
+                                                            }
+                                                        </TableCell>
+                                                    </TableRow>
+                                                )
+                                            })}
+                                        </TableBody>
+                                    </Table>
+                                </TableContainer>
+                        }
                     </Grid>
                 </Grid>
             </Dialog>

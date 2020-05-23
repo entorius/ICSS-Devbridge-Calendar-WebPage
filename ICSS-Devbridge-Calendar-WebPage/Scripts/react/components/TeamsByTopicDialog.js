@@ -15,6 +15,7 @@ import TableHead from '@material-ui/core/TableHead';
 import TableRow from '@material-ui/core/TableRow';
 import Paper from '@material-ui/core/Paper';
 import { indigo, grey } from '@material-ui/core/colors';
+import CircularProgress from '@material-ui/core/CircularProgress';
 
 import { connect } from 'react-redux';
 import { fetchTeamsByTopic } from '../redux/actions/learntTopicsActions';
@@ -52,13 +53,18 @@ const styles = theme => ({
 class TeamsByTopicDialog extends Component {
     constructor(props) {
         super(props);
+        this.state = {
+            isLoading: false
+        }
     }
 
     async componentDidUpdate(prevProps) {
         if (this.props.open !== prevProps.open) {
+            this.setState({ isLoading: true })
             await this.props.fetchTeamsByTopic(this.props.token.accessToken, this.props.topicId)
                 .then(() => {
                     console.log("teamsTopic: " + this.props.teamsByTopic)
+                    this.setState({ isLoading: false })
                 });
         }
     }
@@ -101,28 +107,30 @@ class TeamsByTopicDialog extends Component {
                     <Typography variant="h5" style={{ marginTop: 10, marginBottom: 15, }}>
                         Teams
                     </Typography>
-                    <TableContainer component={Paper} className={classes.table}>
-                        <Table >
-                            <TableHead style={{ backgroundColor: indigo[500] }} className={classes.tableHead}>
-                                <TableCell>Manager's first name </TableCell>
-                                <TableCell>Manager's last name </TableCell>
-                                <TableCell>Manager's role </TableCell>
-                                <TableCell style={{ width: "20%" }}>Number of employees that learnt this topic</TableCell>
-                            </TableHead>
-                            <TableBody className={classes.tableBody}>
-                                {this.props.teamsByTopic.map(team => {
-                                    return (
-                                        <TableRow>
-                                            <TableCell>{team.TeamManager.FirstName}</TableCell>
-                                            <TableCell>{team.TeamManager.LastName}</TableCell>
-                                            <TableCell>{team.TeamManager.Role}</TableCell>
-                                            <TableCell>{team.MemberCount}</TableCell>
-                                        </TableRow>
-                                    )
-                                })}
-                            </TableBody>
-                        </Table>
-                    </TableContainer>
+                    {
+                        this.state.isLoading ? <CircularProgress /> : <TableContainer component={Paper} className={classes.table}>
+                            <Table >
+                                <TableHead style={{ backgroundColor: indigo[500] }} className={classes.tableHead}>
+                                    <TableCell>Manager's first name </TableCell>
+                                    <TableCell>Manager's last name </TableCell>
+                                    <TableCell>Manager's role </TableCell>
+                                    <TableCell style={{ width: "20%" }}>Number of employees that learnt this topic</TableCell>
+                                </TableHead>
+                                <TableBody className={classes.tableBody}>
+                                    {this.props.teamsByTopic.map(team => {
+                                        return (
+                                            <TableRow>
+                                                <TableCell>{team.TeamManager.FirstName}</TableCell>
+                                                <TableCell>{team.TeamManager.LastName}</TableCell>
+                                                <TableCell>{team.TeamManager.Role}</TableCell>
+                                                <TableCell>{team.MemberCount}</TableCell>
+                                            </TableRow>
+                                        )
+                                    })}
+                                </TableBody>
+                            </Table>
+                        </TableContainer>
+                    }
                 </Grid>
             </Dialog>
         )

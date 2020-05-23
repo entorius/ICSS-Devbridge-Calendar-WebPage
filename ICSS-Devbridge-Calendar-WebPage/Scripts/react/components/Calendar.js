@@ -149,7 +149,6 @@ class Calendar extends Component {
                 if (this.props.showPersonalCalender) {
                     let numOfMyTopics = learningDayList.length - numOfTeamTopics
                     moreTopicsNumber += numOfMyTopics;
-                    console.log("moreTopicsNumber " + moreTopicsNumber)
                 }
                 if (this.props.showTeamCalender) {
                     moreTopicsNumber += numOfTeamTopics;

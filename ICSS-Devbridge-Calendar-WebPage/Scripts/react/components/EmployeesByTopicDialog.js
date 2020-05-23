@@ -15,6 +15,7 @@ import TableHead from '@material-ui/core/TableHead';
 import TableRow from '@material-ui/core/TableRow';
 import Paper from '@material-ui/core/Paper';
 import { indigo, grey } from '@material-ui/core/colors';
+import CircularProgress from '@material-ui/core/CircularProgress';
 
 import { connect } from 'react-redux';
 import { fetchEmployeesByTopic } from '../redux/actions/learntTopicsActions';
@@ -52,13 +53,18 @@ const styles = theme => ({
 class EmployeesByTopicDialog extends Component {
     constructor(props) {
         super(props);
+        this.state = {
+            isLoading: false
+        }
     }
 
     async componentDidUpdate(prevProps) {
         if (this.props.open !== prevProps.open) {
+            this.setState({ isLoading: true })
             await this.props.fetchEmployeesByTopic(this.props.token.accessToken, this.props.topicId)
                 .then(() => {
                     console.log("employeesByTopic: " + this.props.employeesByTopic)
+                    this.setState({ isLoading: false })
                 });
         }
     }
@@ -101,26 +107,28 @@ class EmployeesByTopicDialog extends Component {
                     <Typography variant="h5" style={{ marginTop: 10, marginBottom: 15, }}>
                         Employees
                     </Typography>
-                    <TableContainer component={Paper} className={classes.table}>
-                        <Table >
-                            <TableHead style={{ backgroundColor: indigo[500] }} className={classes.tableHead}>
-                                <TableCell>First name</TableCell>
-                                <TableCell>Last name</TableCell>
-                                <TableCell>Role</TableCell>
-                            </TableHead>
-                            <TableBody className={classes.tableBody}>
-                                {this.props.employeesByTopic.map(employee => {
-                                    return (
-                                        <TableRow>
-                                            <TableCell>{employee.FirstName}</TableCell>
-                                            <TableCell>{employee.LastName}</TableCell>
-                                            <TableCell>{employee.Role}</TableCell>
-                                        </TableRow>
-                                    )
-                                })}
-                            </TableBody>
-                        </Table>
-                    </TableContainer>
+                    {
+                        this.state.isLoading ? <CircularProgress /> : <TableContainer component={Paper} className={classes.table}>
+                            <Table >
+                                <TableHead style={{ backgroundColor: indigo[500] }} className={classes.tableHead}>
+                                    <TableCell>First name</TableCell>
+                                    <TableCell>Last name</TableCell>
+                                    <TableCell>Role</TableCell>
+                                </TableHead>
+                                <TableBody className={classes.tableBody}>
+                                    {this.props.employeesByTopic.map(employee => {
+                                        return (
+                                            <TableRow>
+                                                <TableCell>{employee.FirstName}</TableCell>
+                                                <TableCell>{employee.LastName}</TableCell>
+                                                <TableCell>{employee.Role}</TableCell>
+                                            </TableRow>
+                                        )
+                                    })}
+                                </TableBody>
+                            </Table>
+                        </TableContainer>
+                    }
                 </Grid>
             </Dialog>
         )
