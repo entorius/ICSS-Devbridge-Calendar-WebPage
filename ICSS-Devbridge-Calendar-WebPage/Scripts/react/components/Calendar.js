@@ -136,14 +136,27 @@ class Calendar extends Component {
         let learningDayList = [];
         let learningDayInfo = [];
         let topicsFitIntoCell;
-        let moreTopicsNumber = 0;
+
 
         while (day <= endDate) {
             for (let i = 0; i < 7; i++) {
+                let moreTopicsNumber = 0;
+                let numOfTeamTopics = 0;
+                let numOfMyTopics = 0;
                 formattedDate = format(day, dayFormat);
                 learningDayList = this.state.learningDays.filter(learningDay => learningDay.date.toDateString() === day.toDateString())
-                moreTopicsNumber = learningDayList.length - 2;
-                if (learningDayList.length > 2) {
+                numOfTeamTopics = learningDayList.filter(learningDay => learningDay.createdBy != "Me").length
+                if (this.props.showPersonalCalender) {
+                    let numOfMyTopics = learningDayList.length - numOfTeamTopics
+                    moreTopicsNumber += numOfMyTopics;
+                    console.log("moreTopicsNumber " + moreTopicsNumber)
+                }
+                if (this.props.showTeamCalender) {
+                    moreTopicsNumber += numOfTeamTopics;
+                }
+                moreTopicsNumber -= 2
+
+                if (moreTopicsNumber > 0) {
                     topicsFitIntoCell = false;
                     learningDayList = learningDayList.slice(0, 2);
                 }
@@ -227,7 +240,7 @@ class Calendar extends Component {
                                                 <Link
                                                     component="button"
                                                     variant="body2"
-                                                    style={{fontSize: "12px", color: indigo[900]}}
+                                                    style={{ fontSize: "12px", color: indigo[900] }}
                                                     onClick={() => this.handleOpenDialog(day.date)}
                                                 >{day.moreTopicsNumber} more</Link> :
                                                 null}
