@@ -47,7 +47,7 @@ class LearningDayInfoPopover extends Component {
                         style={{ backgroundColor: this.props.color, width: this.props.width}}>
                         <CardActionArea className={classes.action}  {...bindTrigger(popupState)}>
                             <Typography component="h5" variant="h5" style={{ whiteSpace: 'nowrap' }}>
-                                {this.state.topic}
+                                {this.state.topic.Name}
                             </Typography>
                             <Typography component="h5" variant="h5" style={{ whiteSpace: 'nowrap' }}>
                                 {this.state.user}
@@ -79,7 +79,7 @@ class LearningDayInfoPopover extends Component {
                                 alignItems="flex-start"
                                 style={{ margin: "5px" }}>
                                 <Typography component="h5" variant="h5">
-                                    {this.state.topic}
+                                    {this.state.topic.Name}
                                 </Typography>
                                 <Typography component="h5" variant="h5">
                                     {this.state.user}
@@ -98,7 +98,12 @@ class LearningDayInfoPopover extends Component {
                     </Popover>
                     <EditLearningDayDialog
                         open={this.state.openEditLearningDayDialog}
-                        onClose={this.handleCloseDialog} />
+                        onClose={this.handleCloseDialog} 
+                        selectedTopic={this.state.topic}
+                        date={this.state.date}
+                        comment={this.props.comment}
+                        assignment={this.props.assignment}
+                        />
                 </React.Fragment>
             )}
         </PopupState>

@@ -54,7 +54,7 @@ class AddLearningDayTopicsDialog extends Component {
     constructor(props) {
         super(props);
         this.state = {
-            selectedTopic: {},
+            selectedTopic: this.props.selectedTopic,
             topics: {}
         }
     }

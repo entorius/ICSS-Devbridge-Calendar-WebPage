@@ -64,5 +64,5 @@ export const updateAssignment = (accessToken, assignmentData) => dispatch => {
         Date: assignmentData.date
     }
 
-    return axios.patch(baseApiUrl, + `/api/assignments/${assignmentData.id}`, data, config);
+    return axios.patch(baseApiUrl + `/api/assignments/${assignmentData.id}`, data, config);
 }

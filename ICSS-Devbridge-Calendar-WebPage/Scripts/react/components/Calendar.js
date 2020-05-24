@@ -96,7 +96,7 @@ class Calendar extends Component {
         }
     }
 
-    async componentDidMount() {
+    componentDidMount() {
         this.props.fetchAssignments(this.props.token.accessToken)
             .then(() => {
                 this.setState({learningDays: this.formatAssignmentsAsDays(this.props.assignments)});
@@ -118,7 +118,13 @@ class Calendar extends Component {
         let learningDays = [];
 
         assignments.forEach(assignment => {
-            let learningDay = { date: new Date(assignment.Date), topic: assignment.TopicId, createdBy: assignment.UserId };
+            let learningDay = { 
+                id: assignment.AsgnId, 
+                date: new Date(assignment.Date), 
+                topic: assignment.TopicId, 
+                createdBy: assignment.UserId, 
+                comment: assignment.Comments
+            };
             learningDays.push(learningDay)
         })
 
@@ -164,6 +170,9 @@ class Calendar extends Component {
     };
     
     render() {
+        if(this.props.topics.length == 0 || this.props.teamTree.items.length == 0 || this.props.assignments.length == 0 || this.props.teamAssignments.length == 0){
+            return <CircularProgress></CircularProgress>
+        }
         const { classes } = this.props;
         const weekdays = [{ id: 1, day: "Sun" }, { id: 2, day: "Mon" }, { id: 3, day: "Tue" }, { id: 4, day: "Wed" }, { id: 5, day: "Thu" }, { id: 6, day: "Fri" }, { id: 7, day: "Sat" }];
         const dateFormat = "MMMM yyyy";
@@ -205,19 +214,23 @@ class Calendar extends Component {
                         const user = this.findUserInTree(this.props.teamTree.items, learningDay.createdBy);
                         if (learningDay.createdBy == this.props.currentUser.UserId && this.props.showPersonalCalender) {
                             learningDayInfo.push(<LearningDayInfoPopover
-                                topic={topic != null ? topic.Name : null}
+                                topic={topic != null ? topic : null}
                                 width="120px"
                                 date={format(learningDay.date, "MM/dd/yyyy")}
                                 color={green[500]}
+                                comment={learningDay.comment}
+                                assignment={learningDay.id}
                             />)
                         }
                         if (learningDay.createdBy != this.props.currentUser.UserId && this.props.showTeamCalender) {
                             learningDayInfo.push(<LearningDayInfoPopover
-                                topic={topic != null ? topic.Name : null}
+                                topic={topic != null ? topic : null}
                                 user={user.FirstName + ' ' + user.LastName}
                                 width="120px"
                                 date={format(learningDay.date, "MM/dd/yyyy")}
                                 color={blue[500]}
+                                comment={learningDay.comment}
+                                assignment={learningDay.id}
                             />)
 
                         }
@@ -231,9 +244,6 @@ class Calendar extends Component {
             }
             weeks.push(days)
             days = [];
-        }
-        if(this.props.topics.length == 0 || this.props.teamTree.items.length == 0){
-            return <CircularProgress></CircularProgress>
         }
         return (
             <Paper>
