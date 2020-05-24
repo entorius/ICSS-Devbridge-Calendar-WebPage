@@ -25,6 +25,9 @@ import Avatar from '@material-ui/core/Avatar';
 import Select from '@material-ui/core/Select';
 import MenuItem from '@material-ui/core/MenuItem';
 import Input from '@material-ui/core/Input';
+import { indigo } from '@material-ui/core/colors';
+import LinkMUI from '@material-ui/core/Link';
+
 
 //Icons
 import ExpandMoreIcon from '@material-ui/icons/ExpandMore';
@@ -34,6 +37,10 @@ import AddIcon from '@material-ui/icons/Add';
 import CloseIcon from '@material-ui/icons/Close';
 import CompareArrowsIcon from '@material-ui/icons/CompareArrows';
 import PersonIcon from '@material-ui/icons/Person';
+
+
+//Dialogs
+import TopicsByTeamDialog from '../components/TopicsByTeamDialog';
 
 class ChangeRestrictionForTeamMemberDialog extends React.Component {
     constructor(props) {
@@ -48,7 +55,8 @@ class ChangeRestrictionForTeamMemberDialog extends React.Component {
             restrictionDaysPerMonth: null,
             restrictionDaysPerYear: null,
             users: [],
-            selectedUser: {}
+            selectedUser: {},
+            teamTopicsManagerName: 0
         }
         this.handleChange = this.handleChange.bind(this);
         this.handleSelectChange = this.handleSelectChange.bind(this);
@@ -67,7 +75,7 @@ class ChangeRestrictionForTeamMemberDialog extends React.Component {
         const fullName = evt.target.value;
         const user = this.state.users.find(user => user.FirstName + ' ' + user.LastName == fullName);
         this.setState({
-            restrictionConsecutiveDays: user.ConsecLimit, 
+            restrictionConsecutiveDays: user.ConsecLimit,
             restrictionDaysPerMonth: user.MonthlyLimit,
             restrictionDaysPerYear: user.YearlyLimit,
             selectedUser: user
@@ -83,8 +91,8 @@ class ChangeRestrictionForTeamMemberDialog extends React.Component {
         }
     }
 
-    handleClose(){
-        this.setState({ 
+    handleClose() {
+        this.setState({
             open: false,
             restrictionConsecutiveDays: null,
             restrictionDaysPerWeek: null,
@@ -93,8 +101,8 @@ class ChangeRestrictionForTeamMemberDialog extends React.Component {
         });
     }
 
-    getTeam(teams, teamId){
-        if(teams.$id == teamId){
+    getTeam(teams, teamId) {
+        if (teams.$id == teamId) {
             return teams.Children;
         }
 
@@ -103,7 +111,7 @@ class ChangeRestrictionForTeamMemberDialog extends React.Component {
             for(let child of teams.Children){
                 if(Array.isArray(child.Children)){
                     children = this.getTeam(child, teamId);
-                    if(children.length > 0){
+                    if (children.length > 0) {
                         break;
                     }
                 }
@@ -139,7 +147,7 @@ class ChangeRestrictionForTeamMemberDialog extends React.Component {
                 <DialogTitle
                     id="change-restriction-dialog-title"
                     disableTypography
-                    classes={{ root: classes.changeRestrictionTitle}}>
+                    classes={{ root: classes.changeRestrictionTitle }}>
                     Team member restriction
                     <CreateIcon className={classes.popUpButtonPicture} />
                 </DialogTitle>
@@ -154,11 +162,11 @@ class ChangeRestrictionForTeamMemberDialog extends React.Component {
                             name="member"
                             input={<Input />}
                             onChange={this.handleSelectChange}>
-                        >{this.state.users.map(user => (
-                            <MenuItem key={user.FirstName + ' ' + user.LastName} value={user.FirstName + ' ' + user.LastName} >
-                                {user.FirstName + ' ' + user.LastName}
-                            </MenuItem>
-                        ))}
+                            >{this.state.users.map(user => (
+                                <MenuItem key={user.FirstName + ' ' + user.LastName} value={user.FirstName + ' ' + user.LastName} >
+                                    {user.FirstName + ' ' + user.LastName}
+                                </MenuItem>
+                            ))}
                         </Select>
                     </div>
                     <div className={classes.changeRestrictionRestrictionsHeader}>Restrictions</div>
@@ -257,7 +265,7 @@ class ChangeRestrictionForTeamMemberDialog extends React.Component {
                     <Button
                         className={classes.cancelButton}
                         classes={{ label: classes.popUpButtonLabel }}
-                        onClick={() => {this.closeDialog()}}>
+                        onClick={() => { this.closeDialog() }}>
                         Cancel
                     </Button>
                     {/* TODO: Add action to change selected member restriction*/}
@@ -306,7 +314,7 @@ class AddNewTeamMemberDialog extends React.Component {
     }
 
     render() {
-       
+
         //event to handle close (closes dialog)
         const handleClose = () => {
             this.setState({ open: false });
@@ -325,8 +333,8 @@ class AddNewTeamMemberDialog extends React.Component {
                     <AddIcon className={classes.popUpButtonPicture} />
                 </DialogTitle>
                 <div className={classes.addMemberBody}>
-                   
-                  
+
+
                     <TextField
                         id="input-email-with-icon"
                         InputProps={{
@@ -343,8 +351,8 @@ class AddNewTeamMemberDialog extends React.Component {
                         name="email"
                         onChange={this.handleChange}
                         className={classes.addMemberEmail} />
-                       
-                   
+
+
                 </div>
                 <div className={classes.addMemberButtons}>
                     <Button
@@ -434,11 +442,11 @@ class DeleteTeamMemberDialog extends React.Component {
                         name="member"
                         input={<Input />}
                         onChange={this.handleChange}>
-                    >{names.map((name) => (
-                        <MenuItem key={name} value={name} >
-                            {name}
-                        </MenuItem>
-                    ))}
+                        >{names.map((name) => (
+                            <MenuItem key={name} value={name} >
+                                {name}
+                            </MenuItem>
+                        ))}
                     </Select>
 
 
@@ -493,17 +501,17 @@ class ReassignTeamMemberDialog extends React.Component {
         }
     }
 
-    getTeam(teams, teamId){
-        if(teams.$id == teamId){
+    getTeam(teams, teamId) {
+        if (teams.$id == teamId) {
             return teams.Children;
         }
 
         var children = [];
-        if(teams.Children != null){
-            for(let child of teams.Children){
-                if(Array.isArray(child.Children)){
+        if (teams.Children != null) {
+            for (let child of teams.Children) {
+                if (Array.isArray(child.Children)) {
                     children = this.getTeam(child, teamId);
-                    if(children.length > 0){
+                    if (children.length > 0) {
                         break;
                     }
                 }
@@ -515,22 +523,22 @@ class ReassignTeamMemberDialog extends React.Component {
     getAllTeams(teamTree) {
         this.state.teams.push(teamTree);
 
-        if(Array.isArray(teamTree.Children)){
+        if (Array.isArray(teamTree.Children)) {
             teamTree.Children.forEach(child => {
                 this.getAllTeams(child);
             })
         }
     }
 
-    
+
     updateUser(teams, user) {
-        if(teams.This.UserId == user.UserId){
+        if (teams.This.UserId == user.UserId) {
             teams.This = user;
             return teams;
         }
 
-        if(teams.Children != null){
-            for(let child of teams.Children){
+        if (teams.Children != null) {
+            for (let child of teams.Children) {
                 let updatedChild = this.updateUser(child, user);
                 teams.Children[teams.Children.indexOf(child)] = updatedChild;
             }
@@ -538,20 +546,20 @@ class ReassignTeamMemberDialog extends React.Component {
 
         return teams;
     }
-    
+
     handleClose() {
         this.setState({ open: false, teams: [] });
     };
 
     handleListItemClick(evt) {
-        if(this.state.team != "" && this.state.member != ""){
+        if (this.state.team != "" && this.state.member != "") {
             const user = this.state.teamMembers.find(user => user.FirstName + ' ' + user.LastName == this.state.member);
             const manager = this.state.teams.find(team => team.This.FirstName + ' ' + team.This.LastName == this.state.team);
-    
+
             const data = { userId: user.UserId, managerId: manager.This.UserId }
-    
+
             this.props.reassignFunc(this.props.token.accessToken, data).then(() => {
-                if(this.props.error === null) {
+                if (this.props.error === null) {
                     //update the state
                     this.props.updateTreeFunc(this.props.token.accessToken);
 
@@ -559,8 +567,8 @@ class ReassignTeamMemberDialog extends React.Component {
                 }
                 else {
                     console.log(this.props.error);
-                    for(let error of this.props.error){
-                        if(error.Code == 4){
+                    for (let error of this.props.error) {
+                        if (error.Code == 4) {
                             // TODO: Add a message about circular relationships
                         }
                     }
@@ -580,7 +588,7 @@ class ReassignTeamMemberDialog extends React.Component {
                     id="change-restriction-dialog-title"
                     disableTypography
                     classes={{ root: classes.reassignMemberHeader }}
-                    >
+                >
                     Reassign team member
                     <CompareArrowsIcon className={classes.popUpButtonPicture} />
                 </DialogTitle>
@@ -593,7 +601,7 @@ class ReassignTeamMemberDialog extends React.Component {
                         value={this.state.member}
                         className={classes.deleteMemberSelectTeamMember}
                         name="member"
-                        input={<Input/>}
+                        input={<Input />}
                         onChange={this.handleChange}>
                         {this.state.teamMembers.map((member) => (
                             <MenuItem key={member.FirstName + ' ' + member.LastName} value={member.FirstName + ' ' + member.LastName} >
@@ -625,7 +633,7 @@ class ReassignTeamMemberDialog extends React.Component {
                     <Button
                         className={classes.cancelButton}
                         classes={{ label: classes.popUpButtonLabel }}
-                        onClick={() => {this.handleClose()}}>
+                        onClick={() => { this.handleClose() }}>
                         Cancel
                     </Button>
                     <Button
@@ -658,6 +666,7 @@ class Team extends React.Component {
             openAddTeamMemberDialog: false,
             openRemoveTeamMemberDialog: false,
             openReassignTeamMemberDialog: false,
+            openTopicsByTeamDialog: false,
             selectedTeamId: this.props.teamTree.items.$id,
             selectedTeamManagerId: 0,
             teamMemberTreeContent: null
@@ -671,22 +680,24 @@ class Team extends React.Component {
             .then(() => {
                 console.log(this.props.teamTree)
             });
-        
+
         if (this.state.selectedTeamId != this.props.teamTree.items.$id) {
             this.setState({ selectedTeamId: this.props.teamTree.items.$id, selectedTeamManagerId: this.props.teamTree.items.This.UserId })
         }
 
         this.setState({ teamMemberTreeContent: this.renderTree(this.props.teamTree.items, this.props.teamTree.items.$id) });
     }
-    
+
     handleChange(evt) {
         // check it out: we get the evt.target.name 
         // and use it to target the key on our `state` object with the same name, using bracket syntax
+
         this.setState({ [evt.target.name]: evt.target.value });
     }
     handleOpenDialog(evt) {
-        var value = !this.state[evt.currentTarget.name];
-        this.setState({ [evt.currentTarget.name]: value });
+        var name = evt.currentTarget.name;
+        var value = !this.state[name];
+        this.setState({ [name]: value });
     }
 
     onTeamClick = (node) => {
@@ -729,14 +740,28 @@ class Team extends React.Component {
             return (
                 <TreeItem key={nodeId}
                     nodeId={nodeId}
-                    label={nodes.This.FirstName + "'s team"}
+                    label={
+                        <React.Fragment>
+                            {nodes.This.FirstName + "'s team"}
+                            <Button
+                                style={{ fontSize: "12px", color: indigo[900] }}
+                                name="openTopicsByTeamDialog"
+                                onClick={(e) => {
+                                    e.stopPropagation();
+                                    this.handleOpenDialog(e);
+                                    this.setState({ teamTopicsManagerName: nodes.This.FirstName + "'s team" });
+                                }}>
+                                Learnt topics
+                            </Button>
+                        </React.Fragment>
+                    }
                     classes={{
                         root: classes.treeItem, // class name, e.g. `classes-nesting-root-x`
                         label: classes.treeItem, // class name, e.g. `classes-nesting-label-x`
                     }}>
-                    {/* BUGGED */}
-                    { nodes.Children.map((node) => this.renderTeamMember(node)) }
-                </TreeItem>
+
+                    {nodes.Children.map((node) => this.renderTeamMember(node))}
+                </TreeItem >
             );
         }
         else {
@@ -752,19 +777,19 @@ class Team extends React.Component {
         return (
             <TreeItem key={node.This.UserId}
                 nodeId={node.This.UserId}
-                label={node.This.FirstName }
+                label={node.This.FirstName}
                 classes={{
                     root: classes.treeItem, // class name, e.g. `classes-nesting-root-x`
                     label: classes.treeItem, // class name, e.g. `classes-nesting-label-x`
                 }}>
                 <TreeItem key={node.This.UserId + " ConsecLimit"}
                     nodeId={node.This.UserId + " ConsecLimit"}
-                    label={node.This.ConsecLimit === null ? "Consecutive days:  N/A" :"Consecutive days: " + node.This.ConsecLimit.toString() }
+                    label={node.This.ConsecLimit === null ? "Consecutive days:  N/A" : "Consecutive days: " + node.This.ConsecLimit.toString()}
                     classes={{
                         root: classes.treeItem, // class name, e.g. `classes-nesting-root-x`
                         label: classes.treeItem, // class name, e.g. `classes-nesting-label-x`
                     }}>
-                
+
                 </TreeItem>
                 <TreeItem key={node.This.UserId + " MonthlyLimit"}
                     nodeId={node.This.UserId + " MonthlyLimit"}
@@ -773,7 +798,7 @@ class Team extends React.Component {
                         root: classes.treeItem, // class name, e.g. `classes-nesting-root-x`
                         label: classes.treeItem, // class name, e.g. `classes-nesting-label-x`
                     }}>
-                
+
                 </TreeItem>
                 <TreeItem key={node.This.UserId + " QuaterLimit"}
                     nodeId={node.This.UserId + " QuaterLimit"}
@@ -782,7 +807,7 @@ class Team extends React.Component {
                         root: classes.treeItem, // class name, e.g. `classes-nesting-root-x`
                         label: classes.treeItem, // class name, e.g. `classes-nesting-label-x`
                     }}>
-                
+
                 </TreeItem>
                 <TreeItem key={node.This.UserId + " YearlyLimit"}
                     nodeId={node.This.UserId + " YearlyLimit"}
@@ -800,10 +825,10 @@ class Team extends React.Component {
         const renderSidebarTree = (nodes) => {
             return (
                 <TreeItem key={nodes.length === 0 ? 0 : nodes.This.UserId}
-                        nodeId={nodes.length === 0 ? 0 : nodes.This.UserId}
-                        label={nodes.length === 0 ? "no team" : nodes.This.FirstName + "'s team"}
-                        onClick={() => { this.onTeamClick(nodes); }}
-                        classes={{
+                    nodeId={nodes.length === 0 ? 0 : nodes.This.UserId}
+                    label={nodes.length === 0 ? "no team" : nodes.This.FirstName + "'s team"}
+                    onClick={() => { this.onTeamClick(nodes); }}
+                    classes={{
                         root: classes.sidebarTreeItem, // class name, e.g. `classes-nesting-root-x`
                         label: classes.sidebarTreeItem, // class name, e.g. `classes-nesting-label-x`
                     }}>
@@ -847,21 +872,21 @@ class Team extends React.Component {
                                     classes={{ label: classes.popUpButtonLabel }}
                                     name="openAddTeamMemberDialog"
                                     onClick={this.handleOpenDialog}>
-                                    Add new team member 
+                                    Add new team member
                                     <AddIcon className={classes.popUpButtonPicture} />
                                 </Button>
                                 <Button className={classes.removeMemberButton}
                                     classes={{ label: classes.popUpButtonLabel }}
                                     name="openRemoveTeamMemberDialog"
                                     onClick={this.handleOpenDialog}>
-                                    Remove team member 
+                                    Remove team member
                                     <CloseIcon className={classes.popUpButtonPicture} />
                                 </Button>
                                 <Button className={classes.reassignMemberButton}
                                     classes={{ label: classes.popUpButtonLabel }}
                                     name="openReassignTeamMemberDialog"
                                     onClick={this.handleOpenDialog}>
-                                    Reassign team member 
+                                    Reassign team member
                                     <CompareArrowsIcon className={classes.popUpButtonPicture} />
                                 </Button>
 
@@ -965,7 +990,7 @@ class Team extends React.Component {
                                             />
                                         </div>
                                     </div>
-                                    <Button className={classes.restrictionButton} classes={{ label: classes.popUpButtonLabel }} onClick={() => {this.changeTeamRestrictions()}}>
+                                    <Button className={classes.restrictionButton} classes={{ label: classes.popUpButtonLabel }} onClick={() => { this.changeTeamRestrictions() }}>
                                         Change restrictions
                                         for your team
                                     <CreateIcon className={classes.popUpButtonPicture} />
@@ -1070,7 +1095,7 @@ class Team extends React.Component {
                                         </div>
                                     </div>
                                     {/*TODO: Add action to change restrictions globaly for all members according to state parameters*/}
-                                    <Button className={classes.restrictionButton} classes={{ label: classes.popUpButtonLabel }} onClick={() => {this.changeGlobalRestrictions()}}>
+                                    <Button className={classes.restrictionButton} classes={{ label: classes.popUpButtonLabel }} onClick={() => { this.changeGlobalRestrictions() }}>
                                         Change restrictions globally
                                     <CreateIcon className={classes.popUpButtonPicture} />
                                     </Button>
@@ -1087,7 +1112,7 @@ class Team extends React.Component {
                             defaultExpanded={['root']}
                             defaultExpandIcon={<ChevronRightIcon />}
                         >
-                           
+
                             {renderSidebarTree(this.props.teamTree.items)}
                         </TreeView>
 
@@ -1099,6 +1124,7 @@ class Team extends React.Component {
                 <AddNewTeamMemberDialog open={this.state.openAddTeamMemberDialog} addFunc={this.props.addTeamMember} currentUser={this.props.teamTree.items.This} token={this.props.token} />
                 <DeleteTeamMemberDialog open={this.state.openRemoveTeamMemberDialog} />
                 <ReassignTeamMemberDialog open={this.state.openReassignTeamMemberDialog} reassignFunc={this.props.reassignTeamMember} teams={this.props.teamTree.items} teamId={this.state.selectedTeamId} error={this.props.teamTree.error} updateTreeFunc={this.props.fetchTeamTree} token={this.props.token} />
+                <TopicsByTeamDialog open={this.state.openTopicsByTeamDialog} managerName={this.state.teamTopicsManagerName} managerId={this.state.selectedTeamManagerId} />
             </div>
         );
     }
@@ -1120,11 +1146,11 @@ const mapStateToProps = state => ({
 })
 
 export default connect(
-    mapStateToProps, 
-    { 
-        fetchTeamTree, 
-        changeRestrictionsForUser, 
-        changeRestrictionsForTeam, 
+    mapStateToProps,
+    {
+        fetchTeamTree,
+        changeRestrictionsForUser,
+        changeRestrictionsForTeam,
         changeGlobalRestrictions,
         addTeamMember,
         reassignTeamMember

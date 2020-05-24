@@ -4,6 +4,7 @@ import teamReducer from "./teamReducer";
 import loginReducer from "./loginReducer";
 import topicReducer from "./topicReducer";
 import userReducer from "./userReducer";
+import learntTopicsReducer from "./learntTopicsReducer";
 import learningTreeReducer from "./learningTreeReducer";
 
 export default combineReducers({
@@ -12,5 +13,6 @@ export default combineReducers({
     login: loginReducer,
     topics: topicReducer,
     users: userReducer,
+    learntTopics: learntTopicsReducer,
     learningTree: learningTreeReducer
 })
