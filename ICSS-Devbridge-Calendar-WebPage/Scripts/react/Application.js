@@ -29,11 +29,11 @@ class Application extends React.Component {
                     <Route exact path="/" component={Login} />
                     <Route exact path="/Home/Register" component={Register} />
                     <PrivateRoute exact path="/Main/Home" component={Home} />
-                    <Route exact path="/Main/Calendar" component={CalendarPage} />
-                    <Route exact path="/Main/LearningTree" component={LearningTree} />
-                    <Route exact path="/Main/Settings" component={SettingsPage} />
-                    <Route exact path="/Main/Team" component={Team} />
-                    <Route exact path="/Main/Topics" component={Topics} />
+                    <PrivateRoute exact path="/Main/Calendar" component={CalendarPage} />
+                    <PrivateRoute exact path="/Main/LearningTree" component={LearningTree} />
+                    <PrivateRoute exact path="/Main/Settings" component={SettingsPage} />
+                    <PrivateRoute exact path="/Main/Team" component={Team} />
+                    <PrivateRoute exact path="/Main/Topics" component={Topics} />
                 </Switch>
             </div>
         );
