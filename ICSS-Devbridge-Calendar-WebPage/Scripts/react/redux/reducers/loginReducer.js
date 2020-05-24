@@ -1,7 +1,7 @@
 ﻿import { LOGIN } from "../actions/types";
 
 const initialState = {
-    token: {}
+    token: getAuthState()
 }
 
 export default function (state = initialState, action) {
@@ -15,4 +15,10 @@ export default function (state = initialState, action) {
         default:
             return state;
     }
+}
+
+function getAuthState() {
+    const token = JSON.parse(localStorage.getItem('token')) || undefined;
+
+    return { accessToken: token }
 }

@@ -28,4 +28,14 @@ else {
 }
 const store = storeChoice;
 
+function setAuthState(state) {
+    try {
+        localStorage.setItem('token', JSON.stringify((state.login.token || {}).accessToken));
+    } catch (err) { return undefined; }
+}
+  
+store.subscribe(() => {
+    setAuthState(store.getState())
+});
+
 export default store;
