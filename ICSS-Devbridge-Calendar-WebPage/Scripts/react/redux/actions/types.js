@@ -6,3 +6,6 @@ export const LOGIN = "LOGIN";
 export const UPDATE_MANAGER = "UPDATE_MANAGER";
 export const FETCH_TOPICS = "FETCH_TOPICS";
 export const FETCH_CURRENT_USER = "FETCH_CURRENT_USER";
+//Learning tree
+export const LEARNING_TREE = "LEARNING_TREE";
+export const LEARNING_SELECTED_USERS = "LEARNING_SELECTED_USERS";
