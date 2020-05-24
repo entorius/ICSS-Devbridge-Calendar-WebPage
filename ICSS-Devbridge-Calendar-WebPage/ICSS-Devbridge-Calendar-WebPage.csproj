@@ -158,7 +158,10 @@
     <Content Include="Scripts\react\Application.js" />
     <Content Include="Scripts\react\components\AddLearningDayDialog.js" />
     <Content Include="Scripts\react\components\Calendar.js" />
+    <Content Include="Scripts\react\components\EmployeesByTopicDialog.js" />
+    <Content Include="Scripts\react\components\TeamsByTopicDialog.js" />
     <Content Include="Scripts\react\components\Topic.js" />
+    <Content Include="Scripts\react\components\TopicsByTeamDialog.js" />
     <Content Include="Scripts\react\containers\Topics.js" />
     <Content Include="Scripts\react\components\EditLearningDayDialog.js" />
     <Content Include="Scripts\react\components\LearningDayInfoPopover.js" />
@@ -169,12 +172,14 @@
     <Content Include="Scripts\react\containers\SettingsPage.js" />
     <Content Include="Scripts\react\redux\actions\assignmentActions.js" />
     <Content Include="Scripts\react\redux\actions\learningTreeActions.js" />
+    <Content Include="Scripts\react\redux\actions\learntTopicsActions.js" />
     <Content Include="Scripts\react\redux\actions\teamActions.js" />
     <Content Include="Scripts\react\redux\actions\loginActions.js" />
     <Content Include="Scripts\react\redux\actions\types.js" />
     <Content Include="Scripts\react\redux\reducers\index.js" />
     <Content Include="Scripts\react\redux\reducers\assignmentReducer.js" />
     <Content Include="Scripts\react\redux\reducers\learningTreeReducer.js" />
+    <Content Include="Scripts\react\redux\reducers\learntTopicsReducer.js" />
     <Content Include="Scripts\react\redux\reducers\teamReducer.js" />
     <Content Include="Scripts\react\redux\reducers\loginReducer.js" />
     <Content Include="Scripts\react\redux\store.js" />
