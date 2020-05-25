@@ -16,7 +16,7 @@ export default function (state = initialState, action) {
             }
         case CHANGE_USER_RESTRICTIONS:
             var userReplacement = action.payload;
-            const users = JSON.parse(JSON.stringify(state.items)); //this creates a deep copy
+            var users = JSON.parse(JSON.stringify(state.items)); //this creates a deep copy
             users = findAndReplaceUser(users, userReplacement);
             //const index = counters.findIndex(x => x.id == counter.id);
             return {

@@ -29,6 +29,8 @@ import { indigo } from '@material-ui/core/colors';
 import LinkMUI from '@material-ui/core/Link';
 import Paper from '@material-ui/core/Paper';
 import Grid from '@material-ui/core/Grid';
+import FormControl from '@material-ui/core/FormControl';
+import FormHelperText from '@material-ui/core/FormHelperText';
 
 
 //Icons
@@ -42,6 +44,8 @@ import PersonIcon from '@material-ui/icons/Person';
 import AssignmentIndIcon from '@material-ui/icons/AssignmentInd';
 import EmailIcon from '@material-ui/icons/Email';
 
+import { Formik } from 'formik';
+import * as Yup from 'yup';
 
 //Dialogs
 import TopicsByTeamDialog from '../components/TopicsByTeamDialog';
@@ -291,10 +295,6 @@ class AddNewTeamMemberDialog extends React.Component {
         {/* TODO: state for adding team member*/ }
         this.state = {
             open: props.open,
-            email: "",
-            name:"",
-            surname: "",
-            role:""
         }
         this.handleChange = this.handleChange.bind(this);
     }
@@ -311,12 +311,13 @@ class AddNewTeamMemberDialog extends React.Component {
         }
     }
 
-    handleListItemClick = (evt) => {
+    handleListItemClick(user) {
+
         var userObject = {
-            email: this.state.email,
-            name: this.state.name,
-            surname: this.state.surname,
-            role:this.state.role
+            email: user.email,
+            name: user.name,
+            surname: user.surname,
+            role: user.role
         }
         this.props.addFunc(this.props.token.accessToken, userObject, this.props.currentUser.UserId);
         this.setState({ open: false })
@@ -324,6 +325,11 @@ class AddNewTeamMemberDialog extends React.Component {
 
     closeDialog = () => {
         this.setState({ open: false })
+    }
+    onSubmit = (values, { resetForm }) => {
+        resetForm({})
+        console.log(values);
+        this.handleListItemClick(values)
     }
 
     render() {
@@ -346,125 +352,183 @@ class AddNewTeamMemberDialog extends React.Component {
                     <AddIcon className={classes.popUpButtonPicture} />
                 </DialogTitle>
                 <div className={classes.addMemberBody}>
+                    <Formik
+                        initialValues={{ name: '', surname: '', email: '', role: '' }}
+                        onSubmit={this.onSubmit}
+                        validationSchema={Yup.object().shape({
+                            name: Yup.string()
+                                .required('This field is required')
+                                .min(1, "Email must contain at least 1 characters"),
+                            surname: Yup.string()
+                                .required('This field is required')
+                                .min(1, "Surname must contain at least 1 characters"),
+                            email: Yup.string()
+                                .required('This field is required')
+                                .email('Invalid email'),
+                            role: Yup.string()
+                                .required('This field is required')
+                                .min(1, "Role must contain at least 1 characters")
+                        })}
+                    >
+                        {({
+                            handleSubmit,
+                            values,
+                            touched,
+                            errors,
+                            handleChange,
+                            handleBlur
+                        }) => (
+                            <form>
 
-                    <div className={classes.formControl}>
-                        <Grid container spacing={1} alignItems="flex-end">
-                            <Grid item>
-                                <EmailIcon className={classes.textBoxIcon} />
-                            </Grid>
-                            <Grid item>
-                                <TextField
-                                    id="input-email-with-icon"
-                                    InputProps={{
-                                        classes: {
-                                            input: classes.resize,
-                                        },
-                                    }}
-                                    InputLabelProps={{
-                                        classes: {
-                                            root: classes.resize
-                                        }
-                                    }}
-                                    label="Email"
-                                    name="email"
-                                    onChange={this.handleChange}
-                                    className={classes.inputTextBox} />
-                            </Grid>
-                        </Grid>
-                    </div>
+                                    <FormControl className={classes.formControl}
+                                        required
+                                        error={touched.email && Boolean(errors.email)}>
+                                        <Grid container spacing={1} alignItems="flex-end">
+                                            <Grid item>
+                                                <EmailIcon className={classes.textBoxIcon} />
+                                            </Grid>
+                                            <Grid item>
+                                                <TextField
+                                                    id="input-email-with-icon"
+                                                    InputProps={{
+                                                        classes: {
+                                                            input: classes.resize,
+                                                        },
+                                                    }}
+                                                    InputLabelProps={{
+                                                        classes: {
+                                                            root: classes.resize
+                                                        }
+                                                        }}
+                                                    value={values.email}
+                                                    label="Email"
+                                                    name="email"
+                                                    onChange={handleChange}
+                                                    onBlur={handleBlur}
+                                                    className={classes.inputTextBox} />
+                                            </Grid>
+                                        </Grid>
+                                        <FormHelperText id="email-error" style={{ fontSize: 12 }}>
+                                            {touched.email ? errors.email : ""}
+                                        </FormHelperText>
+                                    </FormControl>
 
-                    <div className={classes.formControl}>
-                        <Grid container spacing={1} alignItems="flex-end">
-                            <Grid item>
-                                <PersonIcon className={classes.textBoxIcon} />
-                            </Grid>
-                            <Grid item>
-                                <TextField
-                                    id="input-name-with-icon"
-                                    InputProps={{
-                                        classes: {
-                                            input: classes.resize,
-                                        },
-                                    }}
-                                    InputLabelProps={{
-                                        classes: {
-                                            root: classes.resize
-                                        }
-                                    }}
-                                    label="Name"
-                                    name="name"
-                                    onChange={this.handleChange}
-                                    className={classes.inputTextBox} />
-                            </Grid>
-                        </Grid>
+                                    <FormControl className={classes.formControl}
+                                        required
+                                        error={touched.name && Boolean(errors.name)}>
+                                        <Grid container spacing={1} alignItems="flex-end">
+                                            <Grid item>
+                                                <PersonIcon className={classes.textBoxIcon} />
+                                            </Grid>
+                                            <Grid item>
+                                                <TextField
+                                                    id="input-name-with-icon"
+                                                    InputProps={{
+                                                        classes: {
+                                                            input: classes.resize,
+                                                        },
+                                                    }}
+                                                    InputLabelProps={{
+                                                        classes: {
+                                                            root: classes.resize
+                                                        }
+                                                        }}
+                                                        value={values.name}
+                                                    label="Name"
+                                                    name="name"
+                                                    onChange={handleChange}
+                                                    onBlur={handleBlur}
+                                                    className={classes.inputTextBox} />
+                                            </Grid>
+                                        </Grid>
+                                        <FormHelperText id="name-error" style={{ fontSize: 12 }}>
+                                            {touched.name ? errors.name : ""}
+                                        </FormHelperText>
+                                    </FormControl>
+                                    <FormControl className={classes.formControl}
+                                        required
+                                        error={touched.surname && Boolean(errors.surname)}>
+                                        <Grid container spacing={1} alignItems="flex-end">
+                                            <Grid item>
+                                                <PersonIcon className={classes.textBoxIcon} />
+                                            </Grid>
+                                            <Grid item>
+                                                <TextField
+                                                    id="input-surname-with-icon"
+                                                    InputProps={{
+                                                        classes: {
+                                                            input: classes.resize,
+                                                        },
+                                                    }}
+                                                    InputLabelProps={{
+                                                        classes: {
+                                                            root: classes.resize
+                                                        }
+                                                        }}
+                                                        value={values.surname}
+                                                    label="Surname"
+                                                    name="surname"
+                                                    onChange={handleChange}
+                                                    onBlur={handleBlur}
+                                                    className={classes.inputTextBox} />
+                                            </Grid>
+                                        </Grid>
+                                        <FormHelperText id="surname-error" style={{ fontSize: 12 }}>
+                                            {touched.surname ? errors.surname : ""}
+                                        </FormHelperText>
+                                    </FormControl>
+                                    <FormControl className={classes.formControl}
+                                        required
+                                        error={touched.role && Boolean(errors.role)}>
+                                        <Grid container spacing={1} alignItems="flex-end">
+                                            <Grid item>
+                                                <AssignmentIndIcon className={classes.textBoxIcon} />
+                                            </Grid>
+                                            <Grid item>
+                                                <TextField
+                                                    id="input-role-with-icon"
+                                                    InputProps={{
+                                                        classes: {
+                                                            input: classes.resize,
+                                                        },
+                                                    }}
+                                                    InputLabelProps={{
+                                                        classes: {
+                                                            root: classes.resize
+                                                        }
+                                                        }}
+                                                        value={values.role}
+                                                    label="Role"
+                                                    name="role"
+                                                    onChange={handleChange}
+                                                    onBlur={handleBlur}
+                                                    className={classes.inputTextBox} />
+                                            </Grid>
+                                        </Grid>
+                                        <FormHelperText id="role-error" style={{ fontSize: 12 }}>
+                                            {touched.role ? errors.role : ""}
+                                        </FormHelperText>
+                                    </FormControl>
+                                <div className={classes.addMemberButtons}>
+                                    <Button
+                                        className={classes.cancelButton}
+                                        classes={{ label: classes.popUpButtonLabel }}
+                                        onClick={() => this.closeDialog(this.state.email)}>
+                                        Cancel
+                                    </Button>
+                                    {/* TODO: add action to send invitation to email*/}
+                                    <Button
+                                            className={classes.actionButton}
+                                            classes={{ label: classes.popUpButtonLabel }}
+                                            onClick={handleSubmit/*this.handleListItemClick*/}>
+                                                            Send invitation
+                                    </Button>
+                                </div>
+                            </form>
+                            )
+                        }
+                    </Formik>
                     </div>
-                    <div className={classes.formControl}>
-                        <Grid container spacing={1} alignItems="flex-end">
-                            <Grid item>
-                                <PersonIcon className={classes.textBoxIcon} />
-                            </Grid>
-                            <Grid item>
-                                <TextField
-                                    id="input-surname-with-icon"
-                                    InputProps={{
-                                        classes: {
-                                            input: classes.resize,
-                                        },
-                                    }}
-                                    InputLabelProps={{
-                                        classes: {
-                                            root: classes.resize
-                                        }
-                                    }}
-                                    label="Surname"
-                                    name="surname"
-                                    onChange={this.handleChange}
-                                    className={classes.inputTextBox} />
-                            </Grid>
-                        </Grid>
-                    </div>
-                    <div className={classes.formControl}>
-                        <Grid container spacing={1} alignItems="flex-end">
-                            <Grid item>
-                                <AssignmentIndIcon className={classes.textBoxIcon} />
-                            </Grid>
-                            <Grid item>
-                                <TextField
-                                    id="input-role-with-icon"
-                                    InputProps={{
-                                        classes: {
-                                            input: classes.resize,
-                                        },
-                                    }}
-                                    InputLabelProps={{
-                                        classes: {
-                                            root: classes.resize
-                                        }
-                                    }}
-                                    label="Role"
-                                    name="role"
-                                    onChange={this.handleChange}
-                                    className={classes.inputTextBox} />
-                            </Grid>
-                        </Grid>
-                    </div>
-
-                </div>
-                <div className={classes.addMemberButtons}>
-                    <Button
-                        className={classes.cancelButton}
-                        classes={{ label: classes.popUpButtonLabel }}
-                        onClick={() => this.closeDialog(this.state.email)}>
-                        Cancel
-                    </Button>
-                    {/* TODO: add action to send invitation to email*/}
-                    <Button
-                        className={classes.actionButton}
-                        classes={{ label: classes.popUpButtonLabel }}
-                        onClick={this.handleListItemClick}>
-                        Send invitation
-                    </Button>
-                </div>
             </Dialog>
         );
     }
