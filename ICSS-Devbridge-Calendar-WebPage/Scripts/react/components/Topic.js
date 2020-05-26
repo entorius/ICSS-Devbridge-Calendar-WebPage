@@ -70,13 +70,6 @@ class Topic extends React.Component {
                 <ColoredLine color="white" />
                 <p>{this.convertLinksInText(this.props.topic.description)}</p>
                 <ColoredLine color="white" />
-                <Button onClick={() => this.props.onLoadSubtopics(this.props.topic)}>
-                    Open subtopics
-                </Button>
-                <Button onClick={() => this.props.onEditTopic(this.props.topic)}>
-                    Edit {this.props.topic.name} topic
-                </Button>
-            </Grid>
                 <Grid
                     container
                     direction="row"
@@ -111,6 +104,9 @@ class Topic extends React.Component {
                     topicId={6} />
                 <Button onClick={() => this.props.onLoadSubtopics(this.props.topic.id)}>
                     Open subtopics
+                </Button>
+                <Button onClick={() => this.props.onEditTopic(this.props.topic)}>
+                    Edit {this.props.topic.name} topic
                 </Button>
             </Grid >
         );
