@@ -13,11 +13,18 @@ import isSameDay from "date-fns/isSameDay";
 import toDate from "date-fns/toDate";
 import addMonths from "date-fns/addMonths";
 import subMonths from "date-fns/subMonths";
+import { CircularProgress } from '@material-ui/core'
 import { withStyles } from '@material-ui/core/styles';
 import { indigo, green, blue } from '@material-ui/core/colors';
 import ViewAllLearningDayTopicsDialog from './ViewAllLearningDayTopicsDialog';
 import LearningDayInfoPopover from './LearningDayInfoPopover';
 import Link from '@material-ui/core/Link';
+import { connect } from 'react-redux';
+import PropTypes from 'prop-types';
+import { fetchAssignments, fetchSubordinateAssignments } from '../redux/actions/assignmentActions';
+import { fetchTopics } from '../redux/actions/topicActions';
+import { fetchTeamTree } from '../redux/actions/teamActions';
+import { fetchCurrentUser } from '../redux/actions/userActions';
 
 
 
@@ -83,17 +90,63 @@ class Calendar extends Component {
         super(props);
         this.state = {
             currentMonth: new Date(),
-            learningDays: [
-                { date: new Date('2020-05-25'), topic: 'topic1', createdBy: "Me" },
-                { date: new Date('2020-05-05'), topic: 'subtopic1', createdBy: "Employee1" },
-                { date: new Date('2020-05-05'), topic: 'topic2', createdBy: "Me" },
-                { date: new Date('2020-05-20'), topic: 'subtopic1', createdBy: "Employee2" },
-                { date: new Date('2020-05-20'), topic: 'topic2', createdBy: "Me" },
-                { date: new Date('2020-05-20'), topic: 'topic1', createdBy: "Me" }
-            ],
+            learningDays: [],
             openShowAllLearningTopics: false,
             showAllLearningTopicsDate: null
         }
+    }
+
+    componentDidMount() {
+        this.props.fetchAssignments(this.props.token.accessToken)
+            .then(() => {
+                this.setState({learningDays: this.formatAssignmentsAsDays(this.props.assignments)});
+            });
+        
+        this.props.fetchSubordinateAssignments(this.props.token.accessToken)
+            .then(() => {
+                let learningDays = this.state.learningDays;
+                const teamLearningDays = this.formatAssignmentsAsDays(this.props.teamAssignments);
+                learningDays = learningDays.concat(teamLearningDays);
+                this.setState({learningDays: learningDays});
+            });
+        this.props.fetchTopics(this.props.token.accessToken);
+        this.props.fetchTeamTree(this.props.token.accessToken);
+        this.props.fetchCurrentUser(this.props.token.accessToken);
+    }
+
+    formatAssignmentsAsDays(assignments){
+        let learningDays = [];
+
+        assignments.forEach(assignment => {
+            let learningDay = { 
+                id: assignment.AsgnId, 
+                date: new Date(assignment.Date), 
+                topic: assignment.TopicId, 
+                createdBy: assignment.UserId, 
+                comment: assignment.Comments
+            };
+            learningDays.push(learningDay)
+        })
+
+        return learningDays;
+    }
+
+    findUserInTree(teams, userId){
+        if(teams.This.UserId == userId){
+            return teams.This;
+        }
+
+        var child = null;
+        if(teams.Children != null){
+            for(let _child of teams.Children){
+                child = this.findUserInTree(_child, userId);
+                if(child != null){
+                    break;
+                }
+            }
+        }
+
+        return child;
     }
 
     handleOpenDialog = (day) => {
@@ -115,8 +168,11 @@ class Calendar extends Component {
             currentMonth: subMonths(this.state.currentMonth, 1)
         });
     };
-
+    
     render() {
+        if(this.props.topics.length == 0 || this.props.teamTree.items.length == 0 || this.props.assignments.length == 0 || this.props.teamAssignments.length == 0){
+            return <CircularProgress></CircularProgress>
+        }
         const { classes } = this.props;
         const weekdays = [{ id: 1, day: "Sun" }, { id: 2, day: "Mon" }, { id: 3, day: "Tue" }, { id: 4, day: "Wed" }, { id: 5, day: "Thu" }, { id: 6, day: "Fri" }, { id: 7, day: "Sat" }];
         const dateFormat = "MMMM yyyy";
@@ -166,20 +222,27 @@ class Calendar extends Component {
                 if (learningDayList.length > 0) {
 
                     learningDayList.forEach(learningDay => {
-                        if (learningDay.createdBy == "Me" && this.props.showPersonalCalender) {
+                        const topic = this.props.topics.find((topic) => topic.TopicId == learningDay.topic);
+                        const user = this.findUserInTree(this.props.teamTree.items, learningDay.createdBy);
+                        if (learningDay.createdBy == this.props.currentUser.UserId && this.props.showPersonalCalender) {
                             learningDayInfo.push(<LearningDayInfoPopover
-                                topic={learningDay.topic}
+                                topic={topic != null ? topic : null}
                                 width="120px"
                                 date={format(learningDay.date, "MM/dd/yyyy")}
                                 color={green[500]}
+                                comment={learningDay.comment}
+                                assignment={learningDay.id}
                             />)
                         }
-                        if (learningDay.createdBy != "Me" && this.props.showTeamCalender) {
+                        if (learningDay.createdBy != this.props.currentUser.UserId && this.props.showTeamCalender) {
                             learningDayInfo.push(<LearningDayInfoPopover
-                                topic={learningDay.topic}
+                                topic={topic != null ? topic : null}
+                                user={user.FirstName + ' ' + user.LastName}
                                 width="120px"
                                 date={format(learningDay.date, "MM/dd/yyyy")}
                                 color={blue[500]}
+                                comment={learningDay.comment}
+                                assignment={learningDay.id}
                             />)
 
                         }
@@ -193,9 +256,7 @@ class Calendar extends Component {
             }
             weeks.push(days)
             days = [];
-            days = []
         }
-
         return (
             <Paper>
                 <Grid
@@ -260,4 +321,21 @@ class Calendar extends Component {
     }
 }
 
-export default withStyles(styles)(Calendar);
+Calendar.propTypes = {
+    fetchAssignments: PropTypes.func.isRequired,
+    fetchTopics: PropTypes.func.isRequired,
+    fetchTeamTree: PropTypes.func.isRequired,
+    fetchCurrentUser: PropTypes.func.isRequired,
+    fetchSubordinateAssignments: PropTypes.func.isRequired
+}
+
+const mapStateToProps = state => ({
+    assignments: state.assignments.items,
+    teamAssignments: state.assignments.teamAssignments,
+    token: state.login.token,
+    topics: state.topics.topics,
+    teamTree: state.teamTree,
+    currentUser: state.users.user,
+});
+
+export default connect(mapStateToProps, { fetchAssignments, fetchTopics, fetchTeamTree, fetchCurrentUser, fetchSubordinateAssignments })(withStyles(styles)(Calendar));

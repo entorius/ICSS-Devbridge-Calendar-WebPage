@@ -13,10 +13,15 @@ import InputLabel from '@material-ui/core/InputLabel';
 import MenuItem from '@material-ui/core/MenuItem';
 import Select from '@material-ui/core/Select';
 import DateFnsUtils from '@date-io/date-fns';
+import Typography from '@material-ui/core/Typography';
+import AddLearningDayTopicsDialog from "./AddLearningDayTopicsDialog";
+import PropTypes from 'prop-types';
+import { updateAssignment } from "../redux/actions/assignmentActions"
 import {
     MuiPickersUtilsProvider,
     KeyboardDatePicker,
 } from '@material-ui/pickers';
+import { connect } from 'react-redux';
 
 const styles = theme => ({
     root: {
@@ -54,11 +59,11 @@ class EditLearningDayDialog extends Component {
     constructor(props) {
         super(props);
         this.state = {
-            date: new Date(),
-            topic: "",
-            comment: "",
-            links: "",
-            topics: ["topic1", "subtopic1", "subtopic2", "topic2", "subsubtopic1"]
+            date: this.props.date,
+            topic: { id: this.props.selectedTopic.TopicId, name: this.props.selectedTopic.Name},
+            comment: this.props.comment,
+            openAddLearningDayTopicsDialog: false,
+            links: ""
         }
     }
 
@@ -74,6 +79,27 @@ class EditLearningDayDialog extends Component {
             this.setState({ [name]: event });
         }
     };
+
+    handleOpenTopicsDialog = () => {
+        this.setState({ openAddLearningDayTopicsDialog: true });
+    }
+
+
+    handleCloseTopicsDialog = () => {
+        this.setState({ openAddLearningDayTopicsDialog: false })
+    };
+
+    updateTopics = (selectedTopic) => {
+        console.log(selectedTopic)
+        this.setState({ topic: selectedTopic })
+    };
+
+    updateAssignment() {
+        const updateData = {id: this.props.assignment, topicId: this.state.topic.id, comments: this.state.comment, date: this.state.date};
+        this.props.updateAssignment(this.props.token.accessToken, updateData);
+        this.setState({topic: null});
+        this.props.onClose();
+    }
 
     render() {
         const { classes } = this.props;
@@ -98,7 +124,7 @@ class EditLearningDayDialog extends Component {
                             justify="flex-start"
                             alignItems="center">
                             <BookIcon className={classes.bookIcon} />
-                            Add new learning day
+                            Edit a learning day
                         </Grid>
                     </DialogTitle>
 
@@ -124,25 +150,22 @@ class EditLearningDayDialog extends Component {
                                     inputProps={{ style: { fontSize: 15 } }}
                                     fullWidth
                             />
-                            <FormControl
-                                fullWidth>
-                                <InputLabel id="topics-select" shrink="true">Topic</InputLabel>
-                                <Select
-                                    labelId="topics-select"
-                                    value={this.state.topic}
-                                    onChange={this.handleFormChange('topic')}
-                                    fullWidth
-                                >
-                                <MenuItem aria-label="None" value="" />
-                                {
-                                    this.state.topics.map(t => {
-                                        return (
-                                            <MenuItem value={t}>{t}</MenuItem>
-                                        )
-                                    })
-                                }
-                                </Select>
-                            </FormControl>
+                            <Typography variant="h5" style={{marginBottom: 10}}>{this.state.topic == undefined ? "" : "Topic selected: " + this.state.topic.name}</Typography>
+                                <Button
+                                    onClick={this.handleOpenTopicsDialog}
+                                    variant="contained"
+                                    className={[classes.button, classes.buttonWhiteColorText].join(' ')}
+                                    color="primary"
+                                    style={{marginBottom: 20}}
+                                    >
+                                    Choose topic
+                                </Button>
+                                <AddLearningDayTopicsDialog
+                                    updateTopics={this.updateTopics}
+                                    open={this.state.openAddLearningDayTopicsDialog}
+                                    onClose={this.handleCloseTopicsDialog}
+                                    selectedTopic={this.state.topic} 
+                                    topics={this.props.topics} />
                                 <TextField
                                     id="learning-day-comment"
                                     label="Comments"
@@ -187,8 +210,9 @@ class EditLearningDayDialog extends Component {
                                     Cancel
                                </Button>
                                 <Button
-                                    onClick={this.props.onClose}
+                                    onClick={() => {this.updateAssignment()}}
                                     variant="contained"
+                                    disabled={this.state.topic == null ? true : false}
                                     className={[classes.button, classes.buttonWhiteColorText].join(' ')}
                                     color="secondary">
                                     Save
@@ -202,4 +226,13 @@ class EditLearningDayDialog extends Component {
 
 }
 
-export default withStyles(styles)(EditLearningDayDialog);
+EditLearningDayDialog.propTypes = {
+    updateAssignment: PropTypes.func.isRequired
+}
+
+const mapStateToProps = state => ({
+    topics: state.topics.topics,
+    token: state.login.token
+});
+
+export default connect(mapStateToProps, {updateAssignment})(withStyles(styles)(EditLearningDayDialog));
