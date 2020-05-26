@@ -4,7 +4,10 @@ import { withStyles } from '@material-ui/core/styles';
 import styles from "../../../Content/LearningTree.less";
 //Redux
 import { connect } from 'react-redux';
-import { generateLearningTree, setSelectedLearningTreeUsers } from '../redux/actions/learningTreeActions';
+import {
+    generateLearningTree, setSelectedLearningTreeUsers, fetchUserLearnedTopics, fetchTeamLearnedTopics,
+    fetchDescendantManagers
+} from '../redux/actions/learningTreeActions';
 import PropTypes from 'prop-types';
 //Material UI components
 import Avatar from '@material-ui/core/Avatar';
@@ -50,8 +53,8 @@ function myCustomLabelBuilder(node) {
     return label;
 }
 function generateX(node) {
-    console.log("something")
-    console.log(node)
+    //console.log("something")
+    //console.log(node)
     return node.y
 }
 const currentUserData = {
@@ -135,17 +138,16 @@ class TopicLearnedMembersDialog extends React.Component {
         this.handleChange = this.handleChange.bind(this);
         
     }
-    
     handleChange(evt) {
         // check it out: we get the evt.target.name 
         // and use it to target the key on our `state` object with the same name, using bracket syntax
         this.setState({ [evt.target.name]: evt.target.value });
     }
     componentDidUpdate(prevProps) {
-        console.log("props");
-        console.log(this.props);
-        console.log("prevProps");
-        console.log(prevProps);
+        //console.log("props");
+        //console.log(this.props);
+        //console.log("prevProps");
+        //console.log(prevProps);
         //if props for this class updated open dialog
         if (this.props.open !== prevProps.open) {
 
@@ -230,10 +232,10 @@ class TeamSelectDialog extends React.Component {
         this.setState({ [evt.target.name]: evt.target.value });
     }
     componentDidUpdate(prevProps) {
-        console.log("props");
-        console.log(this.props);
-        console.log("prevProps");
-        console.log(prevProps);
+        //console.log("props");
+        //console.log(this.props);
+        //console.log("prevProps");
+        //console.log(prevProps);
         //if props for this class updated open dialog
         if (this.props.open !== prevProps.open) {
 
@@ -318,7 +320,12 @@ class LearningTree extends React.Component {
 
         };
     }
-    componentDidMount() {
+    async componentDidMount() {
+        //this.props.fetchUserLearnedTopics();
+        //this.props.fetchTeamLearnedTopics();
+        await this.props.fetchDescendantManagers(this.props.token.accessToken).then(() => {
+            console.log(this.props.learningTree);
+        });
         this.props.generateLearningTree(data, currentUserData);
     }
     resetMemberDialogState() {
@@ -328,24 +335,24 @@ class LearningTree extends React.Component {
     onClickNode = nodeId => {
         this.setState({ openMembersDialog: false }, () => {
             var localLearnedUsers = [];
-            console.log("nodeId: ");
-            console.log(nodeId);
+            //console.log("nodeId: ");
+            //console.log(nodeId);
             if (this.state.radioButtonSelectedGeneratingOption == "team") {
                 usersData.users.map(user =>
                     user.learnedTopics.map((top) => {
                         top.topicId == nodeId ? localLearnedUsers.push(user) : "nothing";
                     }));
-                console.log(localLearnedUsers);
+                //console.log(localLearnedUsers);
             }
             else if (this.state.radioButtonSelectedGeneratingOption == "self") {
                 currentUserData.users.map(user =>
                     user.learnedTopics.map((top) => {
                         top.topicId == nodeId ? localLearnedUsers.push(user) : "nothing";
                     }));
-                console.log(localLearnedUsers);
+                //console.log(localLearnedUsers);
             }
             this.props.setSelectedLearningTreeUsers(localLearnedUsers);
-            console.log(this.props);
+            //console.log(this.props);
             this.setState({
                 selectedNode: nodeId,
                 openMembersDialog: true
@@ -354,11 +361,11 @@ class LearningTree extends React.Component {
         
         
        
-        console.log("ending onClickNode state")
+        //console.log("ending onClickNode state")
     };
     handleChange = evt => {
-        console.log("evt changing");
-        console.log(evt);
+        //console.log("evt changing");
+        //console.log(evt);
         // check it out: we get the evt.target.name (which will be either "email" or "password")
         // and use it to target the key on our `state` object with the same name, using bracket syntax
         this.setState({ radioButtonSelectedGeneratingOption: evt.target.value }, () => {
@@ -375,7 +382,7 @@ class LearningTree extends React.Component {
             this.setState({ openTeamDialog: true })
         });
         
-        console.log('onClick');
+        //console.log('onClick');
     }
     
     render() {
@@ -473,8 +480,10 @@ LearningTree.propTypes = {
 
 const mapStateToProps = state => ({
     learningTree: state.learningTree,
-    token: state.login,
+    token: state.login.token,
     learningTreeSelectedUsers: state.learningTreeSelectedUsers
 })
 
-export default connect(mapStateToProps, { generateLearningTree, setSelectedLearningTreeUsers})(LearningTree);
+export default connect(mapStateToProps, {
+    generateLearningTree, setSelectedLearningTreeUsers, fetchUserLearnedTopics, fetchTeamLearnedTopics, fetchDescendantManagers
+})(LearningTree);

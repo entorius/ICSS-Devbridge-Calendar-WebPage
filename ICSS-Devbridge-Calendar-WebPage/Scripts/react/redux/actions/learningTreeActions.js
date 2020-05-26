@@ -1,21 +1,75 @@
-﻿import { LEARNING_TREE, LEARNING_SELECTED_USERS } from "./types";
+﻿import {
+    LEARNING_TREE, LEARNING_SELECTED_USERS, FETCH_USER_LEARNED_TOPICS, FETCH_TEAM_LEARNED_TOPICS,
+    FETCH_DESCENDANT_MANAGERS
+} from "./types";
 import { baseApiUrl } from "../config";
 import axios from "axios";
 
+export const fetchUserLearnedTopics = (accessToken, userId) => dispatch => {
+    const config = {
+        headers: { Authorization: `Bearer ${accessToken}` }
+    }
+
+    return axios.get(baseApiUrl + `/api/topics/learnt/${userId}`, config)
+        .then(response => {
+            console.log("response");
+            console.log(response);
+            const teamTree = response.data;
+            dispatch({
+                type: FETCH_USER_LEARNED_TOPICS,
+                payload: teamTree
+            })
+        });
+}
+export const fetchTeamLearnedTopics = (accessToken, managerId) => dispatch => {
+    const config = {
+        headers: { Authorization: `Bearer ${accessToken}` }
+    }
+
+    return axios.get(baseApiUrl + `/api/topics/teamLearnt/${managerId}`, config)
+        .then(response => {
+            console.log("response");
+            console.log(response);
+            const teamTree = response.data;
+            dispatch({
+                type: FETCH_TEAM_LEARNED_TOPICS,
+                payload: teamTree
+            })
+        });
+}
+export const fetchDescendantManagers = (accessToken) => dispatch => {
+    const config = {
+        headers: { Authorization: `Bearer ${accessToken}` }
+    }
+
+    return axios.get(baseApiUrl + `/api/users/managers`, config)
+        .then(response => {
+            console.log("response");
+            console.log(response);
+            const teamTree = response.data;
+            dispatch({
+                type: FETCH_DESCENDANT_MANAGERS,
+                payload: teamTree
+            })
+        });
+}
+
+
+
 
 export const generateLearningTree = (topicsData, usersData) => dispatch => {
-    console.log("topics data and users data");
-    console.log(topicsData);
-    console.log(usersData);
+    //console.log("topics data and users data");
+    //console.log(topicsData);
+    //console.log(usersData);
 
     var depth = countDepth(topicsData);
     var levelSizes = countLayersSizes(topicsData, depth);
     var maxLayerSize = countMaxLayerSize(levelSizes);
-    console.log("Depth: " + depth);
-    console.log("Levels sizes: ");
-    console.log(levelSizes);
-    console.log("Max level size: ");
-    console.log(maxLayerSize);
+    //console.log("Depth: " + depth);
+    //console.log("Levels sizes: ");
+    //console.log(levelSizes);
+    //console.log("Max level size: ");
+    //console.log(maxLayerSize);
 
     var treeHeight = 500 > depth * 100 ? 500 : depth * 100;
     var treeMiddle = 500 > (maxLayerSize.maxLayerSize * 75) ? 500 : maxLayerSize.maxLayerSize * 75;
@@ -63,8 +117,8 @@ export const setSelectedLearningTreeUsers = (users) => dispatch => {
 }
 
 function createNodeObject(obj, treeHeight, levelSize, usersData) {
-    console.log("********* levelSize *********");
-    console.log(levelSize.thisNodePlace);
+    //console.log("********* levelSize *********");
+    //console.log(levelSize.thisNodePlace);
     var learnedUsers = 0;
     
     usersData.users.map(user =>
@@ -82,7 +136,7 @@ function createNodeObject(obj, treeHeight, levelSize, usersData) {
         topic: obj.topic,
         learnedMembers: learnedUsers,
     }];
-    console.log("after");
+    //console.log("after");
     return node;
 }
 
