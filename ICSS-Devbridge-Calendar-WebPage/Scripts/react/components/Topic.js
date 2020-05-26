@@ -22,11 +22,11 @@ const gridItemStyle = {
 
 class Topic extends React.Component {
     state = {
-        regex: /((?:(?:http|ftp|https):\/\/)*(?:[\w_-]+(?:(?:\.[\w_-]+)+))([\w.,@?^=%&:~+#-]*[\w@?^=%&~+#-])?)/g
+        urlRegex: /((?:(?:http|ftp|https):\/\/)*(?:[\w_-]+(?:(?:\.[\w_-]+)+))([\w.,@?^=%&:~+#-]*[\w@?^=%&~+#-])?)/g
     };
 
     convertLinksInText(text) {
-        let parts = text.split(new RegExp(this.state.regex));
+        let parts = text.split(new RegExp(this.state.urlRegex));
         for (let i = 1; i < parts.length; i += 3) {
             if (!(parts[i].includes("http://") || parts[i].includes("https://") || parts[i].includes("ftp://")))
                 parts[i] = "http://" + parts[i];
@@ -45,8 +45,11 @@ class Topic extends React.Component {
                 <ColoredLine color="white" />
                 <p>{this.convertLinksInText(this.props.topic.description)}</p>
                 <ColoredLine color="white" />
-                <Button onClick={() => this.props.onLoadSubtopics(this.props.topic.id)}>
+                <Button onClick={() => this.props.onLoadSubtopics(this.props.topic)}>
                     Open subtopics
+                </Button>
+                <Button onClick={() => this.props.onEditTopic(this.props.topic)}>
+                    Edit {this.props.topic.name} topic
                 </Button>
             </Grid>
         );
