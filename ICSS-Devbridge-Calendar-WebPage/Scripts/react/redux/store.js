@@ -28,4 +28,15 @@ else {
 }
 const store = storeChoice;
 
+function setAuthState(state) {
+    try {
+        localStorage.setItem('token', JSON.stringify((state.login.token || {}).accessToken));
+        localStorage.setItem('expirationTime', JSON.stringify((state.login.token || {}).expirationTime));
+    } catch (err) { return undefined; }
+}
+  
+store.subscribe(() => {
+    setAuthState(store.getState())
+});
+
 export default store;

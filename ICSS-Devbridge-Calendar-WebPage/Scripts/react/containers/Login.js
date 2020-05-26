@@ -1,5 +1,6 @@
 ﻿//Jquery
 import $ from 'jquery';
+import { setExpirationTime, checkIfDelete, Delete} from "../functions/LocalStorageFunctions";
 //React components
 import React, { Component } from 'react';
 import { Link, useHistory } from "react-router-dom";
@@ -152,6 +153,12 @@ class Login extends React.Component {
         this.handleSignInClick = this.handleSignInClick.bind(this);
         this.handleErrorSnackBarClose = this.handleErrorSnackBarClose.bind(this);
         this.handleSuccessSnackBarClose = this.handleSuccessSnackBarClose.bind(this);
+    }
+    componentDidMount() {
+        var isLoggedIn = localStorage.token !== undefined;
+        isLoggedIn ? checkIfDelete() : null;
+        isLoggedIn = localStorage.token !== undefined;
+        isLoggedIn ? this.props.history.push('/Main/Home') : null;
     }
     handleChange(evt) {
         

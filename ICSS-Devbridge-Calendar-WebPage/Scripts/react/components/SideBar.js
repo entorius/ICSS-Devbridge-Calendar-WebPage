@@ -2,6 +2,7 @@
 //Styles providers
 import { withStyles } from '@material-ui/core/styles';
 
+import {Delete } from "../functions/LocalStorageFunctions"
 //Material UI components
 import Button from '@material-ui/core/Button';
 
@@ -81,6 +82,9 @@ class SideBar extends React.Component {
     constructor(props) {
         super(props);
     }
+    onLogoutClick() {
+        Delete();
+    }
     render() {
         const { classes } = this.props;
         return (
@@ -131,7 +135,7 @@ class SideBar extends React.Component {
                             </Button>
                     </Link>
                     <Link to="/" className={classes.link}>
-                        <Button className={classes.linkButton} classes={{ label: classes.linkButtonLabel }}>
+                        <Button className={classes.linkButton} classes={{ label: classes.linkButtonLabel }} onClick={this.onLogoutClick}>
                             <ExitToAppIcon className={classes.linkButtonPicture} />
                             LOGOUT
                             </Button>

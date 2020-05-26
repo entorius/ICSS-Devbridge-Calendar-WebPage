@@ -10,7 +10,7 @@ import EditLearningDayDialog from "./EditLearningDayDialog";
 
 const styles = theme => ({
     card: {
-        height: "25px",
+        height: "50px",
         marginBottom: "5px",
         textAlign: 'left',
         justifyContent: "center",
@@ -24,6 +24,7 @@ class LearningDayInfoPopover extends Component {
         this.state = {
             topic: this.props.topic,
             date: this.props.date,
+            user: this.props.user,
             openEditLearningDayDialog: false
         };
     }
@@ -45,8 +46,11 @@ class LearningDayInfoPopover extends Component {
                     <Card className={classes.card}
                         style={{ backgroundColor: this.props.color, width: this.props.width}}>
                         <CardActionArea className={classes.action}  {...bindTrigger(popupState)}>
-                            <Typography component="h5" variant="h5">
-                                {this.state.topic}
+                            <Typography component="h5" variant="h5" style={{ whiteSpace: 'nowrap' }}>
+                                {this.state.topic.Name}
+                            </Typography>
+                            <Typography component="h5" variant="h5" style={{ whiteSpace: 'nowrap' }}>
+                                {this.state.user}
                             </Typography>
                         </CardActionArea>
                     </Card>
@@ -75,7 +79,10 @@ class LearningDayInfoPopover extends Component {
                                 alignItems="flex-start"
                                 style={{ margin: "5px" }}>
                                 <Typography component="h5" variant="h5">
-                                    {this.state.topic}
+                                    {this.state.topic.Name}
+                                </Typography>
+                                <Typography component="h5" variant="h5">
+                                    {this.state.user}
                                 </Typography>
                                 <Typography component="h5" variant="h5">
                                     {this.state.date}
@@ -91,7 +98,12 @@ class LearningDayInfoPopover extends Component {
                     </Popover>
                     <EditLearningDayDialog
                         open={this.state.openEditLearningDayDialog}
-                        onClose={this.handleCloseDialog} />
+                        onClose={this.handleCloseDialog} 
+                        selectedTopic={this.state.topic}
+                        date={this.state.date}
+                        comment={this.props.comment}
+                        assignment={this.props.assignment}
+                        />
                 </React.Fragment>
             )}
         </PopupState>

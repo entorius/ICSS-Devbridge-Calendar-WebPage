@@ -49,6 +49,7 @@ import * as Yup from 'yup';
 
 //Dialogs
 import TopicsByTeamDialog from '../components/TopicsByTeamDialog';
+import { checkIfRedirectToLoginPage } from '../functions/LocalStorageFunctions';
 
 class ChangeRestrictionForTeamMemberDialog extends React.Component {
     constructor(props) {
@@ -115,9 +116,9 @@ class ChangeRestrictionForTeamMemberDialog extends React.Component {
         }
 
         var children = [];
-        if (teams.children != null) {
-            for (let child of teams.Children) {
-                if (Array.isArray(child.Children)) {
+        if(teams.Children != null){
+            for(let child of teams.Children){
+                if(Array.isArray(child.Children)){
                     children = this.getTeam(child, teamId);
                     if (children.length > 0) {
                         break;
@@ -846,6 +847,8 @@ class Team extends React.Component {
         }
 
         this.setState({ teamMemberTreeContent: this.renderTree(this.props.teamTree.items, this.props.teamTree.items.$id) });
+
+        checkIfRedirectToLoginPage(this.props);
     }
 
     handleChange(evt) {
