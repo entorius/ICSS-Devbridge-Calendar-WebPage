@@ -143,6 +143,7 @@
     <Content Include="Scripts\bootstrap.min.js" />
     <Content Include="Content\Team.less" />
     <Content Include="Content\LearningTree.less" />
+    <Content Include="Content\Topics.less" />
     <None Include="Scripts\jquery-3.4.1.intellisense.js" />
     <Content Include="Scripts\jquery-3.4.1.js" />
     <Content Include="Scripts\jquery-3.4.1.min.js" />
