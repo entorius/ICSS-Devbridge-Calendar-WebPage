@@ -1,5 +1,5 @@
 ﻿import { LOGIN } from './types';
-import { connectionString } from '../connectionStrings';
+import { baseApiUrl } from '../config';
 import axios from 'axios';
 
 
@@ -17,7 +17,7 @@ export const getToken = (userData) =>  {
         });
         try {
             let postResponse = null;
-            await axios.post(connectionString + `/token`, data)
+            await axios.post(baseApiUrl + `/token`, data)
                 .then(response => {
                 postResponse = response;
             }).catch(error => {

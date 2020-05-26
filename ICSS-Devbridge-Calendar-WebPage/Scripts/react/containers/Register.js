@@ -18,16 +18,27 @@ import Checkbox from '@material-ui/core/Checkbox';
 import Button from '@material-ui/core/Button';
 import TextField from '@material-ui/core/TextField';
 
+import Snackbar from '@material-ui/core/Snackbar';
+import MuiAlert from '@material-ui/lab/Alert';
+
 //Colors
 import { green, purple } from '@material-ui/core/colors';
 
 //Icons
 import AccountCircle from '@material-ui/icons/AccountCircle';
 import LockIcon from '@material-ui/icons/Lock';
+import PersonIcon from '@material-ui/icons/Person';
+import AssignmentIndIcon from '@material-ui/icons/AssignmentInd';
+
+function Alert(props) {
+    return <MuiAlert elevation={6} variant="filled" {...props} />;
+}
 
 //Styles(Css)
 const styles = theme => ({
     background_Image: {
+        display: "flex",
+        flexWrap: "wrap",
         backgroundImage: "linear-gradient( rgba(51, 51, 51, 0.45), rgba(51, 51, 51, 0.45) ), url('../../../Assets/conference.jpg')",
         backgroundSize: 'cover',
         backgroundPosition: 'center',
@@ -35,6 +46,11 @@ const styles = theme => ({
         height: '100%',
         padding: '35px',
         minHeight: '700px'
+    },
+    allHeader: {
+        display: 'flex',
+        width: '100%',
+        flexWrap: 'wrap'
     },
     logo: {
         backgroundImage: "url('../../../Assets/devbridgeLogo.png')",
@@ -44,6 +60,9 @@ const styles = theme => ({
         backgroundRepeat: 'no-repeat'
     },
     header: {
+        marginLeft: "-35px",
+        width: "100%",
+        position: "absolute",
         fontSize: '45px',
         color: '#FF004D',
         textAlign: 'center',
@@ -51,7 +70,7 @@ const styles = theme => ({
     },
     loginBox: {
         backgroundColor: '#ffffff',
-        height: '400px',
+        height: '630px',
         width: '450px',
         marginLeft: 'auto',
         marginRight: 'auto',
@@ -143,14 +162,22 @@ class RegisterWithPassword extends React.Component {
         super(props);
         {/*TODO: state parameters for login: email and password*/ }
         this.state = {
+            name: "",
+            surname: "",
+            role: "",
             password: "",
             repeatPassword: "",
             checkedRememberMe: true,
-            registered: false
+            registered: false,
+            openErrorSnackbar: false,
+            openSuccessSnackbar: false,
+            errorMessage: ""
         };
         console.log(props);
         this.handleChange = this.handleChange.bind(this);
         this.handleCheckboxChange = this.handleCheckboxChange.bind(this);
+        this.handleErrorSnackBarClose = this.handleErrorSnackBarClose.bind(this);
+        this.handleSuccessSnackBarClose = this.handleSuccessSnackBarClose.bind(this);
     }
     handleChange(evt) {
 
@@ -163,13 +190,26 @@ class RegisterWithPassword extends React.Component {
 
         this.setState({ checkedRememberMe: event.target.checked });
     }
+    handleErrorSnackBarClose = (evt) => {
+        this.setState({ openErrorSnackbar: false });
+    }
+    handleSuccessSnackBarClose = (evt) => {
+        this.setState({ openSuccessSnackbar: false });
+    }
+
+
+
+    handleRegisterButtonClick = (evt) => {
+        this.setState({ openSuccessSnackbar: true });
+        this.props.history.push('/Main/Home')
+    }
     render() {
         const { classes } = this.props;
         return (
             <div className={classes.registerElements}>
                 <div className={classes.loginBoxLabel}>
                     Create account
-                                </div>
+                </div>
                 <div className={classes.formControl}>
                     <Grid container spacing={1} alignItems="flex-end">
                         <Grid item>
@@ -235,23 +275,29 @@ class RegisterWithPassword extends React.Component {
                     className={classes.checkBoxRememberMe}
                 />
                 <ThemeProvider theme={theme}>
-                    <Link to="/Main/Home">
                         {/* TODO: add action to register User (add password to database)*/}
-                        <Button variant="contained" color="primary" className={classes.registerButton}>
+                    <Button variant="contained" color="primary" className={classes.registerButton} onClick={this.handleRegisterButtonClick}>
 
                             Register
-                                        </Button>
-                    </Link>
+                       </Button>
                 </ThemeProvider>
                 <ThemeProvider theme={theme}>
                     <Link to="/">
-                       
                         <div className={classes.loginLink}>
-
                             go to Login
-                                        </div>
+                        </div>
                     </Link>
                 </ThemeProvider>
+                <Snackbar open={this.state.openSuccessSnackbar} autoHideDuration={6000} name="openSuccessSnackbar" onClose={this.handleSuccessSnackBarClose} >
+                    <Alert onClose={this.handleSuccessSnackBarClose} name="openSuccessSnackbar" severity="success">
+                        You have succesfully registered!
+                    </Alert>
+                </Snackbar>
+                <Snackbar open={this.state.openErrorSnackbar} autoHideDuration={6000} name="openErrorSnackbar" onClose={this.handleErrorSnackBarClose}>
+                    <Alert onClose={this.handleErrorSnackBarClose} name="openErrorSnackbar" severity="error">
+                        {this.state.errorMessage}
+                    </Alert>
+                </Snackbar>
             </div>
         );
     }
@@ -308,11 +354,13 @@ class Register extends React.Component {
             password: "",
             repeatPassword:"",
             checkedRememberMe: true,
-            registered: true
+            registered: true,
+            
         };
         this.handleChange = this.handleChange.bind(this);
         this.handleCheckboxChange = this.handleCheckboxChange.bind(this);
     }
+    
     handleChange(evt) {
 
         // check it out: we get the evt.target.name (which will be either "email" or "password")
@@ -329,8 +377,10 @@ class Register extends React.Component {
 
         return (
             <div className={classes.background_Image}>
-                <div className={classes.logo} />
-                <div className={classes.header}>LEARNING CALENDAR</div>
+                <div className={classes.allHeader}>
+                    <div className={classes.logo} />
+                    <div className={classes.header}>LEARNING CALENDAR</div>
+                </div>
                 <React.Fragment>
                     <CssBaseline />
                     <Container fixed>
@@ -340,6 +390,7 @@ class Register extends React.Component {
                         </Typography>
                     </Container>
                 </React.Fragment>
+                
             </div>
         );
     }

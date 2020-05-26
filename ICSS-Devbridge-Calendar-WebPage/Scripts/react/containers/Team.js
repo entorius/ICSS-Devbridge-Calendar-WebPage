@@ -5,8 +5,7 @@ import classes from "../../../Content/Team.less";
 
 //Redux
 import { connect } from 'react-redux';
-import { fetchMyTeamTree } from '../redux/actions/teamActions';
-import { fetchAssignments } from '../redux/actions/assignmentActions';
+import { fetchTeamTree, changeRestrictionsForUser, changeRestrictionsForTeam, changeGlobalRestrictions, addTeamMember, reassignTeamMember } from '../redux/actions/teamActions';
 import PropTypes from 'prop-types';
 
 
@@ -26,6 +25,13 @@ import Avatar from '@material-ui/core/Avatar';
 import Select from '@material-ui/core/Select';
 import MenuItem from '@material-ui/core/MenuItem';
 import Input from '@material-ui/core/Input';
+import { indigo } from '@material-ui/core/colors';
+import LinkMUI from '@material-ui/core/Link';
+import Paper from '@material-ui/core/Paper';
+import Grid from '@material-ui/core/Grid';
+import FormControl from '@material-ui/core/FormControl';
+import FormHelperText from '@material-ui/core/FormHelperText';
+
 
 //Icons
 import ExpandMoreIcon from '@material-ui/icons/ExpandMore';
@@ -35,76 +41,124 @@ import AddIcon from '@material-ui/icons/Add';
 import CloseIcon from '@material-ui/icons/Close';
 import CompareArrowsIcon from '@material-ui/icons/CompareArrows';
 import PersonIcon from '@material-ui/icons/Person';
-{/* TODO: example how you could return teams*/ }
+import AssignmentIndIcon from '@material-ui/icons/AssignmentInd';
+import EmailIcon from '@material-ui/icons/Email';
 
+import { Formik } from 'formik';
+import * as Yup from 'yup';
 
+//Dialogs
+import TopicsByTeamDialog from '../components/TopicsByTeamDialog';
 
 class ChangeRestrictionForTeamMemberDialog extends React.Component {
     constructor(props) {
         super(props);
-        console.log(props);
-        {/* TODO: state for changing member restrictions. Anywhere else to get state write this.state.<parameter> where parameter in this case 
-         can be email , name*/ }
         this.state = {
             open: props.open,
             justOpened: false,
             email: "some@gmail.com",
             name: "",
-            restrictionConsecutiveDays: 0,
-            restrictionDaysPerWeek: 0,
-            restrictionDaysPerMonth: 0,
-            restrictionDaysPerYear: 0
-
+            restrictionConsecutiveDays: null,
+            restrictionDaysPerWeek: null,
+            restrictionDaysPerMonth: null,
+            restrictionDaysPerYear: null,
+            users: [],
+            selectedUser: {},
+            teamTopicsManagerName: 0
         }
         this.handleChange = this.handleChange.bind(this);
+        this.handleSelectChange = this.handleSelectChange.bind(this);
+        this.handleClose = this.handleClose.bind(this);
+        this.handleListItemClick = this.handleListItemClick.bind(this);
     }
+
     handleChange(evt) {
         // check it out: we get the evt.target.name 
         // and use it to target the key on our `state` object with the same name, using bracket syntax
         this.setState({ [evt.target.name]: evt.target.value });
     }
+
+    handleSelectChange(evt) {
+        console.log('handleSelectChange');
+        const fullName = evt.target.value;
+        const user = this.state.users.find(user => user.FirstName + ' ' + user.LastName == fullName);
+        this.setState({
+            restrictionConsecutiveDays: user.ConsecLimit,
+            restrictionDaysPerMonth: user.MonthlyLimit,
+            restrictionDaysPerYear: user.YearlyLimit,
+            selectedUser: user
+        })
+    }
+
     componentDidUpdate(prevProps) {
-        //console.log(this.props.open + "Amazing");
-        //console.log(prevProps.open + "Amazing");
-        // Typical usage (don't forget to compare props):
         if (this.props.open !== prevProps.open) {
-           
             this.setState({ open: true });
+
+            const teamMembers = this.getTeam(this.props.teams, this.props.teamId);
+            this.setState({ users: teamMembers.map(member => member.This) });
         }
     }
+
+    handleClose() {
+        this.setState({
+            open: false,
+            restrictionConsecutiveDays: null,
+            restrictionDaysPerWeek: null,
+            restrictionDaysPerMonth: null,
+            restrictionDaysPerYear: null
+        });
+    }
+
+    getTeam(teams, teamId) {
+        if (teams.$id == teamId) {
+            return teams.Children;
+        }
+
+        var children = [];
+        if (teams.children != null) {
+            for (let child of teams.Children) {
+                if (Array.isArray(child.Children)) {
+                    children = this.getTeam(child, teamId);
+                    if (children.length > 0) {
+                        break;
+                    }
+                }
+            }
+        }
+
+        return children;
+    }
+
+    handleListItemClick() {
+        this.setState({ open: false });
+
+        const userData = {
+            id: this.state.selectedUser.UserId,
+            consecLimit: this.state.restrictionConsecutiveDays,
+            monthlyLimit: this.state.restrictionDaysPerMonth,
+            yearlyLimit: this.state.restrictionDaysPerYear
+        }
+
+        this.props.patchFunc(this.props.token.accessToken, userData)
+            .then(() => {
+                this.props.updateTreeFunc(this.props.token.accessToken);
+            });
+    };
+
+    closeDialog() {
+        this.setState({ open: false });
+    }
+
     render() {
-        const names = [
-            'Oliver Hansen',
-            'Van Henry',
-            'April Tucker',
-            'Ralph Hubbard',
-            'Omar Alexander',
-            'Carlos Abbott',
-            'Miriam Wagner',
-            'Bradley Wilkerson',
-            'Virginia Andrews',
-            'Kelly Snyder',
-        ];
-        
-        const handleClose = () => {
-            this.setState({ open: false });
-            //console.log(this.state.open + "NotAmazing");
-        };
-
-        const handleListItemClick = (value) => {
-            this.setState({ open: false })
-            //console.log(this.state.open + "NotAmazing");
-        };
-
         return (
-            <Dialog onClose={handleClose} aria-labelledby="simple-dialog-title" open={this.state.open}>
+            <Dialog onClose={this.handleClose} aria-labelledby="simple-dialog-title" open={this.state.open}>
                 <DialogTitle
                     id="change-restriction-dialog-title"
                     disableTypography
-                    classes={{ root: classes.changeRestrictionTitle}}>
+                    classes={{ root: classes.changeRestrictionTitle }}>
                     Team member restriction
                     <CreateIcon className={classes.popUpButtonPicture} />
-                    </DialogTitle>
+                </DialogTitle>
                 <div className={classes.changeRestrictionBody}>
                     <div className={classes.changeRestrictionTeamMemberSelection}>
                         <div className={classes.changeRestrictionTeamMemberSelectionTitle}>Team member</div>
@@ -115,12 +169,12 @@ class ChangeRestrictionForTeamMemberDialog extends React.Component {
                             className={classes.changeRestrictionSelectTeamMember}
                             name="member"
                             input={<Input />}
-                            onChange={this.handleChange}>
-                        >{names.map((name) => (
-                            <MenuItem key={name} value={name} >
-                                {name}
-                            </MenuItem>
-                        ))}
+                            onChange={this.handleSelectChange}>
+                            >{this.state.users.map(user => (
+                                <MenuItem key={user.FirstName + ' ' + user.LastName} value={user.FirstName + ' ' + user.LastName} >
+                                    {user.FirstName + ' ' + user.LastName}
+                                </MenuItem>
+                            ))}
                         </Select>
                     </div>
                     <div className={classes.changeRestrictionRestrictionsHeader}>Restrictions</div>
@@ -219,14 +273,14 @@ class ChangeRestrictionForTeamMemberDialog extends React.Component {
                     <Button
                         className={classes.cancelButton}
                         classes={{ label: classes.popUpButtonLabel }}
-                        onClick={() => handleListItemClick(this.email)}>
+                        onClick={() => { this.closeDialog() }}>
                         Cancel
                     </Button>
                     {/* TODO: Add action to change selected member restriction*/}
                     <Button
                         className={classes.actionButton}
                         classes={{ label: classes.popUpButtonLabel }}
-                        onClick={() => handleListItemClick(this.email)}>
+                        onClick={this.handleListItemClick}>
                         Change member restrictions
                     </Button>
                 </div>
@@ -234,14 +288,13 @@ class ChangeRestrictionForTeamMemberDialog extends React.Component {
         );
     }
 }
+
 class AddNewTeamMemberDialog extends React.Component {
     constructor(props) {
         super(props);
-        console.log(props);
         {/* TODO: state for adding team member*/ }
         this.state = {
             open: props.open,
-            email: "some@gmail.com"
         }
         this.handleChange = this.handleChange.bind(this);
     }
@@ -257,16 +310,33 @@ class AddNewTeamMemberDialog extends React.Component {
             this.setState({ open: true });
         }
     }
+
+    handleListItemClick(user) {
+
+        var userObject = {
+            email: user.email,
+            name: user.name,
+            surname: user.surname,
+            role: user.role
+        }
+        this.props.addFunc(this.props.token.accessToken, userObject, this.props.currentUser.UserId);
+        this.setState({ open: false })
+    };
+
+    closeDialog = () => {
+        this.setState({ open: false })
+    }
+    onSubmit = (values, { resetForm }) => {
+        resetForm({})
+        console.log(values);
+        this.handleListItemClick(values)
+    }
+
     render() {
-       
+
         //event to handle close (closes dialog)
         const handleClose = () => {
             this.setState({ open: false });
-        };
-
-        //event to handle close (closes dialog)
-        const handleListItemClick = (value) => {
-            this.setState({ open: false })
         };
 
         return (
@@ -282,42 +352,183 @@ class AddNewTeamMemberDialog extends React.Component {
                     <AddIcon className={classes.popUpButtonPicture} />
                 </DialogTitle>
                 <div className={classes.addMemberBody}>
-                   
-                  
-                    <TextField
-                        id="input-email-with-icon"
-                        InputProps={{
-                            classes: {
-                                input: classes.resize,
-                            },
-                        }}
-                        InputLabelProps={{
-                            classes: {
-                                root: classes.resize
-                            }
-                        }}
-                        label="Email"
-                        name="email"
-                        onChange={this.handleChange}
-                        className={classes.addMemberEmail} />
-                       
-                   
-                </div>
-                <div className={classes.addMemberButtons}>
-                    <Button
-                        className={classes.cancelButton}
-                        classes={{ label: classes.popUpButtonLabel }}
-                        onClick={() => handleListItemClick(this.email)}>
-                        Cancel
-                    </Button>
-                    {/* TODO: add action to send invitation to email*/}
-                    <Button
-                        className={classes.actionButton}
-                        classes={{ label: classes.popUpButtonLabel }}
-                        onClick={() => handleListItemClick(this.email)}>
-                        Send invitation
-                    </Button>
-                </div>
+                    <Formik
+                        initialValues={{ name: '', surname: '', email: '', role: '' }}
+                        onSubmit={this.onSubmit}
+                        validationSchema={Yup.object().shape({
+                            name: Yup.string()
+                                .required('This field is required')
+                                .min(1, "Email must contain at least 1 characters"),
+                            surname: Yup.string()
+                                .required('This field is required')
+                                .min(1, "Surname must contain at least 1 characters"),
+                            email: Yup.string()
+                                .required('This field is required')
+                                .email('Invalid email'),
+                            role: Yup.string()
+                                .required('This field is required')
+                                .min(1, "Role must contain at least 1 characters")
+                        })}
+                    >
+                        {({
+                            handleSubmit,
+                            values,
+                            touched,
+                            errors,
+                            handleChange,
+                            handleBlur
+                        }) => (
+                            <form>
+
+                                    <FormControl className={classes.formControl}
+                                        required
+                                        error={touched.email && Boolean(errors.email)}>
+                                        <Grid container spacing={1} alignItems="flex-end">
+                                            <Grid item>
+                                                <EmailIcon className={classes.textBoxIcon} />
+                                            </Grid>
+                                            <Grid item>
+                                                <TextField
+                                                    id="input-email-with-icon"
+                                                    InputProps={{
+                                                        classes: {
+                                                            input: classes.resize,
+                                                        },
+                                                    }}
+                                                    InputLabelProps={{
+                                                        classes: {
+                                                            root: classes.resize
+                                                        }
+                                                        }}
+                                                    value={values.email}
+                                                    label="Email"
+                                                    name="email"
+                                                    onChange={handleChange}
+                                                    onBlur={handleBlur}
+                                                    className={classes.inputTextBox} />
+                                            </Grid>
+                                        </Grid>
+                                        <FormHelperText id="email-error" style={{ fontSize: 12 }}>
+                                            {touched.email ? errors.email : ""}
+                                        </FormHelperText>
+                                    </FormControl>
+
+                                    <FormControl className={classes.formControl}
+                                        required
+                                        error={touched.name && Boolean(errors.name)}>
+                                        <Grid container spacing={1} alignItems="flex-end">
+                                            <Grid item>
+                                                <PersonIcon className={classes.textBoxIcon} />
+                                            </Grid>
+                                            <Grid item>
+                                                <TextField
+                                                    id="input-name-with-icon"
+                                                    InputProps={{
+                                                        classes: {
+                                                            input: classes.resize,
+                                                        },
+                                                    }}
+                                                    InputLabelProps={{
+                                                        classes: {
+                                                            root: classes.resize
+                                                        }
+                                                        }}
+                                                        value={values.name}
+                                                    label="Name"
+                                                    name="name"
+                                                    onChange={handleChange}
+                                                    onBlur={handleBlur}
+                                                    className={classes.inputTextBox} />
+                                            </Grid>
+                                        </Grid>
+                                        <FormHelperText id="name-error" style={{ fontSize: 12 }}>
+                                            {touched.name ? errors.name : ""}
+                                        </FormHelperText>
+                                    </FormControl>
+                                    <FormControl className={classes.formControl}
+                                        required
+                                        error={touched.surname && Boolean(errors.surname)}>
+                                        <Grid container spacing={1} alignItems="flex-end">
+                                            <Grid item>
+                                                <PersonIcon className={classes.textBoxIcon} />
+                                            </Grid>
+                                            <Grid item>
+                                                <TextField
+                                                    id="input-surname-with-icon"
+                                                    InputProps={{
+                                                        classes: {
+                                                            input: classes.resize,
+                                                        },
+                                                    }}
+                                                    InputLabelProps={{
+                                                        classes: {
+                                                            root: classes.resize
+                                                        }
+                                                        }}
+                                                        value={values.surname}
+                                                    label="Surname"
+                                                    name="surname"
+                                                    onChange={handleChange}
+                                                    onBlur={handleBlur}
+                                                    className={classes.inputTextBox} />
+                                            </Grid>
+                                        </Grid>
+                                        <FormHelperText id="surname-error" style={{ fontSize: 12 }}>
+                                            {touched.surname ? errors.surname : ""}
+                                        </FormHelperText>
+                                    </FormControl>
+                                    <FormControl className={classes.formControl}
+                                        required
+                                        error={touched.role && Boolean(errors.role)}>
+                                        <Grid container spacing={1} alignItems="flex-end">
+                                            <Grid item>
+                                                <AssignmentIndIcon className={classes.textBoxIcon} />
+                                            </Grid>
+                                            <Grid item>
+                                                <TextField
+                                                    id="input-role-with-icon"
+                                                    InputProps={{
+                                                        classes: {
+                                                            input: classes.resize,
+                                                        },
+                                                    }}
+                                                    InputLabelProps={{
+                                                        classes: {
+                                                            root: classes.resize
+                                                        }
+                                                        }}
+                                                        value={values.role}
+                                                    label="Role"
+                                                    name="role"
+                                                    onChange={handleChange}
+                                                    onBlur={handleBlur}
+                                                    className={classes.inputTextBox} />
+                                            </Grid>
+                                        </Grid>
+                                        <FormHelperText id="role-error" style={{ fontSize: 12 }}>
+                                            {touched.role ? errors.role : ""}
+                                        </FormHelperText>
+                                    </FormControl>
+                                <div className={classes.addMemberButtons}>
+                                    <Button
+                                        className={classes.cancelButton}
+                                        classes={{ label: classes.popUpButtonLabel }}
+                                        onClick={() => this.closeDialog(this.state.email)}>
+                                        Cancel
+                                    </Button>
+                                    {/* TODO: add action to send invitation to email*/}
+                                    <Button
+                                            className={classes.actionButton}
+                                            classes={{ label: classes.popUpButtonLabel }}
+                                            onClick={handleSubmit/*this.handleListItemClick*/}>
+                                                            Send invitation
+                                    </Button>
+                                </div>
+                            </form>
+                            )
+                        }
+                    </Formik>
+                    </div>
             </Dialog>
         );
     }
@@ -326,7 +537,6 @@ class AddNewTeamMemberDialog extends React.Component {
 class DeleteTeamMemberDialog extends React.Component {
     constructor(props) {
         super(props);
-        console.log(props);
         {/* TODO: parameters for deleting member:   member- member name*/ }
         this.state = {
             open: props.open,
@@ -392,11 +602,11 @@ class DeleteTeamMemberDialog extends React.Component {
                         name="member"
                         input={<Input />}
                         onChange={this.handleChange}>
-                    >{names.map((name) => (
-                        <MenuItem key={name} value={name} >
-                            {name}
-                        </MenuItem>
-                    ))}
+                        >{names.map((name) => (
+                            <MenuItem key={name} value={name} >
+                                {name}
+                            </MenuItem>
+                        ))}
                     </Select>
 
 
@@ -424,14 +634,16 @@ class DeleteTeamMemberDialog extends React.Component {
 class ReassignTeamMemberDialog extends React.Component {
     constructor(props) {
         super(props);
-        console.log(props);
         {/* TODO: state parameters for reassigning team member: member- member name, team- team name*/ }
         this.state = {
             open: props.open,
             member: "",
-            team: ""
+            team: "",
+            teams: [],
+            teamMembers: []
         }
         this.handleChange = this.handleChange.bind(this);
+        this.handleListItemClick = this.handleListItemClick.bind(this);
     }
     handleChange(evt) {
         // check it out: we get the evt.target.name 
@@ -441,42 +653,94 @@ class ReassignTeamMemberDialog extends React.Component {
     componentDidUpdate(prevProps) {
         //if props for this class updated open dialog
         if (this.props.open !== prevProps.open) {
-
             this.setState({ open: true });
+
+            const teamMembers = this.getTeam(this.props.teams, this.props.teamId);
+            this.setState({ teamMembers: teamMembers.map(member => member.This) });
+            this.getAllTeams(this.props.teams);
         }
     }
+
+    getTeam(teams, teamId) {
+        if (teams.$id == teamId) {
+            return teams.Children;
+        }
+
+        var children = [];
+        if (teams.Children != null) {
+            for (let child of teams.Children) {
+                if (Array.isArray(child.Children)) {
+                    children = this.getTeam(child, teamId);
+                    if (children.length > 0) {
+                        break;
+                    }
+                }
+            }
+        }
+        return children;
+    }
+
+    getAllTeams(teamTree) {
+        this.state.teams.push(teamTree);
+
+        if (Array.isArray(teamTree.Children)) {
+            teamTree.Children.forEach(child => {
+                this.getAllTeams(child);
+            })
+        }
+    }
+
+
+    updateUser(teams, user) {
+        if (teams.This.UserId == user.UserId) {
+            teams.This = user;
+            return teams;
+        }
+
+        if (teams.Children != null) {
+            for (let child of teams.Children) {
+                let updatedChild = this.updateUser(child, user);
+                teams.Children[teams.Children.indexOf(child)] = updatedChild;
+            }
+        }
+
+        return teams;
+    }
+
+    handleClose() {
+        this.setState({ open: false, teams: [] });
+    };
+
+    handleListItemClick(evt) {
+        if (this.state.team != "" && this.state.member != "") {
+            const user = this.state.teamMembers.find(user => user.FirstName + ' ' + user.LastName == this.state.member);
+            const manager = this.state.teams.find(team => team.This.FirstName + ' ' + team.This.LastName == this.state.team);
+
+            const data = { userId: user.UserId, managerId: manager.This.UserId }
+
+            this.props.reassignFunc(this.props.token.accessToken, data).then(() => {
+                if (this.props.error === null) {
+                    //update the state
+                    this.props.updateTreeFunc(this.props.token.accessToken);
+
+                    this.handleClose();
+                }
+                else {
+                    console.log(this.props.error);
+                    for (let error of this.props.error) {
+                        if (error.Code == 4) {
+                            // TODO: Add a message about circular relationships
+                        }
+                    }
+                    this.props.error = [];
+                }
+            });
+        }
+    };
+
     render() {
-        const names = [
-            'Oliver Hansen',
-            'Van Henry',
-            'April Tucker',
-            'Ralph Hubbard',
-            'Omar Alexander',
-            'Carlos Abbott',
-            'Miriam Wagner',
-            'Bradley Wilkerson',
-            'Virginia Andrews',
-            'Kelly Snyder',
-        ];
-        const teams = [
-            'Your team',
-            'Liam team',
-            'Caleb team',
-            'Marisha team'
-        ];
-        //event to handle close (closes dialog)
-        
-        const handleClose = () => {
-            this.setState({ open: false });
-        };
-
-        //event to handle close (closes dialog)
-        const handleListItemClick = (value) => {
-            this.setState({ open: false })
-        };
-
         return (
-            <Dialog onClose={handleClose}
+            <Dialog onClose={() => this.handleClose}
                 aria-labelledby="simple-dialog-title"
                 open={this.state.open}
                 classes={{ paper: classes.addMemberDialog }}>
@@ -484,7 +748,7 @@ class ReassignTeamMemberDialog extends React.Component {
                     id="change-restriction-dialog-title"
                     disableTypography
                     classes={{ root: classes.reassignMemberHeader }}
-                    >
+                >
                     Reassign team member
                     <CompareArrowsIcon className={classes.popUpButtonPicture} />
                 </DialogTitle>
@@ -497,23 +761,17 @@ class ReassignTeamMemberDialog extends React.Component {
                         value={this.state.member}
                         className={classes.deleteMemberSelectTeamMember}
                         name="member"
-                        input={<Input/>}
+                        input={<Input />}
                         onChange={this.handleChange}>
-                        {names.map((name) => (
-                            <MenuItem key={name} value={name} >
-                                {name}
-                            </MenuItem>
-                        ))}
-                        {teams.map((team) => (
-                            <MenuItem key={team} value={team} >
-                                {team}
+                        {this.state.teamMembers.map((member) => (
+                            <MenuItem key={member.FirstName + ' ' + member.LastName} value={member.FirstName + ' ' + member.LastName} >
+                                {member.FirstName + ' ' + member.LastName}
                             </MenuItem>
                         ))}
                     </Select>
 
                 </div>
                 <div className={classes.deleteMemberBody}>
-
                     <div className={classes.reassignTeamTitle}>Select team</div>
                     <Select
                         labelId="team-select-label"
@@ -523,9 +781,9 @@ class ReassignTeamMemberDialog extends React.Component {
                         name="team"
                         input={<Input />}
                         onChange={this.handleChange}>
-                        {teams.map((team) => (
-                            <MenuItem key={team} value={team} >
-                                {team}
+                        {this.state.teams.map((team) => (
+                            <MenuItem key={team.$id} value={team.This.FirstName + ' ' + team.This.LastName}>
+                                {team.This.FirstName + ' ' + team.This.LastName + '\'s team'}
                             </MenuItem>
                         ))}
                     </Select>
@@ -535,15 +793,14 @@ class ReassignTeamMemberDialog extends React.Component {
                     <Button
                         className={classes.cancelButton}
                         classes={{ label: classes.popUpButtonLabel }}
-                        onClick={() => handleListItemClick(this.email)}>
+                        onClick={() => { this.handleClose() }}>
                         Cancel
                     </Button>
-                    {/* TODO: add action to reassign team member to another team*/}
                     <Button
                         className={classes.actionButton}
                         classes={{ label: classes.popUpButtonLabel }}
-                        onClick={() => handleListItemClick(this.email)}>
-                        Ressign team member
+                        onClick={this.handleListItemClick}>
+                        Reassign team member
                     </Button>
                 </div>
             </Dialog>
@@ -569,134 +826,173 @@ class Team extends React.Component {
             openAddTeamMemberDialog: false,
             openRemoveTeamMemberDialog: false,
             openReassignTeamMemberDialog: false,
-            selectedTeamId: this.props.teamTree.items.$id
+            openTopicsByTeamDialog: false,
+            selectedTeamId: this.props.teamTree.items.$id,
+            selectedTeamManagerId: 0,
+            teamMemberTreeContent: null
         };
         this.handleChange = this.handleChange.bind(this);
         this.handleOpenDialog = this.handleOpenDialog.bind(this);
-        console.log(this.props);
     }
+
     async componentDidMount() {
-        await this.props.fetchMyTeamTree(1);
-    }
-    componentDidUpdate() {
-        {/* TODO: Check if this did not reset this.state.selectedTeamId*/ }
+        await this.props.fetchTeamTree(this.props.token.accessToken)
+            .then(() => {
+                console.log(this.props.teamTree)
+            });
+
         if (this.state.selectedTeamId != this.props.teamTree.items.$id) {
-            this.setState({ selectedTeamId: this.props.teamTree.items.$id })
+            this.setState({ selectedTeamId: this.props.teamTree.items.$id, selectedTeamManagerId: this.props.teamTree.items.This.UserId })
         }
+
+        this.setState({ teamMemberTreeContent: this.renderTree(this.props.teamTree.items, this.props.teamTree.items.$id) });
     }
-    componentWillMount() {
-        this.props.fetchAssignments(this.props.token.token.accessToken);
-    }
-    
+
     handleChange(evt) {
         // check it out: we get the evt.target.name 
         // and use it to target the key on our `state` object with the same name, using bracket syntax
+
         this.setState({ [evt.target.name]: evt.target.value });
     }
     handleOpenDialog(evt) {
-        var value = !this.state[evt.currentTarget.name];
-        this.setState({ [evt.currentTarget.name]: value });
+        var name = evt.currentTarget.name;
+        var value = !this.state[name];
+        this.setState({ [name]: value });
     }
-    
-    
-    findSelectedTeamNode(nodes, nodeId) {
-        {/* TODO: correct the function to find child with nodeId*/ }
-        return nodes.$id == nodeId ? nodes : Array.isArray(nodes.Children)? nodes.Children.map((node) => this.findSelectedTeamNode(node, nodeId)):null;
-    }
-   //Function that set selectedTeamId
-    onTeamClick(node) {
-       
-        console.log("Clicked");
+
+    onTeamClick = (node) => {
         console.log(node);
-        //this.setState({ selectedTeamId: node.$id });
+        this.setState({ selectedTeamId: node.$id, selectedTeamManagerId: node.This.UserId });
+        this.setState({ teamMemberTreeContent: this.renderTree(node, node.$id) })
     }
 
-    render() {
-        
-        const renderTree = (nodes, nodeId) => {
-            if (nodeId >= 0) {
-                var selectedTeam = this.findSelectedTeamNode(nodes,nodeId);
-                console.log(selectedTeam);
-                return (
-                    <TreeItem key={selectedTeam.$id}
-                        nodeId={selectedTeam.$id}
-                        label={nodes.This.FirstName + " team"}
-                        classes={{
-                            root: classes.treeItem, // class name, e.g. `classes-nesting-root-x`
-                            label: classes.treeItem, // class name, e.g. `classes-nesting-label-x`
-                        }}>
-                        {Array.isArray(nodes.Children) ? nodes.Children.map((node) => renderTeamMember(node)) : null}
-                    </TreeItem>
-
-                );
-            }
-            else {
-                return (
-                    <div>
-                        No team selected
-                    </div>
-                );
-            }
+    changeTeamRestrictions() {
+        var data = {
+            managerId: this.state.selectedTeamManagerId,
+            consecLimit: this.state.teamRestrictionConsecutiveDays,
+            monthlyLimit: this.state.teamRestrictionDaysPerMonth,
+            yearlyLimit: this.state.teamRestrictionDaysPerYear
         };
-        const renderTeamMember = (node) => {
-            console.log(node);
+
+        this.props.changeRestrictionsForTeam(this.props.token.accessToken, data)
+            .then(() => {
+                this.props.fetchTeamTree(this.props.token.accessToken);
+            });
+    }
+
+    changeGlobalRestrictions() {
+        var data = {
+            consecLimit: this.state.globalRestrictionConsecutiveDays,
+            monthlyLimit: this.state.globalRestrictionDaysPerMonth,
+            yearlyLimit: this.state.globalRestrictionDaysPerYear
+        };
+
+        this.props.changeGlobalRestrictions(this.props.token.accessToken, data)
+            .then(() => {
+                this.props.fetchTeamTree(this.props.token.accessToken);
+            });
+    }
+
+    renderTree = (nodes, nodeId) => {
+        console.log(nodeId)
+        if (nodeId >= 0) {
+            // var selectedTeam = this.findSelectedTeamNode(nodes, nodeId);
             return (
-                <TreeItem key={node.This.UserId}
-                    nodeId={node.This.UserId}
-                    label={node.This.FirstName }
+                <TreeItem key={nodeId}
+                    nodeId={nodeId}
+                    label={
+                        <React.Fragment>
+                            {nodes.This.FirstName + "'s team"}
+                            <Button
+                                style={{ fontSize: "12px", color: indigo[900] }}
+                                name="openTopicsByTeamDialog"
+                                onClick={(e) => {
+                                    e.stopPropagation();
+                                    this.handleOpenDialog(e);
+                                    this.setState({ teamTopicsManagerName: nodes.This.FirstName + "'s team" });
+                                }}>
+                                Learnt topics
+                            </Button>
+                        </React.Fragment>
+                    }
                     classes={{
                         root: classes.treeItem, // class name, e.g. `classes-nesting-root-x`
                         label: classes.treeItem, // class name, e.g. `classes-nesting-label-x`
                     }}>
-                    <TreeItem key={node.This.UserId + " ConsecLimit"}
-                        nodeId={node.This.UserId + " ConsecLimit"}
-                        label={node.This.ConsecLimit === null ? "Consecutive days:  N/A" :"Consecutive days: " + node.This.ConsecLimit.toString() }
-                        classes={{
-                            root: classes.treeItem, // class name, e.g. `classes-nesting-root-x`
-                            label: classes.treeItem, // class name, e.g. `classes-nesting-label-x`
-                        }}>
-                    
-                    </TreeItem>
-                    <TreeItem key={node.This.UserId + " MonthlyLimit"}
-                        nodeId={node.This.UserId + " MonthlyLimit"}
-                        label={node.This.MonthlyLimit === null ? "Days per month:  N/A" : "Days per month: " + node.This.MonthlyLimit.toString()}
-                        classes={{
-                            root: classes.treeItem, // class name, e.g. `classes-nesting-root-x`
-                            label: classes.treeItem, // class name, e.g. `classes-nesting-label-x`
-                        }}>
-                    
-                    </TreeItem>
-                    <TreeItem key={node.This.UserId + " QuaterLimit"}
-                        nodeId={node.This.UserId + " QuaterLimit"}
-                        label={node.This.MonthlyLimit === null ? "Days per quater:  N/A" : "Days per quater: " + node.This.MonthlyLimit.toString()}
-                        classes={{
-                            root: classes.treeItem, // class name, e.g. `classes-nesting-root-x`
-                            label: classes.treeItem, // class name, e.g. `classes-nesting-label-x`
-                        }}>
-                    
-                    </TreeItem>
-                    <TreeItem key={node.This.UserId + " YearlyLimit"}
-                        nodeId={node.This.UserId + " YearlyLimit"}
-                        label={node.This.YearlyLimit === null ? "Days per year:  N/A" : "Days per year: " + node.This.YearlyLimit.toString()}
-                        classes={{
-                            root: classes.treeItem, // class name, e.g. `classes-nesting-root-x`
-                            label: classes.treeItem, // class name, e.g. `classes-nesting-label-x`
-                        }}>
-                    </TreeItem>
-                </TreeItem>
+
+                    {nodes.Children.map((node) => this.renderTeamMember(node))}
+                </TreeItem >
             );
         }
+        else {
+            return (
+                <div>
+                    No team selected
+                </div>
+            );
+        }
+    };
+
+    renderTeamMember = (node) => {
+        return (
+            <TreeItem key={node.This.UserId}
+                nodeId={node.This.UserId}
+                label={node.This.FirstName}
+                classes={{
+                    root: classes.treeItem, // class name, e.g. `classes-nesting-root-x`
+                    label: classes.treeItem, // class name, e.g. `classes-nesting-label-x`
+                }}>
+                <TreeItem key={node.This.UserId + " ConsecLimit"}
+                    nodeId={node.This.UserId + " ConsecLimit"}
+                    label={node.This.ConsecLimit === null ? "Consecutive days:  N/A" : "Consecutive days: " + node.This.ConsecLimit.toString()}
+                    classes={{
+                        root: classes.treeItem, // class name, e.g. `classes-nesting-root-x`
+                        label: classes.treeItem, // class name, e.g. `classes-nesting-label-x`
+                    }}>
+
+                </TreeItem>
+                <TreeItem key={node.This.UserId + " MonthlyLimit"}
+                    nodeId={node.This.UserId + " MonthlyLimit"}
+                    label={node.This.MonthlyLimit === null ? "Days per month:  N/A" : "Days per month: " + node.This.MonthlyLimit.toString()}
+                    classes={{
+                        root: classes.treeItem, // class name, e.g. `classes-nesting-root-x`
+                        label: classes.treeItem, // class name, e.g. `classes-nesting-label-x`
+                    }}>
+
+                </TreeItem>
+                <TreeItem key={node.This.UserId + " QuaterLimit"}
+                    nodeId={node.This.UserId + " QuaterLimit"}
+                    label={node.This.MonthlyLimit === null ? "Days per quater:  N/A" : "Days per quater: " + node.This.MonthlyLimit.toString()}
+                    classes={{
+                        root: classes.treeItem, // class name, e.g. `classes-nesting-root-x`
+                        label: classes.treeItem, // class name, e.g. `classes-nesting-label-x`
+                    }}>
+
+                </TreeItem>
+                <TreeItem key={node.This.UserId + " YearlyLimit"}
+                    nodeId={node.This.UserId + " YearlyLimit"}
+                    label={node.This.YearlyLimit === null ? "Days per year:  N/A" : "Days per year: " + node.This.YearlyLimit.toString()}
+                    classes={{
+                        root: classes.treeItem, // class name, e.g. `classes-nesting-root-x`
+                        label: classes.treeItem, // class name, e.g. `classes-nesting-label-x`
+                    }}>
+                </TreeItem>
+            </TreeItem>
+        );
+    }
+
+    render() {
         const renderSidebarTree = (nodes) => {
             return (
                 <TreeItem key={nodes.length === 0 ? 0 : nodes.This.UserId}
                     nodeId={nodes.length === 0 ? 0 : nodes.This.UserId}
-                    label={nodes.length === 0 ? "no team" : nodes.This.FirstName + " team"}
+                    label={nodes.length === 0 ? "no team" : nodes.This.FirstName + "'s team"}
                     onClick={() => { this.onTeamClick(nodes); }}
                     classes={{
                         root: classes.sidebarTreeItem, // class name, e.g. `classes-nesting-root-x`
                         label: classes.sidebarTreeItem, // class name, e.g. `classes-nesting-label-x`
                     }}>
-                    {Array.isArray(nodes.Children) ? nodes.Children.map((node) => Array.isArray(node.Children)? renderSidebarTree(node):null) : null}
+                    {Array.isArray(nodes.Children) ? nodes.Children.map(node => Array.isArray(node.Children) ? renderSidebarTree(node) : null) : null}
                 </TreeItem>
 
             )
@@ -708,58 +1004,58 @@ class Team extends React.Component {
                 <div className={classes.teamPageStyle}>
                     <div className={classes.mainContent}>
 
-                        <div className={classes.title}>Team not selected</div>
+                        <div className={classes.title}>Team Page</div>
                         <div className={classes.popUpButtonsAndTeamMembers}>
-                            <div className={classes.teamInfo}>
+                            <Paper className={classes.teamInfo}>
 
                                 <div className={classes.teamTitle}>Team members and their restrictions</div>
                                 <TreeView
                                     className={classes.teamMembersTree}
-                                    defaultCollapseIcon={<ExpandMoreIcon />}
+                                    children={this.state.teamMemberTreeContent}
                                     defaultExpanded={['root']}
+                                    defaultCollapseIcon={<ExpandMoreIcon />}
                                     defaultExpandIcon={<ChevronRightIcon />}
-                                >
-                                    {renderTree(this.props.teamTree.items, this.state.selectedTeamId)}
-                                </TreeView>
+                                />
                                 <Button
                                     className={classes.changeRestrictionButton}
                                     classes={{ label: classes.popUpButtonLabel }}
                                     name="openChangeRestrictionForTeamMemberDialog"
                                     onClick={this.handleOpenDialog}>
-                                    Change restrictions for team memember
+                                    Change restrictions for team member
                                      <CreateIcon className={classes.popUpButtonPicture} />
                                 </Button>
 
-                            </div>
-                            <div className={classes.popUpButtonsGroup}>
-
-                                <Button className={classes.addNewMemberButton}
-                                    classes={{ label: classes.popUpButtonLabel }}
-                                    name="openAddTeamMemberDialog"
-                                    onClick={this.handleOpenDialog}>
-                                    Add new team member 
-                                    <AddIcon className={classes.popUpButtonPicture} />
-                                </Button>
-                                <Button className={classes.removeMemberButton}
-                                    classes={{ label: classes.popUpButtonLabel }}
-                                    name="openRemoveTeamMemberDialog"
-                                    onClick={this.handleOpenDialog}>
-                                    Remove team member 
-                                    <CloseIcon className={classes.popUpButtonPicture} />
-                                </Button>
-                                <Button className={classes.reassignMemberButton}
-                                    classes={{ label: classes.popUpButtonLabel }}
-                                    name="openReassignTeamMemberDialog"
-                                    onClick={this.handleOpenDialog}>
-                                    Reassign team member 
-                                    <CompareArrowsIcon className={classes.popUpButtonPicture} />
-                                </Button>
-
-                            </div>
+                            </Paper>
+                            <Paper className={classes.popUpButtonsGroup}>
+                                <div className={classes.popUpButtonsGroupTitle}>Team actions</div>
+                                <div className={classes.popUpButtonsGroupButtons}>
+                                    <Button className={classes.addNewMemberButton}
+                                        classes={{ label: classes.popUpButtonLabel }}
+                                        name="openAddTeamMemberDialog"
+                                        onClick={this.handleOpenDialog}>
+                                        Add new team member
+                                        <AddIcon className={classes.popUpButtonPicture} />
+                                    </Button>
+                                    <Button className={classes.removeMemberButton}
+                                        classes={{ label: classes.popUpButtonLabel }}
+                                        name="openRemoveTeamMemberDialog"
+                                        onClick={this.handleOpenDialog}>
+                                        Remove team member
+                                        <CloseIcon className={classes.popUpButtonPicture} />
+                                    </Button>
+                                    <Button className={classes.reassignMemberButton}
+                                        classes={{ label: classes.popUpButtonLabel }}
+                                        name="openReassignTeamMemberDialog"
+                                        onClick={this.handleOpenDialog}>
+                                        Reassign team member
+                                        <CompareArrowsIcon className={classes.popUpButtonPicture} />
+                                    </Button>
+                                </div>
+                            </Paper>
                         </div>
                         <div className={classes.restrictions}>
 
-                            <div className={classes.teamRestrictions}>
+                            <Paper className={classes.teamRestrictions}>
 
                                 <div className={classes.restrictionsHeader}>
                                     Team restrictions
@@ -855,16 +1151,15 @@ class Team extends React.Component {
                                             />
                                         </div>
                                     </div>
-                                    {/*TODO: Add action to change restrictions for all team members according to state parameters*/}
-                                    <Button className={classes.restrictionButton} classes={{ label: classes.popUpButtonLabel }}>
+                                    <Button className={classes.restrictionButton} classes={{ label: classes.popUpButtonLabel }} onClick={() => { this.changeTeamRestrictions() }}>
                                         Change restrictions
                                         for your team
                                     <CreateIcon className={classes.popUpButtonPicture} />
                                     </Button>
                                 </div>
 
-                            </div>
-                            <div className={classes.globalRestrictions}>
+                            </Paper>
+                            <Paper className={classes.globalRestrictions}>
 
                                 <div className={classes.restrictionsHeader}>
                                     Global restrictions
@@ -961,12 +1256,12 @@ class Team extends React.Component {
                                         </div>
                                     </div>
                                     {/*TODO: Add action to change restrictions globaly for all members according to state parameters*/}
-                                    <Button className={classes.restrictionButton} classes={{ label: classes.popUpButtonLabel }}>
-                                        Change restrictions globaly
+                                    <Button className={classes.restrictionButton} classes={{ label: classes.popUpButtonLabel }} onClick={() => { this.changeGlobalRestrictions() }}>
+                                        Change restrictions globally
                                     <CreateIcon className={classes.popUpButtonPicture} />
                                     </Button>
                                 </div>
-                            </div>
+                            </Paper>
                         </div>
                     </div>
                     <div className={classes.rightSidebar}>
@@ -978,32 +1273,47 @@ class Team extends React.Component {
                             defaultExpanded={['root']}
                             defaultExpandIcon={<ChevronRightIcon />}
                         >
-                           
-                            {renderSidebarTree(this.props.teamTree.items )}
+
+                            {renderSidebarTree(this.props.teamTree.items)}
                         </TreeView>
 
                     </div>
 
 
                 </div>
-                <ChangeRestrictionForTeamMemberDialog open={this.state.openChangeRestrictionForTeamMemberDialog} />
-                <AddNewTeamMemberDialog open={this.state.openAddTeamMemberDialog} />
+                <ChangeRestrictionForTeamMemberDialog open={this.state.openChangeRestrictionForTeamMemberDialog} patchFunc={this.props.changeRestrictionsForUser} token={this.props.token} teams={this.props.teamTree.items} teamId={this.state.selectedTeamId} updateTreeFunc={this.props.fetchTeamTree} />
+                <AddNewTeamMemberDialog open={this.state.openAddTeamMemberDialog} addFunc={this.props.addTeamMember} currentUser={this.props.teamTree.items.This} token={this.props.token} />
                 <DeleteTeamMemberDialog open={this.state.openRemoveTeamMemberDialog} />
-                <ReassignTeamMemberDialog open={this.state.openReassignTeamMemberDialog} />
+                <ReassignTeamMemberDialog open={this.state.openReassignTeamMemberDialog} reassignFunc={this.props.reassignTeamMember} teams={this.props.teamTree.items} teamId={this.state.selectedTeamId} error={this.props.teamTree.error} updateTreeFunc={this.props.fetchTeamTree} token={this.props.token} />
+                <TopicsByTeamDialog open={this.state.openTopicsByTeamDialog} managerName={this.state.teamTopicsManagerName} managerId={this.state.selectedTeamManagerId} />
             </div>
         );
     }
 }
 
 Team.propTypes = {
-    fetchMyTeamTree: PropTypes.func.isRequired,
+    fetchTeamTree: PropTypes.func.isRequired,
     teamTree: PropTypes.array.isRequired,
+    changeRestrictionsForUser: PropTypes.func.isRequired,
+    changeRestrictionsForTeam: PropTypes.func.isRequired,
+    changeGlobalRestrictions: PropTypes.func.isRequired,
+    addTeamMember: PropTypes.func.isRequired,
+    reassignTeamMember: PropTypes.func.isRequired
 }
 
 const mapStateToProps = state => ({
     teamTree: state.teamTree,
-    assignments: state.assignments,
-    token: state.login
+    token: state.login.token
 })
 
-export default connect(mapStateToProps, { fetchMyTeamTree, fetchAssignments })(Team);
+export default connect(
+    mapStateToProps,
+    {
+        fetchTeamTree,
+        changeRestrictionsForUser,
+        changeRestrictionsForTeam,
+        changeGlobalRestrictions,
+        addTeamMember,
+        reassignTeamMember
+    }
+)(Team);

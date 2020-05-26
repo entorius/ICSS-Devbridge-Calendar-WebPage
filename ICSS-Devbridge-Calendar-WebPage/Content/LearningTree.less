@@ -27,7 +27,8 @@ path[class="link"] {
 }*/
 //Page Styles
 .mainPage {
-    display: flex; 
+    height: 100%;
+    display: flex;
     min-height: 800px;
 }
 
@@ -36,9 +37,9 @@ path[class="link"] {
     display: flex;
     flex-wrap: wrap;
     flex-direction: column;
-    align-content:center;
+    align-content: center;
     width: 80%;
-    background-color: #808080;
+    background-color: #37474f;
 }
 .mainTreePart{
     display:flex;
@@ -46,25 +47,27 @@ path[class="link"] {
 }
 .title {
     width: 98%;
-    background-color: #13BC75;
-    text-align: center;
+    //background-color: #13BC75;
+    //text-align: center;
     padding-top: 7px;
     height: 50px;
     font-family: ROBOTO;
-    font-size: 25px;
+    font-size: 30px;
     font-weight: bold;
-    color: #FFFFFF;
-    margin: 10px 0;
+    color: #eeeeee;
+    margin: 10px 0 !important;
+    margin-bottom: 20px !important;
 }
 .graphPart {
     margin-right: 1%;
     width: 82%;
-    background-color: #555555;
+    background-color: #757575 !important;
 }
 .rightSideBar {
+    min-width: 180px;
     width: 17%;
-    background-color: #555555;
-    color:white;
+    background-color: #757575 !important;
+    color: white;
 }
 .nodeRepresentation {
     display: flex;
@@ -77,16 +80,127 @@ path[class="link"] {
     border-radius: 50%
     
 }
-.nodeRepresentationCircleTopicComplexity {
+.nodeRepresentationCircleNotLearnedTopic {
     .nodeRepresentationCircle;
-    background-color: lightgreen !important ;
+    background-color: #00b0ff !important;
 }
-.nodeRepresentationCircleTopic {
+.nodeRepresentationCircleLearnedTopic {
     .nodeRepresentationCircle;
-    background-color: #8400FF !important;
+    background-color: #33eb91 !important;
 }
-.sideBarBubleTitle {
+.sideBarCircleTitle {
     padding-top: 3px;
     margin-left: 10px;
     font-family: ROBOTO;
+    color: #e5e5e5;
+}
+// Learning tree dialog styles
+.popUpDialogButton {
+    width: 40%;
+    min-width: 220px !important;
+    height: 60px;
+    margin-bottom: 15px !important;
+}
+.topicLearnedMembersTitle {
+    border-bottom: solid 2px #808080;
+    margin-bottom: 15px !important;
+    background-color: #13BC75;
+    color: #FFFFFF;
+    font-size: 25px;
+    text-align: center;
+}
+.popUpButtonPicture {
+    font-size: 20px !important;
+    margin-left: 5px;
+}
+.topicLearnedMembersButtons {
+    justify-content: space-around;
+    display: flex;
+}
+
+.title {
+    margin: 4px 0 2px;
+}
+.demo {
+    background-color: white;
+    margin-left: 20px!important;
+
+}
+//Nodes Legend
+.nodesLegend{
+
+}
+.nodeslegendTitle {
+    text-align: center;
+    margin-top: 10px;
+    color: #eeeeee;
+    font-size: 15px !important;
+}
+// Selecting tree type
+.selectTreeTypeBody {
+    margin-top: 400px !important;
+    width: 100% !important;
+}
+.selectTreeTypeLegend {
+    font-size: 15px !important;
+    color: #eeeeee !important;
+    margin-left: 24px !important;
+    text-align: center !important;
+}
+.radioButtonRoot {
+    margin: 0 !important;
+    color: #eeeeee;
+}
+.radioButtonLabel {
+    color: #eeeeee;
+}
+.selectTreeTypeButton {
+    margin-left: 35% !important;
+}
+//Learning tree on node clisk dialog styles
+.nodeMembersLearnedTopicsMemberLabel {
+    font-size: 15px !important;
+}
+
+//Select team dialog
+
+.selectTeamDialog {
+    width: 500px;
+}
+.selectTeamTitle {
+    border-bottom: solid 2px #808080;
+    margin-bottom: 15px !important;
+    background-color: #3f51b5;
+    color: #FFFFFF;
+    font-size: 25px;
+    text-align: center;
+}
+.selectTeamBody {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+    margin-bottom: 20px;
+}
+.selectTeam {
+    width: 250px;
+}
+.selectTeamButtons {
+    justify-content: space-around;
+    display: flex;
+}
+.popUpButtonLabel {
+    font-size: 12px !important
+}
+//Popup buttons
+.actionButton {
+    .popUpDialogButton;
+    color: #FFFFFF !important;
+    border: solid #6200ea !important;
+    background-color: #3d5afe !important;
+}
+.closeButton {
+    .popUpDialogButton;
+    color: #808080 !important;
+    border: solid #808080 !important;
+    background-color: #FFFFFF !important;
 }
