@@ -15,7 +15,7 @@ import CheckBoxOutlineBlankIcon from "@material-ui/icons/CheckBoxOutlineBlank";
 import CheckBoxIcon from "@material-ui/icons/CheckBox";
 import FormGroup from '@material-ui/core/FormGroup';
 import { checkIfRedirectToLoginPage } from '../functions/LocalStorageFunctions';
-
+import { connect } from 'react-redux';
 const styles = theme => ({
     root: {
         minHeight: '100vh',
@@ -167,7 +167,8 @@ class CalendarPage extends Component {
                             </Button>
                             <AddLearningDayDialog
                                 open={this.state.openAddLearningDayDialog}
-                                onClose={this.handleCloseDialog} />
+                                onClose={this.handleCloseDialog}
+                                topics={this.props.topics} />
                         </Grid>
                     </div>
                 </div >
@@ -176,4 +177,8 @@ class CalendarPage extends Component {
     }
 }
 
-export default withStyles(styles)(CalendarPage);
+const mapStateToProps = state => ({
+    topics: state.topics.topics
+});
+
+export default connect(mapStateToProps, null)(withStyles(styles)(CalendarPage));

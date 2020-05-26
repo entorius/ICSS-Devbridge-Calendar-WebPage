@@ -54,43 +54,57 @@ class AddLearningDayTopicsDialog extends Component {
     constructor(props) {
         super(props);
         this.state = {
-            selectedTopics: this.props.topics,
-            topics: {
-                id: 'root',
-                name: 'Topics',
-                children: [
-                    {
-                        id: '1',
-                        name: 'Topic1',
-                    },
-                    {
-                        id: '2',
-                        name: 'Topic2',
-                        children: [
-                            {
-                                id: '2.1',
-                                name: 'Subtopic1',
-                            },
-                        ],
-                    },
-                ],
-            }
+            selectedTopic: this.props.selectedTopic,
+            topics: {}
         }
     }
 
-    checkBoxClicked = (event, checked, name) => {
-        if (checked) {
-            this.setState(prevState => ({
-                selectedTopics: [...prevState.selectedTopics, name]
-            }))
+    async componentDidMount() {
+        this.createTopicTree(this.props.topics);
+    }
+
+    createTopicTree(topics){
+        let topicTree = {
+            id: 'root',
+            name: 'Topics',
+            children: undefined
         }
-        else {
+        const rootTopics = topics.filter(topic => topic.ParentTopicId == null);
+        
+        const rootTopicArray = [];
+        
+        rootTopics.forEach(topic => {
+            const formattedTopic = { id: topic.TopicId, name: topic.Name, children: this.findChildrenForTopic(topics, topic.TopicId) };
+            rootTopicArray.push(formattedTopic);
+        });
+
+        topicTree.children = rootTopicArray;
+
+        this.setState({topics: topicTree})
+    }
+
+    findChildrenForTopic(topics, topicId){
+        const children = topics.filter(topic => topic.ParentTopicId == topicId);
+
+        const topicChildren = [];
+
+        children.forEach(childTopic => {
+            const topic = { id: childTopic.TopicId, name: childTopic.Name, children: this.findChildrenForTopic(topics, childTopic.TopicId) };
+            topicChildren.push(topic);
+        });
+        
+        return topicChildren;
+    }
+
+    checkBoxClicked = (event, checked, topic) => {
+        if (checked) {
             this.setState({
-                selectedTopics: this.state.selectedTopics.filter(topic => {
-                    return topic !== name
-                })
+                selectedTopic: topic
             });
         }
+        else {
+            this.setState({ selectedTopic: null })
+        };
     };
 
 
@@ -117,8 +131,8 @@ class AddLearningDayTopicsDialog extends Component {
                     <Checkbox
                         id={`checkbox-${nodes.id}`}
                         color="primary"
-                        checked={this.state.selectedTopics.findIndex(x => x == nodes.name) != -1}
-                        onChange={(event, checked) => this.checkBoxClicked(event, checked, nodes.name)}
+                        checked={this.state.selectedTopic != null && this.state.selectedTopic.id == nodes.id && this.state.selectedTopic.name == nodes.name}
+                        onChange={(event, checked) => this.checkBoxClicked(event, checked, {id: nodes.id, name: nodes.name})}
                         icon={<CheckBoxOutlineBlankIcon style={{ fontSize: 25 }} />}
                         checkedIcon={<CheckBoxIcon style={{ fontSize: 25 }} />}
                         onClick={e => (e.stopPropagation())}
@@ -159,7 +173,6 @@ class AddLearningDayTopicsDialog extends Component {
                         defaultCollapseIcon={<ExpandMoreIcon />}
                         defaultExpandIcon={<ChevronRightIcon />}
                         defaultExpanded={['root']}
-                        multiSelect
                     >
                         {renderTree(this.state.topics)}
                     </TreeView>
@@ -171,13 +184,7 @@ class AddLearningDayTopicsDialog extends Component {
                             justify="space-between"
                             alignItems="flex-start">
                             <Button
-                                onClick={this.props.onClose}
-                                variant="outlined"
-                                className={classes.button}>
-                                Cancel
-                               </Button>
-                            <Button
-                                onClick={() => { this.props.updateTopics(this.state.selectedTopics); this.props.onClose(); }}
+                                onClick={() => { this.props.updateTopics(this.state.selectedTopic); this.props.onClose(); }}
                                 variant="contained"
                                 className={[classes.button, classes.buttonWhiteColorText].join(' ')}
                                 color="secondary">

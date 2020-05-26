@@ -30,12 +30,24 @@ const buttons = {
 }
 
 class Topic extends React.Component {
+  
     constructor(props) {
         super(props);
         this.state = {
             openEmployeesByTopicDialog: false,
-            openTeamsByTopicDialog: false
+            openTeamsByTopicDialog: false,
+            urlRegex: /((?:(?:http|ftp|https):\/\/)*(?:[\w_-]+(?:(?:\.[\w_-]+)+))([\w.,@?^=%&:~+#-]*[\w@?^=%&~+#-])?)/g
         }
+    }
+
+    convertLinksInText(text) {
+        let parts = text.split(new RegExp(this.state.urlRegex));
+        for (let i = 1; i < parts.length; i += 3) {
+            if (!(parts[i].includes("http://") || parts[i].includes("https://") || parts[i].includes("ftp://")))
+                parts[i] = "http://" + parts[i];
+            parts[i] = <a href={parts[i]}>{parts[i]}</a>
+        }
+        return parts
     }
 
     handleOpenDialog = (e) => {
@@ -48,7 +60,6 @@ class Topic extends React.Component {
         this.setState({ [name]: false })
     };
 
-
     render() {
         return (
             <Grid container item
@@ -57,13 +68,7 @@ class Topic extends React.Component {
                 style={gridItemStyle}>
                 <p style={topicNameStyle}>{this.props.topic.name}</p>
                 <ColoredLine color="white" />
-                <p>
-                    Description: Lorem ipsum dolor sit amet, consectetur
-                    adipisicing elit, sed do eiusmod tempor incididunt
-                    ut labore et dolore magna aliqua. Ut enim ad minim
-                    veniam, quis nostrud exercitation ullamco laboris
-                    nisi ut aliquip ex ea commodo consequat.
-                </p>
+                <p>{this.convertLinksInText(this.props.topic.description)}</p>
                 <ColoredLine color="white" />
                 <Grid
                     container
@@ -99,6 +104,9 @@ class Topic extends React.Component {
                     topicId={6} />
                 <Button onClick={() => this.props.onLoadSubtopics(this.props.topic.id)}>
                     Open subtopics
+                </Button>
+                <Button onClick={() => this.props.onEditTopic(this.props.topic)}>
+                    Edit {this.props.topic.name} topic
                 </Button>
             </Grid >
         );
