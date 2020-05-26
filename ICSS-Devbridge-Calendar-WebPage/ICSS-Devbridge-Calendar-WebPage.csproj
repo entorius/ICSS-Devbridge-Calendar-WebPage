@@ -170,6 +170,7 @@
     <Content Include="Scripts\react\containers\LearningTree.js" />
     <Content Include="Scripts\react\containers\Register.js" />
     <Content Include="Scripts\react\containers\SettingsPage.js" />
+    <Content Include="Scripts\react\functions\LocalStorageFunctions.js" />
     <Content Include="Scripts\react\redux\actions\assignmentActions.js" />
     <Content Include="Scripts\react\redux\actions\learningTreeActions.js" />
     <Content Include="Scripts\react\redux\actions\learntTopicsActions.js" />
