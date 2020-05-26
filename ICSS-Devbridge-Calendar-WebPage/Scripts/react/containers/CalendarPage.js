@@ -14,6 +14,7 @@ import Button from '@material-ui/core/Button';
 import CheckBoxOutlineBlankIcon from "@material-ui/icons/CheckBoxOutlineBlank";
 import CheckBoxIcon from "@material-ui/icons/CheckBox";
 import FormGroup from '@material-ui/core/FormGroup';
+import { checkIfRedirectToLoginPage } from '../functions/LocalStorageFunctions';
 
 const styles = theme => ({
     root: {
@@ -62,6 +63,10 @@ class CalendarPage extends Component {
             openAddLearningDayDialog: false
         };
         this.selectCalendar = this.selectCalendar.bind(this);
+    }
+
+    componentDidMount(){
+        checkIfRedirectToLoginPage(this.props);
     }
 
     selectCalendar = (event) => {

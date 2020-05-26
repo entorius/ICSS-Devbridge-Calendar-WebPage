@@ -35,6 +35,7 @@ import AddIcon from '@material-ui/icons/Add';
 import CloseIcon from '@material-ui/icons/Close';
 import CompareArrowsIcon from '@material-ui/icons/CompareArrows';
 import PersonIcon from '@material-ui/icons/Person';
+import { checkIfRedirectToLoginPage } from '../functions/LocalStorageFunctions';
 
 const styles = theme => ({
     root: {
@@ -88,6 +89,8 @@ class Topics extends React.Component {
     componentDidMount() {
         // ask for topics from server
         this.addTopics(15);
+        
+        checkIfRedirectToLoginPage(this.props);
     };
 
     render() {

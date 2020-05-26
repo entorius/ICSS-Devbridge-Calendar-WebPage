@@ -5,6 +5,7 @@ import { withStyles } from '@material-ui/core/styles';
 import Button from '@material-ui/core/Button';
 
 import { Link } from "react-router-dom";
+import { checkIfRedirectToLoginPage } from "../functions/LocalStorageFunctions"
 
 //Icons
 
@@ -142,6 +143,11 @@ class Home extends React.Component {
     constructor(props) {
         super(props);
     }
+
+    componentDidMount(){
+        checkIfRedirectToLoginPage(this.props);
+    }
+
     render() {
         const { classes } = this.props;
         return (

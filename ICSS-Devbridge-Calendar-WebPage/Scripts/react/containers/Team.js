@@ -41,6 +41,7 @@ import PersonIcon from '@material-ui/icons/Person';
 
 //Dialogs
 import TopicsByTeamDialog from '../components/TopicsByTeamDialog';
+import { checkIfRedirectToLoginPage } from '../functions/LocalStorageFunctions';
 
 class ChangeRestrictionForTeamMemberDialog extends React.Component {
     constructor(props) {
@@ -686,6 +687,8 @@ class Team extends React.Component {
         }
 
         this.setState({ teamMemberTreeContent: this.renderTree(this.props.teamTree.items, this.props.teamTree.items.$id) });
+
+        checkIfRedirectToLoginPage(this.props);
     }
 
     handleChange(evt) {

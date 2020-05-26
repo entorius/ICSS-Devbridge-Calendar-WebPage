@@ -2,6 +2,7 @@
 import SideBar from "../components/SideBar";
 import { withStyles } from '@material-ui/core/styles';
 import styles from "../../../Content/LearningTree.less";
+import { checkIfRedirectToLoginPage } from '../functions/LocalStorageFunctions';
 //Redux
 import { connect } from 'react-redux';
 import { generateLearningTree, setSelectedLearningTreeUsers } from '../redux/actions/learningTreeActions';
@@ -141,6 +142,11 @@ class TopicLearnedMembersDialog extends React.Component {
         // and use it to target the key on our `state` object with the same name, using bracket syntax
         this.setState({ [evt.target.name]: evt.target.value });
     }
+
+    componentDidMount(){
+        checkIfRedirectToLoginPage(this.props);
+    }
+
     componentDidUpdate(prevProps) {
         console.log("props");
         console.log(this.props);
