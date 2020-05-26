@@ -64,9 +64,15 @@ export const getToken = (userData) =>  {
 
 export function loadRequestSuccess(results) {
     const token = results.data.access_token;
+    const expires = results.data.expires_in;
+    var now = new Date().getTime();
+    var expirationTime = now + (expires * 1000);
     return {
         type: LOGIN,
-        payload: { accessToken: token },
+        payload: {
+            accessToken: token,
+            expirationTime: expirationTime
+        },
         error: null
     }
 }

@@ -1,7 +1,7 @@
 ﻿import { LOGIN } from "../actions/types";
 
 const initialState = {
-    token: {}
+    token: getAuthState()
 }
 
 export default function (state = initialState, action) {
@@ -14,5 +14,14 @@ export default function (state = initialState, action) {
             }
         default:
             return state;
+    }
+}
+
+function getAuthState() {
+    const token = JSON.parse(localStorage.getItem('token')) || undefined;
+    const expirationTime = JSON.parse(localStorage.getItem('expirationTime')) || undefined;
+    return {
+        accessToken: token,
+        expirationTime: expirationTime
     }
 }
