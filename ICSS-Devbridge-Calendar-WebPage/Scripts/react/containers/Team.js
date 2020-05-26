@@ -27,6 +27,10 @@ import MenuItem from '@material-ui/core/MenuItem';
 import Input from '@material-ui/core/Input';
 import { indigo } from '@material-ui/core/colors';
 import LinkMUI from '@material-ui/core/Link';
+import Paper from '@material-ui/core/Paper';
+import Grid from '@material-ui/core/Grid';
+import FormControl from '@material-ui/core/FormControl';
+import FormHelperText from '@material-ui/core/FormHelperText';
 
 
 //Icons
@@ -37,7 +41,11 @@ import AddIcon from '@material-ui/icons/Add';
 import CloseIcon from '@material-ui/icons/Close';
 import CompareArrowsIcon from '@material-ui/icons/CompareArrows';
 import PersonIcon from '@material-ui/icons/Person';
+import AssignmentIndIcon from '@material-ui/icons/AssignmentInd';
+import EmailIcon from '@material-ui/icons/Email';
 
+import { Formik } from 'formik';
+import * as Yup from 'yup';
 
 //Dialogs
 import TopicsByTeamDialog from '../components/TopicsByTeamDialog';
@@ -287,7 +295,6 @@ class AddNewTeamMemberDialog extends React.Component {
         {/* TODO: state for adding team member*/ }
         this.state = {
             open: props.open,
-            email: "some@gmail.com"
         }
         this.handleChange = this.handleChange.bind(this);
     }
@@ -304,13 +311,25 @@ class AddNewTeamMemberDialog extends React.Component {
         }
     }
 
-    handleListItemClick = (email) => {
-        this.props.addFunc(this.props.token.accessToken, email, this.props.currentUser.UserId);
+    handleListItemClick(user) {
+
+        var userObject = {
+            email: user.email,
+            name: user.name,
+            surname: user.surname,
+            role: user.role
+        }
+        this.props.addFunc(this.props.token.accessToken, userObject, this.props.currentUser.UserId);
         this.setState({ open: false })
     };
 
     closeDialog = () => {
         this.setState({ open: false })
+    }
+    onSubmit = (values, { resetForm }) => {
+        resetForm({})
+        console.log(values);
+        this.handleListItemClick(values)
     }
 
     render() {
@@ -333,42 +352,183 @@ class AddNewTeamMemberDialog extends React.Component {
                     <AddIcon className={classes.popUpButtonPicture} />
                 </DialogTitle>
                 <div className={classes.addMemberBody}>
+                    <Formik
+                        initialValues={{ name: '', surname: '', email: '', role: '' }}
+                        onSubmit={this.onSubmit}
+                        validationSchema={Yup.object().shape({
+                            name: Yup.string()
+                                .required('This field is required')
+                                .min(1, "Email must contain at least 1 characters"),
+                            surname: Yup.string()
+                                .required('This field is required')
+                                .min(1, "Surname must contain at least 1 characters"),
+                            email: Yup.string()
+                                .required('This field is required')
+                                .email('Invalid email'),
+                            role: Yup.string()
+                                .required('This field is required')
+                                .min(1, "Role must contain at least 1 characters")
+                        })}
+                    >
+                        {({
+                            handleSubmit,
+                            values,
+                            touched,
+                            errors,
+                            handleChange,
+                            handleBlur
+                        }) => (
+                            <form>
 
+                                    <FormControl className={classes.formControl}
+                                        required
+                                        error={touched.email && Boolean(errors.email)}>
+                                        <Grid container spacing={1} alignItems="flex-end">
+                                            <Grid item>
+                                                <EmailIcon className={classes.textBoxIcon} />
+                                            </Grid>
+                                            <Grid item>
+                                                <TextField
+                                                    id="input-email-with-icon"
+                                                    InputProps={{
+                                                        classes: {
+                                                            input: classes.resize,
+                                                        },
+                                                    }}
+                                                    InputLabelProps={{
+                                                        classes: {
+                                                            root: classes.resize
+                                                        }
+                                                        }}
+                                                    value={values.email}
+                                                    label="Email"
+                                                    name="email"
+                                                    onChange={handleChange}
+                                                    onBlur={handleBlur}
+                                                    className={classes.inputTextBox} />
+                                            </Grid>
+                                        </Grid>
+                                        <FormHelperText id="email-error" style={{ fontSize: 12 }}>
+                                            {touched.email ? errors.email : ""}
+                                        </FormHelperText>
+                                    </FormControl>
 
-                    <TextField
-                        id="input-email-with-icon"
-                        InputProps={{
-                            classes: {
-                                input: classes.resize,
-                            },
-                        }}
-                        InputLabelProps={{
-                            classes: {
-                                root: classes.resize
-                            }
-                        }}
-                        label="Email"
-                        name="email"
-                        onChange={this.handleChange}
-                        className={classes.addMemberEmail} />
-
-
-                </div>
-                <div className={classes.addMemberButtons}>
-                    <Button
-                        className={classes.cancelButton}
-                        classes={{ label: classes.popUpButtonLabel }}
-                        onClick={() => this.closeDialog(this.state.email)}>
-                        Cancel
-                    </Button>
-                    {/* TODO: add action to send invitation to email*/}
-                    <Button
-                        className={classes.actionButton}
-                        classes={{ label: classes.popUpButtonLabel }}
-                        onClick={() => this.handleListItemClick(this.state.email)}>
-                        Send invitation
-                    </Button>
-                </div>
+                                    <FormControl className={classes.formControl}
+                                        required
+                                        error={touched.name && Boolean(errors.name)}>
+                                        <Grid container spacing={1} alignItems="flex-end">
+                                            <Grid item>
+                                                <PersonIcon className={classes.textBoxIcon} />
+                                            </Grid>
+                                            <Grid item>
+                                                <TextField
+                                                    id="input-name-with-icon"
+                                                    InputProps={{
+                                                        classes: {
+                                                            input: classes.resize,
+                                                        },
+                                                    }}
+                                                    InputLabelProps={{
+                                                        classes: {
+                                                            root: classes.resize
+                                                        }
+                                                        }}
+                                                        value={values.name}
+                                                    label="Name"
+                                                    name="name"
+                                                    onChange={handleChange}
+                                                    onBlur={handleBlur}
+                                                    className={classes.inputTextBox} />
+                                            </Grid>
+                                        </Grid>
+                                        <FormHelperText id="name-error" style={{ fontSize: 12 }}>
+                                            {touched.name ? errors.name : ""}
+                                        </FormHelperText>
+                                    </FormControl>
+                                    <FormControl className={classes.formControl}
+                                        required
+                                        error={touched.surname && Boolean(errors.surname)}>
+                                        <Grid container spacing={1} alignItems="flex-end">
+                                            <Grid item>
+                                                <PersonIcon className={classes.textBoxIcon} />
+                                            </Grid>
+                                            <Grid item>
+                                                <TextField
+                                                    id="input-surname-with-icon"
+                                                    InputProps={{
+                                                        classes: {
+                                                            input: classes.resize,
+                                                        },
+                                                    }}
+                                                    InputLabelProps={{
+                                                        classes: {
+                                                            root: classes.resize
+                                                        }
+                                                        }}
+                                                        value={values.surname}
+                                                    label="Surname"
+                                                    name="surname"
+                                                    onChange={handleChange}
+                                                    onBlur={handleBlur}
+                                                    className={classes.inputTextBox} />
+                                            </Grid>
+                                        </Grid>
+                                        <FormHelperText id="surname-error" style={{ fontSize: 12 }}>
+                                            {touched.surname ? errors.surname : ""}
+                                        </FormHelperText>
+                                    </FormControl>
+                                    <FormControl className={classes.formControl}
+                                        required
+                                        error={touched.role && Boolean(errors.role)}>
+                                        <Grid container spacing={1} alignItems="flex-end">
+                                            <Grid item>
+                                                <AssignmentIndIcon className={classes.textBoxIcon} />
+                                            </Grid>
+                                            <Grid item>
+                                                <TextField
+                                                    id="input-role-with-icon"
+                                                    InputProps={{
+                                                        classes: {
+                                                            input: classes.resize,
+                                                        },
+                                                    }}
+                                                    InputLabelProps={{
+                                                        classes: {
+                                                            root: classes.resize
+                                                        }
+                                                        }}
+                                                        value={values.role}
+                                                    label="Role"
+                                                    name="role"
+                                                    onChange={handleChange}
+                                                    onBlur={handleBlur}
+                                                    className={classes.inputTextBox} />
+                                            </Grid>
+                                        </Grid>
+                                        <FormHelperText id="role-error" style={{ fontSize: 12 }}>
+                                            {touched.role ? errors.role : ""}
+                                        </FormHelperText>
+                                    </FormControl>
+                                <div className={classes.addMemberButtons}>
+                                    <Button
+                                        className={classes.cancelButton}
+                                        classes={{ label: classes.popUpButtonLabel }}
+                                        onClick={() => this.closeDialog(this.state.email)}>
+                                        Cancel
+                                    </Button>
+                                    {/* TODO: add action to send invitation to email*/}
+                                    <Button
+                                            className={classes.actionButton}
+                                            classes={{ label: classes.popUpButtonLabel }}
+                                            onClick={handleSubmit/*this.handleListItemClick*/}>
+                                                            Send invitation
+                                    </Button>
+                                </div>
+                            </form>
+                            )
+                        }
+                    </Formik>
+                    </div>
             </Dialog>
         );
     }
@@ -844,9 +1004,9 @@ class Team extends React.Component {
                 <div className={classes.teamPageStyle}>
                     <div className={classes.mainContent}>
 
-                        <div className={classes.title}>Team not selected</div>
+                        <div className={classes.title}>Team Page</div>
                         <div className={classes.popUpButtonsAndTeamMembers}>
-                            <div className={classes.teamInfo}>
+                            <Paper className={classes.teamInfo}>
 
                                 <div className={classes.teamTitle}>Team members and their restrictions</div>
                                 <TreeView
@@ -865,36 +1025,37 @@ class Team extends React.Component {
                                      <CreateIcon className={classes.popUpButtonPicture} />
                                 </Button>
 
-                            </div>
-                            <div className={classes.popUpButtonsGroup}>
-
-                                <Button className={classes.addNewMemberButton}
-                                    classes={{ label: classes.popUpButtonLabel }}
-                                    name="openAddTeamMemberDialog"
-                                    onClick={this.handleOpenDialog}>
-                                    Add new team member
-                                    <AddIcon className={classes.popUpButtonPicture} />
-                                </Button>
-                                <Button className={classes.removeMemberButton}
-                                    classes={{ label: classes.popUpButtonLabel }}
-                                    name="openRemoveTeamMemberDialog"
-                                    onClick={this.handleOpenDialog}>
-                                    Remove team member
-                                    <CloseIcon className={classes.popUpButtonPicture} />
-                                </Button>
-                                <Button className={classes.reassignMemberButton}
-                                    classes={{ label: classes.popUpButtonLabel }}
-                                    name="openReassignTeamMemberDialog"
-                                    onClick={this.handleOpenDialog}>
-                                    Reassign team member
-                                    <CompareArrowsIcon className={classes.popUpButtonPicture} />
-                                </Button>
-
-                            </div>
+                            </Paper>
+                            <Paper className={classes.popUpButtonsGroup}>
+                                <div className={classes.popUpButtonsGroupTitle}>Team actions</div>
+                                <div className={classes.popUpButtonsGroupButtons}>
+                                    <Button className={classes.addNewMemberButton}
+                                        classes={{ label: classes.popUpButtonLabel }}
+                                        name="openAddTeamMemberDialog"
+                                        onClick={this.handleOpenDialog}>
+                                        Add new team member
+                                        <AddIcon className={classes.popUpButtonPicture} />
+                                    </Button>
+                                    <Button className={classes.removeMemberButton}
+                                        classes={{ label: classes.popUpButtonLabel }}
+                                        name="openRemoveTeamMemberDialog"
+                                        onClick={this.handleOpenDialog}>
+                                        Remove team member
+                                        <CloseIcon className={classes.popUpButtonPicture} />
+                                    </Button>
+                                    <Button className={classes.reassignMemberButton}
+                                        classes={{ label: classes.popUpButtonLabel }}
+                                        name="openReassignTeamMemberDialog"
+                                        onClick={this.handleOpenDialog}>
+                                        Reassign team member
+                                        <CompareArrowsIcon className={classes.popUpButtonPicture} />
+                                    </Button>
+                                </div>
+                            </Paper>
                         </div>
                         <div className={classes.restrictions}>
 
-                            <div className={classes.teamRestrictions}>
+                            <Paper className={classes.teamRestrictions}>
 
                                 <div className={classes.restrictionsHeader}>
                                     Team restrictions
@@ -997,8 +1158,8 @@ class Team extends React.Component {
                                     </Button>
                                 </div>
 
-                            </div>
-                            <div className={classes.globalRestrictions}>
+                            </Paper>
+                            <Paper className={classes.globalRestrictions}>
 
                                 <div className={classes.restrictionsHeader}>
                                     Global restrictions
@@ -1100,7 +1261,7 @@ class Team extends React.Component {
                                     <CreateIcon className={classes.popUpButtonPicture} />
                                     </Button>
                                 </div>
-                            </div>
+                            </Paper>
                         </div>
                     </div>
                     <div className={classes.rightSidebar}>
