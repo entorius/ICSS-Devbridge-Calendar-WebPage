@@ -1,8 +1,10 @@
 ﻿import React from 'react';
 import SideBar from "../components/SideBar";
 import Topic from "../components/Topic";
-import { withStyles } from '@material-ui/core/styles';
+import { withStyles, createMuiTheme, MuiThemeProvider } from '@material-ui/core/styles';
 import classes from "../../../Content/Topics.less";
+import CreateTopicDialog from '../components/topicDialogs/CreateTopicDialog';
+import { grey, indigo, blue } from '@material-ui/core/colors';
 
 //Redux
 import { connect } from 'react-redux';
@@ -19,14 +21,14 @@ import TreeView from '@material-ui/lab/TreeView';
 import TreeItem from '@material-ui/lab/TreeItem';
 import Dialog from '@material-ui/core/Dialog';
 import DialogTitle from '@material-ui/core/DialogTitle';
-import List from '@material-ui/core/List';
-import ListItem from '@material-ui/core/ListItem';
+import Typography from '@material-ui/core/Typography';
+import IconButton from '@material-ui/core/IconButton';
 import ListItemAvatar from '@material-ui/core/ListItemAvatar';
 import ListItemText from '@material-ui/core/ListItemText';
 import Avatar from '@material-ui/core/Avatar';
 import Select from '@material-ui/core/Select';
 import MenuItem from '@material-ui/core/MenuItem';
-import Input from '@material-ui/core/Input';
+
 
 //Icons
 import ExpandMoreIcon from '@material-ui/icons/ExpandMore';
@@ -48,6 +50,14 @@ const styles = theme => ({
         direction: 'row',
         justify: 'space-around',
         alignItems: 'flex-start'
+    }
+});
+
+const theme = createMuiTheme({
+    palette: {
+        primary: indigo,
+        secondary: blue,
+        textPrimary: grey
     }
 });
 
@@ -89,7 +99,7 @@ class Topics extends React.Component {
         if (topic && topic.id && topic.name && topic.description) {
             this.setState({ topicToChange: topic });
             this.setState({ openEditTopic: true });
-        } 
+        }
         else
             this.setState({ openEditTopic: false });
     }
@@ -98,7 +108,7 @@ class Topics extends React.Component {
         let topics = this.state.topics;
         for (let i in topics)
             if (topics[i].id === topic.id) {
-                if(topic.name)
+                if (topic.name)
                     topics[i].name = topic.name;
                 if (topic.description)
                     topics[i].description = topic.description;
@@ -121,45 +131,65 @@ class Topics extends React.Component {
     componentDidMount() {
         // ask for topics from server
         this.addTopics(15);
-        
+
         checkIfRedirectToLoginPage(this.props);
     };
+
+
 
     render() {
         const { classes } = this.props;
         return (
-            <div className={classes.root}>
-                <SideBar />
-                <div>
-                    <p className={classes.pageNameStyle}>{this.state.pageName}</p>
-                    <p className={classes.addTopicTextStyle}>Add new topic in this section
-                        <Button className={classes.addButtonStyle}
-                            onClick={this.handleDialogCreateTopic}>
-                            <AddIcon style={{ fontSize: 40 }} />
-                        </Button>
-                    </p>
-                    <Grid container
-                        direction="row"
-                        justify="space-around"
-                        spacing="8"
-                        className={classes.gridContainerStyle}>
-                        {this.state.topics.map(topic =>
-                            <Topic topic={topic}
-                                onLoadSubtopics={this.handleLoadSubtopics}
-                                onEditTopic={this.handleDialogEditTopic} />
-                        )}
+            <MuiThemeProvider>
+                <div className={classes.root}>
+                    <SideBar />
+                    <Grid
+                        container
+                        direction="column"
+                        alignItems="flex-start"
+                        style={{ padding: "15px" }}
+                    >
+                        <Typography variant="h2">Topics</Typography>
+                        <Grid
+                            container
+                            direction="row"
+                            justify="flex-end"
+                            alignItems="center"
+                        >
+                            <Typography
+                                variant="h4"
+                                color="primary"
+                            >
+                                Create New Topic
+                                </Typography>
+                            <IconButton className={classes.addButtonStyle}
+                                onClick={this.handleDialogCreateTopic}>
+                                <AddIcon style={{ fontSize: 30 }}
+                                    color="primary" />
+                            </IconButton>
+                        </Grid>
+                        <Grid container
+                            direction="row"
+                            justify="space-around"
+                            spacing="6"
+                            className={classes.gridContainerStyle}>
+                            {this.state.topics.map(topic =>
+                                <Topic topic={topic}
+                                    onLoadSubtopics={this.handleLoadSubtopics}
+                                    onEditTopic={this.handleDialogEditTopic} />
+                            )}
+                        </Grid>
                     </Grid>
+                    <EditTopic open={this.state.openEditTopic}
+                        topicToChange={this.state.topicToChange}
+                        onTopicChange={this.handleTopicChange}
+                        onDialogChange={this.handleDialogEditTopic} />
+                    <CreateTopicDialog
+                        open={this.state.openCreateTopic}
+                        onClose={this.handleDialogCreateTopic} />
                 </div>
-                <EditTopic open={this.state.openEditTopic}
-                    topicToChange={this.state.topicToChange}
-                    onTopicChange={this.handleTopicChange}
-                    onDialogChange={this.handleDialogEditTopic} />
-                <EditTopic open={this.state.openCreateTopic}
-                    topicToChange={{}}
-                    onTopicChange={this.handleCreateTopic}
-                    onDialogChange={this.handleDialogCreateTopic} />
-            </div>
-            );
+            </MuiThemeProvider>
+        );
     }
 }
 
