@@ -1,6 +1,6 @@
 ﻿import {
-    LEARNING_TREE, LEARNING_SELECTED_USERS, FETCH_USER_LEARNED_TOPICS, FETCH_TEAM_LEARNED_TOPICS,
-    FETCH_DESCENDANT_MANAGERS
+    LEARNING_TREE, LEARNING_SELECTED_USERS, FETCH_ALL_TOPICS, FETCH_USER_LEARNED_TOPICS, FETCH_TEAM_LEARNED_TOPICS,
+    FETCH_DESCENDANT_MANAGERS, SELECT_MANAGER
 } from "./types";
 import { baseApiUrl } from "../config";
 import axios from "axios";
@@ -12,12 +12,10 @@ export const fetchUserLearnedTopics = (accessToken, userId) => dispatch => {
 
     return axios.get(baseApiUrl + `/api/topics/learnt/${userId}`, config)
         .then(response => {
-            console.log("response");
-            console.log(response);
-            const teamTree = response.data;
+            const userLearnedTopics = response.data;
             dispatch({
                 type: FETCH_USER_LEARNED_TOPICS,
-                payload: teamTree
+                payload: userLearnedTopics
             })
         });
 }
@@ -28,12 +26,10 @@ export const fetchTeamLearnedTopics = (accessToken, managerId) => dispatch => {
 
     return axios.get(baseApiUrl + `/api/topics/teamLearnt/${managerId}`, config)
         .then(response => {
-            console.log("response");
-            console.log(response);
-            const teamTree = response.data;
+            const teamLearnedTopics = response.data;
             dispatch({
                 type: FETCH_TEAM_LEARNED_TOPICS,
-                payload: teamTree
+                payload: teamLearnedTopics
             })
         });
 }
@@ -44,32 +40,40 @@ export const fetchDescendantManagers = (accessToken) => dispatch => {
 
     return axios.get(baseApiUrl + `/api/users/managers`, config)
         .then(response => {
-            console.log("response");
-            console.log(response);
-            const teamTree = response.data;
+            const descendantManagers = response.data;
             dispatch({
                 type: FETCH_DESCENDANT_MANAGERS,
-                payload: teamTree
+                payload: descendantManagers
+            })
+        });
+}
+export const fetchAllTopics = (accessToken) => dispatch => {
+    const config = {
+        headers: { Authorization: `Bearer ${accessToken}` }
+    }
+
+    return axios.get(baseApiUrl + `/api/topics`, config)
+        .then(response => {
+            const topics = response.data;
+            dispatch({
+                type: FETCH_ALL_TOPICS,
+                payload: topics
             })
         });
 }
 
+export const selectManager = (user) => dispatch =>{
+    dispatch({
+        type: SELECT_MANAGER,
+        payload: user
+    })
+}
 
-
-
-export const generateLearningTree = (topicsData, usersData) => dispatch => {
-    //console.log("topics data and users data");
-    //console.log(topicsData);
-    //console.log(usersData);
-
-    var depth = countDepth(topicsData);
-    var levelSizes = countLayersSizes(topicsData, depth);
+export const generateLearningTree = (newUsersData, newTopicsData) => dispatch => {
+    newTopicsData = addObjLevels(newTopicsData);
+    var depth = countDepth(newTopicsData);
+    var levelSizes = countLayersSizes(newTopicsData, depth);
     var maxLayerSize = countMaxLayerSize(levelSizes);
-    //console.log("Depth: " + depth);
-    //console.log("Levels sizes: ");
-    //console.log(levelSizes);
-    //console.log("Max level size: ");
-    //console.log(maxLayerSize);
 
     var treeHeight = 500 > depth * 100 ? 500 : depth * 100;
     var treeMiddle = 500 > (maxLayerSize.maxLayerSize * 75) ? 500 : maxLayerSize.maxLayerSize * 75;
@@ -77,10 +81,10 @@ export const generateLearningTree = (topicsData, usersData) => dispatch => {
     levelSizes.map(LS => LS.thisNodePlace = treeMiddle - LS.size * 75);
 
     var learningTree = {
-        nodes: [{ id: 'Root', x: treeMiddle, y: treeHeight, learnedMembers: 0, symbolType: 'square', color: "#37474f", parent: null, level: 0 }],
+        nodes: [{ id: 0, x: treeMiddle, y: treeHeight + 200, learnedMembers: 0, symbolType: 'square', color: "#37474f", parent: null, level: 0 }],
         links: []
     };
-    topicsData.nodes.forEach((node) => {
+    newTopicsData.forEach((node) => {
         var nodeLevel = 0;
         if (node.level <= 1) {
             nodeLevel = node.level ? 1 : 0;
@@ -88,7 +92,7 @@ export const generateLearningTree = (topicsData, usersData) => dispatch => {
         else {
             nodeLevel = node.level
         }
-        var createdNode = createNodeObject(node, treeHeight, levelSizes[nodeLevel], usersData);
+        var createdNode = createNodeObject(node, treeHeight, levelSizes[nodeLevel], newUsersData);
         levelSizes[nodeLevel].thisNodePlace += 150;
         var createdLink = createLinkObject(node);
         var joinedNodes = learningTree.nodes.concat(createdNode)
@@ -117,44 +121,52 @@ export const setSelectedLearningTreeUsers = (users) => dispatch => {
 }
 
 function createNodeObject(obj, treeHeight, levelSize, usersData) {
-    //console.log("********* levelSize *********");
-    //console.log(levelSize.thisNodePlace);
     var learnedUsers = 0;
     
-    usersData.users.map(user =>
-        user.learnedTopics.map(topic =>
-            topic.topicId == obj.id ? learnedUsers = learnedUsers + 1 : null));
+    usersData.map(user =>
+        user.Topics.map(topic =>
+            topic.TopicId == obj.TopicId ? learnedUsers = learnedUsers + 1 : null));
     var color = learnedUsers > 0 ? "#33eb91" : "#00b0ff";
     var node = [{
-        id: obj.id,
+        id: obj.TopicId,
         x: levelSize.thisNodePlace,
         y: treeHeight - ((levelSize.level) * 100),
         level: obj.level,
-        symbolType: obj.symbolType,
+        symbolType: "circle",
         color: color,
-        parent: obj.parent,
-        topic: obj.topic,
+        parent: obj.ParentTopicId == null ? 0 : obj.ParentTopicId,
+        topic: obj.Name,
         learnedMembers: learnedUsers,
     }];
-    //console.log("after");
     return node;
 }
 
 function createLinkObject(obj) {
-    if (obj.parent != null) {
+    if (typeof obj.parent == "undefined") {
         var link = [{
-            source: obj.parent,
-            target: obj.id,
+            source: obj.ParentTopicId == null ? 0 : obj.ParentTopicId,
+            target: obj.TopicId,
             color: "#ff9800"
         }];
         return link;
     }
     return null;
 }
+function addObjLevels(obj) {
+    obj.map(function (node) {
+        if (node.ParentTopicId == null) {
+            node.level = 1
+        }
+        else {
+            node.level = obj[node.ParentTopicId - 1].level + 1;
+        }
+    });
+    return obj;
+}
 
 function countDepth(obj) {
     var MaxDepth = 1
-    obj.nodes.map(node =>
+    obj.map(node =>
         node.level > MaxDepth ? MaxDepth = node.level : null 
     );
     return MaxDepth;
@@ -164,7 +176,7 @@ function countLayersSizes(obj, Depth) {
     var levelsSizesArray = [];
     for (var i = 0; i <= Depth; i++) {
         var levelSize = 0;
-        obj.nodes.map(node =>
+        obj.map(node =>
             node.level == i ? levelSize++ : null
         );
         levelsSizesArray.push({
