@@ -72,69 +72,71 @@ class Topic extends React.Component {
     render() {
         const { classes } = this.props;
         return (
-            <MuiThemeProvider theme={theme}>
-                <Card className={classes.cardRoot}>
-                    <CardContent style={{ marginBottom: 0, paddingBottom: 0 }}>
-                        <Typography variant="h4" color="primary" align="center">
-                            {this.props.topic.Name}
-                        </Typography>
-                        <Divider className={classes.divider} />
-                        <Typography variant="h6" color="textSecondary">
-                            {
-                                this.props.topic.Description.trim() == "" ? "No description" :
-                                    this.convertLinksInText(this.props.topic.Description)
-                            }
+            <React.Fragment>
+                <MuiThemeProvider theme={theme}>
+                    <Card className={classes.cardRoot}>
+                        <CardContent style={{ marginBottom: 0, paddingBottom: 0 }}>
+                            <Typography variant="h4" color="primary" align="center">
+                                {this.props.topic.Name}
+                            </Typography>
+                            <Divider className={classes.divider} />
+                            <Typography variant="h6" color="textSecondary">
+                                {
+                                    this.props.topic.Description.trim() == "" ? "No description" :
+                                        this.convertLinksInText(this.props.topic.Description)
+                                }
 
-                        </Typography>
-                        <Divider className={classes.divider} />
-                    </CardContent>
-                    <CardActions style={{ width: "100%", marginTop: 0 }}>
-                        <Grid
-                            container
-                            direction="column"
-                            justify="center"
-                            alignItems="center"
-                        >
+                            </Typography>
+                            <Divider className={classes.divider} />
+                        </CardContent>
+                        <CardActions style={{ width: "100%", marginTop: 0 }}>
                             <Grid
                                 container
-                                direction="row"
+                                direction="column"
                                 justify="center"
                                 alignItems="center"
                             >
-                                <Button onClick={this.handleOpenDialog} className={classes.openDialogbuttons} name="openEmployeesByTopicDialog">
-                                    Employees
+                                <Grid
+                                    container
+                                    direction="row"
+                                    justify="center"
+                                    alignItems="center"
+                                >
+                                    <Button onClick={this.handleOpenDialog} className={classes.openDialogbuttons} name="openEmployeesByTopicDialog">
+                                        Employees
                                     </Button>
-                                <Button onClick={this.handleOpenDialog} className={classes.openDialogbuttons} name="openTeamsByTopicDialog">
-                                    Teams
+                                    <Button onClick={this.handleOpenDialog} className={classes.openDialogbuttons} name="openTeamsByTopicDialog">
+                                        Teams
                                 </Button>
-                            </Grid>
-                            <Grid
-                                container
-                                direction="row"
-                                justify="center"
-                                alignItems="center"
-                            >
-                                <Button color="secondary" onClick={() => this.props.onLoadSubtopics(this.props.topic)} style={{ fontSize: 12 }}>
-                                    Open subtopics
+                                </Grid>
+                                <Grid
+                                    container
+                                    direction="row"
+                                    justify="center"
+                                    alignItems="center"
+                                >
+                                    <Button color="secondary" onClick={() => this.props.onLoadSubtopics(this.props.topic)} style={{ fontSize: 12 }}>
+                                        Open subtopics
                                     </Button>
-                                <Button color="secondary" onClick={() => this.props.onEditTopic(this.props.topic)} style={{ fontSize: 12 }}>
-                                    Edit  topic
+                                    <Button color="secondary" onClick={() => this.props.onEditTopic(this.props.topic)} style={{ fontSize: 12 }}>
+                                        Edit  topic
                                 </Button>
+                                </Grid>
                             </Grid>
-                        </Grid>
-                    </CardActions>
-                    <EmployeesByTopicDialog
-                        open={this.state.openEmployeesByTopicDialog}
-                        onClose={() => this.handleCloseDialog("openEmployeesByTopicDialog")}
-                        topic={this.props.topic.Name}
-                        topicId={this.props.topic.TopicId} />
-                    <TeamsByTopicDialog
-                        open={this.state.openTeamsByTopicDialog}
-                        onClose={() => this.handleCloseDialog("openTeamsByTopicDialog")}
-                        topic={this.props.topic.Name}
-                        topicId={this.props.topic.TopicId} />
-                </Card>
-            </MuiThemeProvider>
+                        </CardActions>
+                    </Card>
+                </MuiThemeProvider>
+                <EmployeesByTopicDialog
+                    open={this.state.openEmployeesByTopicDialog}
+                    onClose={() => this.handleCloseDialog("openEmployeesByTopicDialog")}
+                    topic={this.props.topic.Name}
+                    topicId={this.props.topic.TopicId} />
+                <TeamsByTopicDialog
+                    open={this.state.openTeamsByTopicDialog}
+                    onClose={() => this.handleCloseDialog("openTeamsByTopicDialog")}
+                    topic={this.props.topic.Name}
+                    topicId={this.props.topic.TopicId} />
+            </React.Fragment>
         );
     }
 }
