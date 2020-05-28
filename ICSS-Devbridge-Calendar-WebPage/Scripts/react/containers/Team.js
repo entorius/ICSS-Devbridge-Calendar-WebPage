@@ -828,7 +828,7 @@ class Team extends React.Component {
             openRemoveTeamMemberDialog: false,
             openReassignTeamMemberDialog: false,
             openTopicsByTeamDialog: false,
-            selectedTeamId: this.props.teamTree.items.$id,
+            selectedTeamId: 0,
             selectedTeamManagerId: 0,
             teamMemberTreeContent: null
         };

@@ -287,15 +287,6 @@ class Login extends React.Component {
                                     </Button>
                                 {/* </Link> */}
                             </ThemeProvider>
-                            <ThemeProvider theme={theme}>
-                                <Link to="/Home/Register">
-                                    {/*TODO: add ajax request for login button*/}
-                                    <div className={classes.registerLink}>
-
-                                        Register
-                                    </div>
-                                </Link>
-                            </ThemeProvider>
                         </Typography>
                     </Container>
                 </React.Fragment>
