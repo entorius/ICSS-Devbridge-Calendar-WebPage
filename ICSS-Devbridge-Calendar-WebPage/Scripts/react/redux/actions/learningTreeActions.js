@@ -133,8 +133,6 @@ function createNodeObject(obj, treeHeight, levelSize, usersData) {
         user.Topics.map(topic =>
             topic.TopicId == obj.TopicId ? learnedUsers = learnedUsers + 1 : null));
     var color = learnedUsers > 0 ? "#33eb91" : "#00b0ff";
-    console.log(levelSize.thisNodePlace);
-    console.log(treeHeight - ((levelSize.level) * 100));
     var node = [{
         id: obj.TopicId,
         x: levelSize.thisNodePlace,
