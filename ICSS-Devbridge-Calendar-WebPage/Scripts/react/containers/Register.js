@@ -44,8 +44,6 @@ function Alert(props) {
 //Styles(Css)
 const styles = theme => ({
     background_Image: {
-        display: "flex",
-        flexWrap: "wrap",
         backgroundImage: "linear-gradient( rgba(51, 51, 51, 0.45), rgba(51, 51, 51, 0.45) ), url('../../../Assets/conference.jpg')",
         backgroundSize: 'cover',
         backgroundPosition: 'center',
@@ -55,9 +53,7 @@ const styles = theme => ({
         minHeight: '700px'
     },
     allHeader: {
-        display: 'flex',
         width: '100%',
-        flexWrap: 'wrap'
     },
     logo: {
         backgroundImage: "url('../../../Assets/devbridgeLogo.png')",
@@ -67,9 +63,7 @@ const styles = theme => ({
         backgroundRepeat: 'no-repeat'
     },
     header: {
-        marginLeft: "-35px",
         width: "100%",
-        position: "absolute",
         fontSize: '45px',
         color: '#FF004D',
         textAlign: 'center',
@@ -77,7 +71,7 @@ const styles = theme => ({
     },
     loginBox: {
         backgroundColor: '#ffffff',
-        height: '630px',
+        height: '430px',
         width: '450px',
         marginLeft: 'auto',
         marginRight: 'auto',
@@ -425,10 +419,13 @@ class Register extends React.Component {
     async componentDidMount() {
         const params = new URLSearchParams(this.props.location.search);
         const registrationToken = params.get('registrationToken');
+        console.log(registrationToken);
+        console.log(registrationToken !== null);
+        console.log(this.state);
         registrationToken !== null ? this.setState({ registered: false }) : this.setState({ registered: true });
         this.setState({ registrationToken: registrationToken }, () => {
             console.log("registrationToken");
-            console.log(registrationToken);
+            console.log(this.state);
         });
         registrationToken !== null ? console.log("registrationToken not equal null"): null;
         registrationToken !== null ? await this.props.getCheckRegistered(registrationToken) : null;

@@ -2,9 +2,9 @@ import { FETCH_CURRENT_USER, GET_CHECK_REGISTERED, FINISH_REGISTRATION } from ".
 
 const initialState = {
     user: {},
-    isRegistered: {},
+    isRegistered: null,
     finishRegistration: {},
-    error: {}
+    error: null
 }
 
 export default function (state = initialState,action) {
