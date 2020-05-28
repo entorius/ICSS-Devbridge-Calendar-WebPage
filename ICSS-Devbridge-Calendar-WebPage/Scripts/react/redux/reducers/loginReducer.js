@@ -18,8 +18,10 @@ export default function (state = initialState, action) {
 }
 
 function getAuthState() {
-    const token = JSON.parse(localStorage.getItem('token')) || undefined;
-    const expirationTime = JSON.parse(localStorage.getItem('expirationTime')) || undefined;
+    var loginTokenGet = localStorage.getItem('token');
+    var expirationTimeGet = localStorage.getItem('expirationTime');
+    const token = loginTokenGet == 'undefined'? undefined : JSON.parse(localStorage.getItem('token'));
+    const expirationTime = expirationTimeGet == 'undefined' ? undefined: JSON.parse(localStorage.getItem('expirationTime'));
     return {
         accessToken: token,
         expirationTime: expirationTime

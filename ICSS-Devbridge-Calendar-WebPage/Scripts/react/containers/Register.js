@@ -12,6 +12,8 @@ import Typography from '@material-ui/core/Typography';
 import Container from '@material-ui/core/Container';
 import Grid from '@material-ui/core/Grid';
 import FormControlLabel from '@material-ui/core/FormControlLabel';
+import FormHelperText from '@material-ui/core/FormHelperText';
+import FormControl from '@material-ui/core/FormControl';
 
 //Components
 import Checkbox from '@material-ui/core/Checkbox';
@@ -25,10 +27,15 @@ import MuiAlert from '@material-ui/lab/Alert';
 import { green, purple } from '@material-ui/core/colors';
 
 //Icons
-import AccountCircle from '@material-ui/icons/AccountCircle';
 import LockIcon from '@material-ui/icons/Lock';
-import PersonIcon from '@material-ui/icons/Person';
-import AssignmentIndIcon from '@material-ui/icons/AssignmentInd';
+//Redux
+import { getCheckRegistered, finishRegistration } from '../redux/actions/userActions';
+import PropTypes from 'prop-types';
+import { connect } from 'react-redux';
+
+//Yup and fomik
+import { Formik } from 'formik';
+import * as Yup from 'yup';
 
 function Alert(props) {
     return <MuiAlert elevation={6} variant="filled" {...props} />;
@@ -149,6 +156,10 @@ const styles = theme => ({
         marginRight: 'auto',
         marginTop: '20px',
         fontSize: '14px',
+    },
+    registrationField: {
+        display: 'flex',
+        justifyContent: 'center'
     }
 });
 const theme = createMuiTheme({
@@ -162,9 +173,7 @@ class RegisterWithPassword extends React.Component {
         super(props);
         {/*TODO: state parameters for login: email and password*/ }
         this.state = {
-            name: "",
-            surname: "",
-            role: "",
+            registrationToken: "",
             password: "",
             repeatPassword: "",
             checkedRememberMe: true,
@@ -173,7 +182,6 @@ class RegisterWithPassword extends React.Component {
             openSuccessSnackbar: false,
             errorMessage: ""
         };
-        console.log(props);
         this.handleChange = this.handleChange.bind(this);
         this.handleCheckboxChange = this.handleCheckboxChange.bind(this);
         this.handleErrorSnackBarClose = this.handleErrorSnackBarClose.bind(this);
@@ -196,12 +204,24 @@ class RegisterWithPassword extends React.Component {
     handleSuccessSnackBarClose = (evt) => {
         this.setState({ openSuccessSnackbar: false });
     }
+    componentDidUpdate(prevProps) {
+        console.log("registrationTokenUpdate");
+        console.log(this.props.registrationToken);
+        console.log(prevProps.registrationToken);
+        if (this.props.registrationToken !== prevProps.registrationToken) {
+            this.setState({ registrationToken: this.props.registrationToken });
+        }
+    }
 
 
-
-    handleRegisterButtonClick = (evt) => {
-        this.setState({ openSuccessSnackbar: true });
-        this.props.history.push('/Main/Home')
+    handleRegisterButtonClick = async (values, { resetForm }) => {
+        console.log("registrationToken");
+        console.log(this.state.registrationToken);
+        await this.props.allProps.finishRegistration(values.password, this.props.registrationToken);
+        console.log(this.props.allProps);
+        //this.setState({ openSuccessSnackbar: true });
+        //this.props.history.push('/Main/Home');
+        
     }
     render() {
         const { classes } = this.props;
@@ -210,77 +230,119 @@ class RegisterWithPassword extends React.Component {
                 <div className={classes.loginBoxLabel}>
                     Create account
                 </div>
-                <div className={classes.formControl}>
-                    <Grid container spacing={1} alignItems="flex-end">
-                        <Grid item>
-                            <LockIcon className={classes.textBoxIcon} />
-                        </Grid>
-                        <Grid item>
-                            <TextField
-                                id="input-email-with-icon"
-                                InputProps={{
-                                    classes: {
-                                        input: classes.resize,
-                                    },
-                                }}
-                                InputLabelProps={{
-                                    classes: {
-                                        root: classes.resize
+                <Formik
+                    initialValues={{ password: '', confirmPassword: '' }}
+                    onSubmit={this.handleRegisterButtonClick}
+                    validationSchema={Yup.object().shape({
+                        password: Yup.string()
+                            .required('This field is required')
+                            .min(7, "Password must contain at least 7 characters")
+                            .matches(/^(?=.*[A-Za-z])(?=.*\d)(?=.*[$@$!%* #+=\(\)\^?&])[A-Za-z\d$@$!%* #+=\(\)\^?&]{3,}$/, {message : "Password must contain at least 1 letter, 1 number and 1 special character"}),
+                        confirmPassword: Yup.string()
+                            .required('This field is required')
+                            .oneOf([Yup.ref('password'), null], 'Passwords do not match')
+                    })}
+                >
+                    {({
+                        handleSubmit,
+                        values,
+                        touched,
+                        errors,
+                        handleChange,
+                        handleBlur
+                    }) => (
+                            <form>
+                                <FormControl className={classes.formControl}
+                                    required
+                                    error={touched.password && Boolean(errors.password)}>
+                                    <Grid container spacing={1} alignItems="flex-end" className={classes.registrationField}>
+                                        <Grid item>
+                                            <LockIcon className={classes.textBoxIcon} />
+                                        </Grid>
+                                        <Grid item>
+                                            <TextField
+                                                id="password"
+                                                value={values.password}
+                                                helperText={this.state.errorMessage}
+                                                onChange={handleChange}
+                                                onBlur={handleBlur}
+                                                InputProps={{
+                                                    classes: {
+                                                        input: classes.resize,
+                                                    },
+                                                }}
+                                                InputLabelProps={{
+                                                    classes: {
+                                                        root: classes.resize
+                                                    }
+                                                }}
+                                                label="Password"
+                                                type="password"
+                                                name="password"
+                                                className={classes.inputTextBox} />
+                                        </Grid>
+                                    </Grid>
+                                    <FormHelperText id="password-error" style={{ fontSize: 12, textAlign: "center" }}>
+                                        {touched.password ? errors.password : ""}
+                                    </FormHelperText>
+                                </FormControl>
+                                <FormControl className={classes.formControl}
+                                    required
+                                    error={touched.password && Boolean(errors.password)}>
+                                    <Grid container spacing={1} alignItems="flex-end" className={classes.registrationField}>
+                                        <Grid item>
+                                            <LockIcon className={classes.textBoxIcon} />
+                                        </Grid>
+                                        <Grid item>
+                                            <TextField
+                                                id="confirm-passsword"
+                                                value={values.confirmPassword}
+                                                helperText={this.state.errorMessage}
+                                                onChange={handleChange}
+                                                onBlur={handleBlur}
+                                                InputProps={{
+                                                    classes: {
+                                                        input: classes.resize,
+                                                    },
+                                                }}
+                                                InputLabelProps={{
+                                                    classes: {
+                                                        root: classes.resize
+                                                    }
+                                                }}
+                                                label="Repeat Password"
+                                                name="confirmPassword"
+                                                type="password"
+                                                className={classes.inputTextBox} />
+                                        </Grid>
+                                    </Grid>
+                                    <FormHelperText id="confirm-password-error" style={{ fontSize: 12, textAlign: "center" }}>
+                                        {touched.confirmPassword ? errors.confirmPassword : ""}
+                                    </FormHelperText>
+                                </FormControl>
+                                <FormControlLabel
+                                    control={
+                                        <Checkbox
+                                            checked={this.state.checkedRememberMe}
+                                            onChange={this.handleCheckboxChange}
+                                            name="checkedRememberMe"
+                                            color="primary"
+                                        />
                                     }
-                                }}
-                                label="Password"
-                                type="password"
-                                name="password"
-                                onChange={this.handleChange}
-                                className={classes.inputTextBox} />
-                        </Grid>
-                    </Grid>
-                </div>
-                <div className={classes.formControl}>
-                    <Grid container spacing={1} alignItems="flex-end">
-                        <Grid item>
-                            <LockIcon className={classes.textBoxIcon} />
-                        </Grid>
-                        <Grid item>
-                            <TextField
-                                id="input-password-with-icon"
-                                InputProps={{
-                                    classes: {
-                                        input: classes.resize,
-                                    },
-                                }}
-                                InputLabelProps={{
-                                    classes: {
-                                        root: classes.resize
-                                    }
-                                }}
-                                label="Repeat Password"
-                                name="repeatPassword"
-                                type="repeatPassword"
-                                onChange={this.handleChange}
-                                className={classes.inputTextBox} />
-                        </Grid>
-                    </Grid>
-                </div>
-                <FormControlLabel
-                    control={
-                        <Checkbox
-                            checked={this.state.checkedRememberMe}
-                            onChange={this.handleCheckboxChange}
-                            name="checkedRememberMe"
-                            color="primary"
-                        />
-                    }
-                    label=" Agree with terms and policies"
-                    className={classes.checkBoxRememberMe}
-                />
-                <ThemeProvider theme={theme}>
-                        {/* TODO: add action to register User (add password to database)*/}
-                    <Button variant="contained" color="primary" className={classes.registerButton} onClick={this.handleRegisterButtonClick}>
+                                    label=" Agree with terms and policies"
+                                    className={classes.checkBoxRememberMe}
+                                />
+                                <ThemeProvider theme={theme}>
+                                    {/* TODO: add action to register User (add password to database)*/}
+                                    <Button variant="contained" color="primary" className={classes.registerButton} onClick={handleSubmit}>
 
-                            Register
-                       </Button>
-                </ThemeProvider>
+                                        Register
+                                    </Button>
+                                </ThemeProvider>
+                            </form>
+                        )
+                    }
+                        </Formik>
                 <ThemeProvider theme={theme}>
                     <Link to="/">
                         <div className={classes.loginLink}>
@@ -328,7 +390,7 @@ class Registered extends React.Component {
         return (
             <div className={classes.registeredElements}>
                 <div className={classes.registeredBoxLabel}>
-                    You have already registered!
+                    You have already registered or do not have permission to this page!
                     </div>
                 
                 <ThemeProvider theme={theme}>
@@ -350,7 +412,7 @@ class Register extends React.Component {
         super(props);
         {/*TODO: when loading get state if user registered and user itself and his email*/ }
         this.state = {
-            email: "",
+            registrationToken: "",
             password: "",
             repeatPassword:"",
             checkedRememberMe: true,
@@ -359,6 +421,22 @@ class Register extends React.Component {
         };
         this.handleChange = this.handleChange.bind(this);
         this.handleCheckboxChange = this.handleCheckboxChange.bind(this);
+    }
+    async componentDidMount() {
+        const params = new URLSearchParams(this.props.location.search);
+        const registrationToken = params.get('registrationToken');
+        registrationToken !== null ? this.setState({ registered: false }) : this.setState({ registered: true });
+        this.setState({ registrationToken: registrationToken }, () => {
+            console.log("registrationToken");
+            console.log(registrationToken);
+        });
+        registrationToken !== null ? console.log("registrationToken not equal null"): null;
+        registrationToken !== null ? await this.props.getCheckRegistered(registrationToken) : null;
+        this.props.users.isRegistered !== null ?
+            this.setState({ registered: false }) : this.setState({ registered: true });
+        
+        //getCheckRegistered()
+        //finishRegistration
     }
     
     handleChange(evt) {
@@ -385,7 +463,7 @@ class Register extends React.Component {
                     <CssBaseline />
                     <Container fixed>
                         <Typography component="div" className={classes.loginBox}>
-                            {!this.state.registered ? <RegisterWithPassword classes={classes} /> : null}
+                            {!this.state.registered ? <RegisterWithPassword classes={classes} allProps={this.props} registrationToken={this.state.registrationToken} /> : null}
                             {this.state.registered ? <Registered classes={classes} /> : null}
                         </Typography>
                     </Container>
@@ -395,5 +473,13 @@ class Register extends React.Component {
         );
     }
 }
+Register.propTypes = {
+    getCheckRegistered: PropTypes.func.isRequired,
+    finishRegistration: PropTypes.func.isRequired
+}
 
-export default withStyles(styles)(Register);
+const mapStateToProps = state => ({
+    users: state.users,
+})
+
+export default connect(mapStateToProps, { getCheckRegistered, finishRegistration})(withStyles(styles)(Register));
