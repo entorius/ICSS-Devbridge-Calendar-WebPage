@@ -177,13 +177,17 @@
     <Content Include="Scripts\react\redux\actions\learntTopicsActions.js" />
     <Content Include="Scripts\react\redux\actions\teamActions.js" />
     <Content Include="Scripts\react\redux\actions\loginActions.js" />
+    <Content Include="Scripts\react\redux\actions\topicActions.js" />
     <Content Include="Scripts\react\redux\actions\types.js" />
+    <Content Include="Scripts\react\redux\actions\userActions.js" />
     <Content Include="Scripts\react\redux\reducers\index.js" />
     <Content Include="Scripts\react\redux\reducers\assignmentReducer.js" />
     <Content Include="Scripts\react\redux\reducers\learningTreeReducer.js" />
     <Content Include="Scripts\react\redux\reducers\learntTopicsReducer.js" />
     <Content Include="Scripts\react\redux\reducers\teamReducer.js" />
     <Content Include="Scripts\react\redux\reducers\loginReducer.js" />
+    <Content Include="Scripts\react\redux\reducers\topicReducer.js" />
+    <Content Include="Scripts\react\redux\reducers\userReducer.js" />
     <Content Include="Scripts\react\redux\store.js" />
     <Content Include="Scripts\react\containers\CalendarPage.js" />
     <Content Include="Scripts\react\containers\Directory.js" />
