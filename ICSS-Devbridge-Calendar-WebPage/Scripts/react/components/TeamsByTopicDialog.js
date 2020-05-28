@@ -16,6 +16,7 @@ import TableRow from '@material-ui/core/TableRow';
 import Paper from '@material-ui/core/Paper';
 import { indigo, grey } from '@material-ui/core/colors';
 import CircularProgress from '@material-ui/core/CircularProgress';
+import CssBaseline from '@material-ui/core/CssBaseline';
 
 import { connect } from 'react-redux';
 import { fetchTeamsByTopic } from '../redux/actions/learntTopicsActions';
@@ -47,6 +48,10 @@ const styles = theme => ({
             color: 'white !important',
             fontSize: 15
         },
+    },
+    noTeamsFoundMessage: {
+        fontWeight: "bold",
+        color: grey[600]
     }
 });
 
@@ -72,67 +77,75 @@ class TeamsByTopicDialog extends Component {
     render() {
         const { classes } = this.props;
         return (
-            <Dialog fullScreen
-                open={this.props.open}
-                onClose={this.props.onClose}
-                PaperProps={{
-                    style: {
-                        backgroundColor: grey[100]
-                    },
-                }}>
-                <AppBar className={classes.appBar}>
-                    <Toolbar>
-                        <IconButton
-                            edge="start"
-                            color="inherit"
-                            onClick={this.props.onClose}
-                            aria-label="close"
-                        >
-                            <CloseIcon className={classes.closeIcon} />
-                        </IconButton>
-                        <Typography variant="h3" className={classes.title}>
-                            Teams By Topic
+            <React.Fragment>
+                <CssBaseline />
+                <Dialog fullScreen
+                    open={this.props.open}
+                    onClose={this.props.onClose}
+                    PaperProps={{
+                        style: {
+                            backgroundColor: grey[100]
+                        },
+                    }}>
+                    <AppBar className={classes.appBar}>
+                        <Toolbar>
+                            <IconButton
+                                edge="start"
+                                color="inherit"
+                                onClick={this.props.onClose}
+                                aria-label="close"
+                            >
+                                <CloseIcon className={classes.closeIcon} />
+                            </IconButton>
+                            <Typography variant="h3" className={classes.title}>
+                                Teams By Topic
+                            </Typography>
+                        </Toolbar>
+                    </AppBar>
+                    <Grid
+                        container
+                        direction="column"
+                        justify="flex-start"
+                        alignItems="center"
+                    >
+                        <Typography variant="h4" style={{ marginTop: 20, marginBottom: 15, }}>
+                            {this.props.topic}
                         </Typography>
-                    </Toolbar>
-                </AppBar>
-                <Grid
-                    container
-                    direction="column"
-                    justify="flex-start"
-                    alignItems="center"
-                >
-                    <Typography variant="h4" style={{ marginTop: 20, marginBottom: 15, }}>
-                        {this.props.topic}
-                    </Typography>
-                    <Typography variant="h5" style={{ marginTop: 10, marginBottom: 15, }}>
-                        Teams
-                    </Typography>
-                    {
-                        this.state.isLoading ? <CircularProgress /> : <TableContainer component={Paper} className={classes.table}>
-                            <Table >
-                                <TableHead style={{ backgroundColor: indigo[500] }} className={classes.tableHead}>
-                                    <TableCell>Manager's first name </TableCell>
-                                    <TableCell>Manager's last name </TableCell>
-                                    <TableCell>Manager's role </TableCell>
-                                    <TableCell style={{ width: "20%" }}>Number of employees that learnt this topic</TableCell>
-                                </TableHead>
-                                <TableBody className={classes.tableBody}>
-                                    {this.props.teamsByTopic.map(team => {
-                                        return (
-                                            <TableRow>
-                                                <TableCell>{team.TeamManager.FirstName}</TableCell>
-                                                <TableCell>{team.TeamManager.LastName}</TableCell>
-                                                <TableCell>{team.TeamManager.Role}</TableCell>
-                                                <TableCell>{team.MemberCount}</TableCell>
-                                            </TableRow>
-                                        )
-                                    })}
-                                </TableBody>
-                            </Table>
-                        </TableContainer>
-                    }
-                </Grid>
-            </Dialog>
+                        <Typography variant="h5" style={{ marginTop: 10, marginBottom: 15, }}>
+                            Teams
+                        </Typography>
+                        {
+                            this.state.isLoading ? <CircularProgress /> :
+                                this.props.teamsByTopic.length == 0 ?
+                                    <Typography variant="h5" className={classes.noTeamsFoundMessage}>
+                                        No teams found
+                                </Typography> :
+                                    <TableContainer component={Paper} className={classes.table}>
+                                        <Table >
+                                            <TableHead style={{ backgroundColor: indigo[500] }} className={classes.tableHead}>
+                                                <TableCell>Manager's first name </TableCell>
+                                                <TableCell>Manager's last name </TableCell>
+                                                <TableCell>Manager's role </TableCell>
+                                                <TableCell style={{ width: "20%" }}>Number of employees that learnt this topic</TableCell>
+                                            </TableHead>
+                                            <TableBody className={classes.tableBody}>
+                                                {this.props.teamsByTopic.map(team => {
+                                                    return (
+                                                        <TableRow>
+                                                            <TableCell>{team.TeamManager.FirstName}</TableCell>
+                                                            <TableCell>{team.TeamManager.LastName}</TableCell>
+                                                            <TableCell>{team.TeamManager.Role}</TableCell>
+                                                            <TableCell>{team.MemberCount}</TableCell>
+                                                        </TableRow>
+                                                    )
+                                                })}
+                                            </TableBody>
+                                        </Table>
+                                    </TableContainer>
+                        }
+                    </Grid>
+                </Dialog>
+            </React.Fragment>
         )
     }
 }

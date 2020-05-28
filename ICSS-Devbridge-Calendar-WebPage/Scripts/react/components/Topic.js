@@ -62,7 +62,6 @@ class Topic extends React.Component {
 
     handleOpenDialog = (e) => {
         var name = e.currentTarget.name;
-        console.log(name)
         this.setState(prevState => ({ [name]: !prevState[name] }));
     }
 
@@ -81,7 +80,11 @@ class Topic extends React.Component {
                         </Typography>
                         <Divider className={classes.divider} />
                         <Typography variant="h6" color="textSecondary">
-                            {this.convertLinksInText(this.props.topic.Description)}
+                            {
+                                this.props.topic.Description.trim() == "" ? "No description" :
+                                    this.convertLinksInText(this.props.topic.Description)
+                            }
+
                         </Typography>
                         <Divider className={classes.divider} />
                     </CardContent>
@@ -98,15 +101,12 @@ class Topic extends React.Component {
                                 justify="center"
                                 alignItems="center"
                             >
-                                <Typography variant="h5" color="textSecondary" style={{ fontWeight: "bold", marginRight: 20 }}>
-                                    This topic learnt:
-                                </Typography>
                                 <Button onClick={this.handleOpenDialog} className={classes.openDialogbuttons} name="openEmployeesByTopicDialog">
                                     Employees
                                     </Button>
                                 <Button onClick={this.handleOpenDialog} className={classes.openDialogbuttons} name="openTeamsByTopicDialog">
                                     Teams
-                                    </Button>
+                                </Button>
                             </Grid>
                             <Grid
                                 container
@@ -119,19 +119,19 @@ class Topic extends React.Component {
                                     </Button>
                                 <Button color="secondary" onClick={() => this.props.onEditTopic(this.props.topic)} style={{ fontSize: 12 }}>
                                     Edit  topic
-                                    </Button>
+                                </Button>
                             </Grid>
                         </Grid>
                     </CardActions>
                     <EmployeesByTopicDialog
                         open={this.state.openEmployeesByTopicDialog}
                         onClose={() => this.handleCloseDialog("openEmployeesByTopicDialog")}
-                        topic="Topic title"
+                        topic={this.props.topic.Name}
                         topicId={this.props.topic.TopicId} />
                     <TeamsByTopicDialog
                         open={this.state.openTeamsByTopicDialog}
                         onClose={() => this.handleCloseDialog("openTeamsByTopicDialog")}
-                        topic="Topic title"
+                        topic={this.props.topic.Name}
                         topicId={this.props.topic.TopicId} />
                 </Card>
             </MuiThemeProvider>

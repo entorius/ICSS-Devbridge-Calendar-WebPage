@@ -31,3 +31,17 @@ export const createTopic = (accessToken, topicData) => dispatch => {
 
     return axios.post(baseApiUrl + `/api/topics`, data, config);
 }
+
+export const updateTopic = (accessToken, topicData, topicId) => dispatch => {
+    const config = {
+        headers: { Authorization: `Bearer ${accessToken}` }
+    }
+
+    const data = {
+        Name: topicData.name,
+        Description: topicData.description,
+        ParentTopicId: topicData.parentTopic
+    }
+
+    return axios.put(baseApiUrl + `/api/topics/${topicId}`, data, config);
+}

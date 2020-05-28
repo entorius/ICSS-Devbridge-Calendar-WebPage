@@ -17,7 +17,7 @@ import { Formik } from 'formik';
 import * as Yup from 'yup';
 
 import { connect } from 'react-redux';
-import { fetchTopics, createTopic } from '../../redux/actions/topicActions';
+import { fetchTopics, updateTopic } from '../../redux/actions/topicActions';
 import PropTypes from 'prop-types';
 
 
@@ -63,7 +63,7 @@ const styles = theme => ({
     }
 });
 
-class CreateTopicDialog extends React.Component {
+class EditTopicDialog extends React.Component {
     constructor(props) {
         super(props);
     }
@@ -78,9 +78,9 @@ class CreateTopicDialog extends React.Component {
     }
 
     onSubmit = (values, { resetForm }) => {
-        this.props.createTopic(this.props.token.accessToken, values);
+        this.props.updateTopic(this.props.token.accessToken, values, this.props.topic.TopicId);
         this.props.onClose()
-        this.props.createTopicSuccess();
+        this.props.updateTopicSuccess();
     }
 
     render() {
@@ -99,11 +99,15 @@ class CreateTopicDialog extends React.Component {
                 <DialogTitle id="add-learning-day"
                     disableTypography="true"
                     classes={{ root: classes.dialogTitle }} >
-                    Create New Topic
+                    Edit Topic
                 </DialogTitle>
 
                 <Formik
-                    initialValues={{ name: '', description: '', parentTopic: '' }}
+                    initialValues={{
+                        name: this.props.topic.Name,
+                        description: this.props.topic.Description,
+                        parentTopic: this.props.topic.ParentTopicId
+                    }}
                     onSubmit={this.onSubmit}
                     validationSchema={Yup.object().shape({
                         name: Yup.string()
@@ -212,7 +216,7 @@ class CreateTopicDialog extends React.Component {
                                         root: classes.saveButton,
                                         focus: classes.saveButton
                                     }}>
-                                    Save
+                                    Update
                                 </Button>
                             </Grid>
                         </DialogActions>
@@ -223,9 +227,9 @@ class CreateTopicDialog extends React.Component {
     }
 }
 
-CreateTopicDialog.propTypes = {
+EditTopicDialog.propTypes = {
     fetchTopics: PropTypes.func.isRequired,
-    createTopic: PropTypes.func.isRequired
+    updateTopic: PropTypes.func.isRequired
 }
 
 const mapStateToProps = state => ({
@@ -233,6 +237,6 @@ const mapStateToProps = state => ({
     token: state.login.token
 })
 
-const CreateTopicDialogStyled = withStyles(styles)(CreateTopicDialog);
+const EditTopicDialogStyled = withStyles(styles)(EditTopicDialog);
 
-export default connect(mapStateToProps, { fetchTopics, createTopic })(CreateTopicDialogStyled);
+export default connect(mapStateToProps, { fetchTopics, updateTopic })(EditTopicDialogStyled);

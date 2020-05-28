@@ -47,6 +47,10 @@ const styles = theme => ({
             color: 'white !important',
             fontSize: 15
         },
+    },
+    noEmployeesFoundMessage: {
+        fontWeight: "bold",
+        color: grey[600]
     }
 });
 
@@ -108,26 +112,31 @@ class EmployeesByTopicDialog extends Component {
                         Employees
                     </Typography>
                     {
-                        this.state.isLoading ? <CircularProgress /> : <TableContainer component={Paper} className={classes.table}>
-                            <Table >
-                                <TableHead style={{ backgroundColor: indigo[500] }} className={classes.tableHead}>
-                                    <TableCell>First name</TableCell>
-                                    <TableCell>Last name</TableCell>
-                                    <TableCell>Role</TableCell>
-                                </TableHead>
-                                <TableBody className={classes.tableBody}>
-                                    {this.props.employeesByTopic.map(employee => {
-                                        return (
-                                            <TableRow>
-                                                <TableCell>{employee.FirstName}</TableCell>
-                                                <TableCell>{employee.LastName}</TableCell>
-                                                <TableCell>{employee.Role}</TableCell>
-                                            </TableRow>
-                                        )
-                                    })}
-                                </TableBody>
-                            </Table>
-                        </TableContainer>
+                        this.state.isLoading ? <CircularProgress /> :
+                            this.props.employeesByTopic.length == 0 ?
+                                <Typography variant="h5" className={classes.noEmployeesFoundMessage}>
+                                    No employees found
+                                </Typography> :
+                                <TableContainer component={Paper} className={classes.table}>
+                                    <Table >
+                                        <TableHead style={{ backgroundColor: indigo[500] }} className={classes.tableHead}>
+                                            <TableCell>First name</TableCell>
+                                            <TableCell>Last name</TableCell>
+                                            <TableCell>Role</TableCell>
+                                        </TableHead>
+                                        <TableBody className={classes.tableBody}>
+                                            {this.props.employeesByTopic.map(employee => {
+                                                return (
+                                                    <TableRow>
+                                                        <TableCell>{employee.FirstName}</TableCell>
+                                                        <TableCell>{employee.LastName}</TableCell>
+                                                        <TableCell>{employee.Role}</TableCell>
+                                                    </TableRow>
+                                                )
+                                            })}
+                                        </TableBody>
+                                    </Table>
+                                </TableContainer>
                     }
                 </Grid>
             </Dialog>
