@@ -4,33 +4,43 @@ import Grid from '@material-ui/core/Grid';
 import Button from '@material-ui/core/Button';
 import EmployeesByTopicDialog from './EmployeesByTopicDialog';
 import TeamsByTopicDialog from './TeamsByTopicDialog';
-import { indigo } from "@material-ui/core/colors";
+import { indigo, green, grey, blue } from "@material-ui/core/colors";
 import Typography from '@material-ui/core/Typography';
+import Card from '@material-ui/core/Card';
+import CardContent from '@material-ui/core/CardContent';
+import CardActions from '@material-ui/core/CardActions';
+import Divider from '@material-ui/core/Divider';
+import { withStyles, createMuiTheme, MuiThemeProvider } from '@material-ui/core/styles';
 
-const topicNameStyle = {
-    fontSize: 20,
-    display: "inline",
-    color: "black",
-    textAlign: "center",
-    margin: 0
-};
-const gridItemStyle = {
-    backgroundColor: "cyan",
-    borderRadius: 10,
-    padding: 10,
-    marginTop: 10,
-    marginBottom: 10,
-    marginLeft: 5,
-    marginRight: 5
-};
+const styles = theme => ({
+    cardRoot: {
+        width: "80%",
+        marginBottom: 15
+    },
+    openDialogbuttons: {
+        color: indigo[900],
+        fontSize: '12px'
+    },
+    divider: {
+        marginTop: 5,
+        marginBottom: 5
+    }
+});
 
-const buttons = {
-    color: indigo[900],
-    fontSize: '12px',
-}
+const theme = createMuiTheme({
+    palette: {
+        primary: indigo,
+        secondary: {
+            main: green[700]
+        },
+        textSecondary: {
+            main: grey[700]
+        }
+    }
+});
 
 class Topic extends React.Component {
-  
+
     constructor(props) {
         super(props);
         this.state = {
@@ -61,67 +71,72 @@ class Topic extends React.Component {
     };
 
     render() {
+        const { classes } = this.props;
         return (
-            <Grid container item
-                xs="3"
-                direction="column"
-                style={gridItemStyle}>
-                <p style={topicNameStyle}>{this.props.topic.name}</p>
-                <ColoredLine color="white" />
-                <p>{this.convertLinksInText(this.props.topic.description)}</p>
-                <ColoredLine color="white" />
-                <Grid
-                    container
-                    direction="row"
-                    justify="flex-start"
-                    alignItems="center"
-                >
-                    <Typography variant="h5">
-                        Learnt by
+            <MuiThemeProvider theme={theme}>
+                <Card className={classes.cardRoot}>
+                    <CardContent style={{ marginBottom: 0, paddingBottom: 0 }}>
+                        <Typography variant="h4" color="primary" align="center">
+                            {this.props.topic.Name}
                         </Typography>
-                    <Grid
-                        container
-                        direction="row"
-                        style={{ width: 40 }}
-                    >
-                    </Grid>
-                    <Button onClick={this.handleOpenDialog} style={buttons} name="openEmployeesByTopicDialog">
-                        Employees
-                        </Button>
-                    <Button onClick={this.handleOpenDialog} style={buttons} name="openTeamsByTopicDialog">
-                        Teams
-                    </Button>
-                </Grid>
-                <EmployeesByTopicDialog
-                    open={this.state.openEmployeesByTopicDialog}
-                    onClose={() => this.handleCloseDialog("openEmployeesByTopicDialog")}
-                    topic="Topic title"
-                    topicId={6} />
-                <TeamsByTopicDialog
-                    open={this.state.openTeamsByTopicDialog}
-                    onClose={() => this.handleCloseDialog("openTeamsByTopicDialog")}
-                    topic="Topic title"
-                    topicId={6} />
-                <Button onClick={() => this.props.onLoadSubtopics(this.props.topic.id)}>
-                    Open subtopics
-                </Button>
-                <Button onClick={() => this.props.onEditTopic(this.props.topic)}>
-                    Edit {this.props.topic.name} topic
-                </Button>
-            </Grid >
+                        <Divider className={classes.divider} />
+                        <Typography variant="h6" color="textSecondary">
+                            {this.convertLinksInText(this.props.topic.Description)}
+                        </Typography>
+                        <Divider className={classes.divider} />
+                    </CardContent>
+                    <CardActions style={{ width: "100%", marginTop: 0 }}>
+                        <Grid
+                            container
+                            direction="column"
+                            justify="center"
+                            alignItems="center"
+                        >
+                            <Grid
+                                container
+                                direction="row"
+                                justify="center"
+                                alignItems="center"
+                            >
+                                <Typography variant="h5" color="textSecondary" style={{ fontWeight: "bold", marginRight: 20 }}>
+                                    This topic learnt:
+                                </Typography>
+                                <Button onClick={this.handleOpenDialog} className={classes.openDialogbuttons} name="openEmployeesByTopicDialog">
+                                    Employees
+                                    </Button>
+                                <Button onClick={this.handleOpenDialog} className={classes.openDialogbuttons} name="openTeamsByTopicDialog">
+                                    Teams
+                                    </Button>
+                            </Grid>
+                            <Grid
+                                container
+                                direction="row"
+                                justify="center"
+                                alignItems="center"
+                            >
+                                <Button color="secondary" onClick={() => this.props.onLoadSubtopics(this.props.topic)} style={{ fontSize: 12 }}>
+                                    Open subtopics
+                                    </Button>
+                                <Button color="secondary" onClick={() => this.props.onEditTopic(this.props.topic)} style={{ fontSize: 12 }}>
+                                    Edit  topic
+                                    </Button>
+                            </Grid>
+                        </Grid>
+                    </CardActions>
+                    <EmployeesByTopicDialog
+                        open={this.state.openEmployeesByTopicDialog}
+                        onClose={() => this.handleCloseDialog("openEmployeesByTopicDialog")}
+                        topic="Topic title"
+                        topicId={this.props.topic.TopicId} />
+                    <TeamsByTopicDialog
+                        open={this.state.openTeamsByTopicDialog}
+                        onClose={() => this.handleCloseDialog("openTeamsByTopicDialog")}
+                        topic="Topic title"
+                        topicId={this.props.topic.TopicId} />
+                </Card>
+            </MuiThemeProvider>
         );
     }
 }
 
-const ColoredLine = ({ color }) => (
-    <hr
-        style={{
-            color: color,
-            backgroundColor: color,
-            height: 1,
-            margin: 0
-        }}
-    />
-);
-
-export default Topic;
+export default withStyles(styles)(Topic);

@@ -4,59 +4,37 @@ import Topic from "../components/Topic";
 import { withStyles, createMuiTheme, MuiThemeProvider } from '@material-ui/core/styles';
 import classes from "../../../Content/Topics.less";
 import CreateTopicDialog from '../components/topicDialogs/CreateTopicDialog';
-import { grey, indigo, blue } from '@material-ui/core/colors';
-
-//Redux
-import { connect } from 'react-redux';
-import { fetchAssignments } from '../redux/actions/assignmentActions';
-import PropTypes from 'prop-types';
-
-
-// Material UI components
+import { grey, indigo, green } from '@material-ui/core/colors';
 import Grid from '@material-ui/core/Grid';
 import Button from '@material-ui/core/Button';
 import TextField from '@material-ui/core/TextField';
-import { Link } from "react-router-dom";
-import TreeView from '@material-ui/lab/TreeView';
-import TreeItem from '@material-ui/lab/TreeItem';
 import Dialog from '@material-ui/core/Dialog';
 import DialogTitle from '@material-ui/core/DialogTitle';
 import Typography from '@material-ui/core/Typography';
 import IconButton from '@material-ui/core/IconButton';
-import ListItemAvatar from '@material-ui/core/ListItemAvatar';
-import ListItemText from '@material-ui/core/ListItemText';
-import Avatar from '@material-ui/core/Avatar';
-import Select from '@material-ui/core/Select';
-import MenuItem from '@material-ui/core/MenuItem';
-
-
-//Icons
-import ExpandMoreIcon from '@material-ui/icons/ExpandMore';
-import ChevronRightIcon from '@material-ui/icons/ChevronRight';
-import CreateIcon from '@material-ui/icons/Create';
+import ArrowForwardIcon from '@material-ui/icons/ArrowForward';
 import AddIcon from '@material-ui/icons/Add';
-import CloseIcon from '@material-ui/icons/Close';
-import CompareArrowsIcon from '@material-ui/icons/CompareArrows';
-import PersonIcon from '@material-ui/icons/Person';
+import CircularProgress from '@material-ui/core/CircularProgress';
 import { checkIfRedirectToLoginPage } from '../functions/LocalStorageFunctions';
+import { connect } from 'react-redux';
+import { fetchTopics } from '../redux/actions/topicActions';
+import PropTypes from 'prop-types';
 
 const styles = theme => ({
     root: {
         minHeight: '100vh',
-        display: 'flex',
-        flexGrowth: 1
-    },
-    gridContainer: {
-        direction: 'row',
-        justify: 'space-around',
-        alignItems: 'flex-start'
+        display: 'flex'
     }
 });
 
 const theme = createMuiTheme({
     palette: {
-        primary: indigo,
-        secondary: blue,
+        primary: {
+            main: indigo[900]
+        },
+        secondary: {
+            main: green[700]
+        },
         textPrimary: grey
     }
 });
@@ -66,10 +44,12 @@ class Topics extends React.Component {
         super(props);
         this.state = {
             topics: [],
+            isLoading: false,
             pageName: "Main topics",
             topicToChange: {},
             openEditTopic: false,
             openCreateTopic: false,
+            path: [{ name: "Main topics", id: null }]
         };
         this.handleLoadSubtopics = this.handleLoadSubtopics.bind(this);
         this.handleDialogEditTopic = this.handleDialogEditTopic.bind(this);
@@ -90,9 +70,9 @@ class Topics extends React.Component {
     };
 
     handleLoadSubtopics(topic) {
-        // ask database for topic subtopics
-        this.addTopics(5);
-        this.setState({ pageName: topic.name });
+        let subtopics = this.props.topics.filter(t => t.ParentTopicId === topic.TopicId)
+        let newPathTopic = { name: topic.Name, id: topic.TopicId }
+        this.setState({ topics: subtopics, path: [...this.state.path, newPathTopic] });
     };
 
     handleDialogEditTopic(topic) {
@@ -128,26 +108,37 @@ class Topics extends React.Component {
         this.setState({ topics: topics });
     }
 
-    componentDidMount() {
-        // ask for topics from server
-        this.addTopics(15);
-
+    async componentDidMount() {
+        this.setState({ isLoading: true })
+        await this.props.fetchTopics(this.props.token.accessToken)
+            .then(() => {
+                console.log("topics: " + this.props.topics)
+                let mainTopics = this.props.topics.filter(t => t.ParentTopicId === null)
+                this.setState({ topics: mainTopics, isLoading: false })
+            });
         checkIfRedirectToLoginPage(this.props);
     };
 
-
+    handlePathClicked = (path) => {
+        let subtopics = this.props.topics.filter(t => t.ParentTopicId === path.id)
+        this.setState({ topics: subtopics });
+        let pathIndex = this.state.path.findIndex(p => p.id === path.id);
+        console.log("pathIndex" + path.name + " " + path.id + " " + pathIndex)
+        let newPath = this.state.path.slice(0, pathIndex + 1)
+        this.setState({ path: newPath });
+    }
 
     render() {
         const { classes } = this.props;
         return (
-            <MuiThemeProvider>
+            <MuiThemeProvider theme={theme}>
                 <div className={classes.root}>
                     <SideBar />
                     <Grid
                         container
                         direction="column"
                         alignItems="flex-start"
-                        style={{ padding: "15px" }}
+                        style={{ padding: "15px", backgroundColor: grey[100] }}
                     >
                         <Typography variant="h2">Topics</Typography>
                         <Grid
@@ -168,16 +159,57 @@ class Topics extends React.Component {
                                     color="primary" />
                             </IconButton>
                         </Grid>
-                        <Grid container
+                        <Grid
+                            container
                             direction="row"
-                            justify="space-around"
-                            spacing="6"
-                            className={classes.gridContainerStyle}>
-                            {this.state.topics.map(topic =>
-                                <Topic topic={topic}
-                                    onLoadSubtopics={this.handleLoadSubtopics}
-                                    onEditTopic={this.handleDialogEditTopic} />
-                            )}
+                            justify="flex-start"
+                            alignItems="center"
+                            style={{ marginBottom: 10 }}
+                        >
+                            {
+                                this.state.path.map((topic, index) => {
+                                    if (index + 1 < this.state.path.length) {
+                                        return <React.Fragment>
+                                            <Button
+                                                color="secondary"
+                                                style={{ fontSize: 15 }}
+                                                onClick={() => this.handlePathClicked(topic)}>
+                                                {topic.name}
+                                            </Button>
+                                            <ArrowForwardIcon />
+                                        </React.Fragment>
+                                    }
+                                    else {
+                                        return <Button
+                                            color="secondary"
+                                            style={{ fontSize: 15 }}
+                                            onClick={() => this.handlePathClicked(topic)}>
+                                            {topic.name}
+                                        </Button>
+                                    }
+                                })
+                            }
+                        </Grid>
+                        <Grid
+                            container
+                            direction="column"
+                            justify="flex-start"
+                            alignItems="center"
+                            style={{ width: "100%", marginTop: 15 }}
+                        >
+                            {
+                                this.state.isLoading ? <CircularProgress /> :
+
+                                    <React.Fragment>{
+                                        this.state.topics.map(topic =>
+                                            <Topic topic={topic}
+                                                onLoadSubtopics={this.handleLoadSubtopics}
+                                                onEditTopic={this.handleDialogEditTopic} />
+                                        )
+                                    }
+                                    </React.Fragment>
+
+                            }
                         </Grid>
                     </Grid>
                     <EditTopic open={this.state.openEditTopic}
@@ -248,4 +280,15 @@ class EditTopic extends React.Component {
     }
 }
 
-export default withStyles(styles)(Topics);
+Topics.propTypes = {
+    fetchTopics: PropTypes.func.isRequired
+}
+
+const mapStateToProps = state => ({
+    topics: state.topics.topics,
+    token: state.login.token
+})
+
+const TopicsStyled = withStyles(styles)(Topics);
+
+export default connect(mapStateToProps, { fetchTopics })(TopicsStyled);
