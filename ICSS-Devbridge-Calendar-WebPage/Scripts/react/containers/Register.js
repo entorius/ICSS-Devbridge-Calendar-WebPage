@@ -199,9 +199,6 @@ class RegisterWithPassword extends React.Component {
         this.setState({ openSuccessSnackbar: false });
     }
     componentDidUpdate(prevProps) {
-        console.log("registrationTokenUpdate");
-        console.log(this.props.registrationToken);
-        console.log(prevProps.registrationToken);
         if (this.props.registrationToken !== prevProps.registrationToken) {
             this.setState({ registrationToken: this.props.registrationToken });
         }
@@ -209,12 +206,8 @@ class RegisterWithPassword extends React.Component {
 
 
     handleRegisterButtonClick = async (values, { resetForm }) => {
-        console.log("registrationToken");
-        console.log(this.state.registrationToken);
         await this.props.allProps.finishRegistration(values.password, this.props.registrationToken);
-        console.log(this.props.allProps);
-        //this.setState({ openSuccessSnackbar: true });
-        //this.props.history.push('/Main/Home');
+        this.props.allProps.history.push('/');
         
     }
     render() {
@@ -364,7 +357,6 @@ class Registered extends React.Component {
         {/*TODO: state parameters for login: email and password*/ }
         this.state = {
         };
-        console.log(props);
         this.handleChange = this.handleChange.bind(this);
         this.handleCheckboxChange = this.handleCheckboxChange.bind(this);
     }
@@ -419,15 +411,8 @@ class Register extends React.Component {
     async componentDidMount() {
         const params = new URLSearchParams(this.props.location.search);
         const registrationToken = params.get('registrationToken');
-        console.log(registrationToken);
-        console.log(registrationToken !== null);
-        console.log(this.state);
         registrationToken !== null ? this.setState({ registered: false }) : this.setState({ registered: true });
-        this.setState({ registrationToken: registrationToken }, () => {
-            console.log("registrationToken");
-            console.log(this.state);
-        });
-        registrationToken !== null ? console.log("registrationToken not equal null"): null;
+        this.setState({ registrationToken: registrationToken });
         registrationToken !== null ? await this.props.getCheckRegistered(registrationToken) : null;
         this.props.users.isRegistered !== null ?
             this.setState({ registered: false }) : this.setState({ registered: true });
