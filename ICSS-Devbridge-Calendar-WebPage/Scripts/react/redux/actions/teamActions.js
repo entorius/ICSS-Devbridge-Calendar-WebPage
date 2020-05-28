@@ -42,7 +42,6 @@ export const changeRestrictionsForTeam = (accessToken, teamData) => dispatch => 
         headers: { Authorization: `Bearer ${accessToken}` }
     }
 
-    console.log(teamData)
 
     const data = {
         ConsecLimit: teamData.consecLimit,
@@ -71,7 +70,6 @@ export const addTeamMember = (accessToken, userObject, managerId) => dispatch =>
     const config = {
         headers: { Authorization: `Bearer ${accessToken}` }
     }
-    console.log(userObject);
 
     const user = {
         FirstName: userObject.name,

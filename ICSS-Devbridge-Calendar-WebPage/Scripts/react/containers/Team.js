@@ -64,7 +64,7 @@ class ChangeRestrictionForTeamMemberDialog extends React.Component {
             restrictionDaysPerMonth: null,
             restrictionDaysPerYear: null,
             users: [],
-            selectedUser: {},
+            selectedUser: null
         }
         this.handleChange = this.handleChange.bind(this);
         this.handleSelectChange = this.handleSelectChange.bind(this);
@@ -102,10 +102,11 @@ class ChangeRestrictionForTeamMemberDialog extends React.Component {
     handleClose() {
         this.setState({
             open: false,
-            restrictionConsecutiveDays: null,
-            restrictionDaysPerWeek: null,
-            restrictionDaysPerMonth: null,
-            restrictionDaysPerYear: null
+            restrictionConsecutiveDays: 0,
+            restrictionDaysPerWeek: 0,
+            restrictionDaysPerMonth: 0,
+            restrictionDaysPerYear: 0,
+            selectedUser: null
         });
     }
 
@@ -141,7 +142,8 @@ class ChangeRestrictionForTeamMemberDialog extends React.Component {
 
         this.props.patchFunc(this.props.token.accessToken, userData)
             .then(() => {
-                this.props.updateTreeFunc(this.props.token.accessToken);
+                this.props.updateTreeFunc(this.props.token.accessToken)
+                    .then(() => this.props.updateFunc());
             });
     };
 
@@ -202,28 +204,6 @@ class ChangeRestrictionForTeamMemberDialog extends React.Component {
                             />
                         </div>
                         <div className={classes.changeRestrictionsRestriction}>
-                            <div className={classes.restrictionLabel}>Days per week: </div>
-                            <TextField
-                                id="outlined-required"
-                                className={classes.restrictionTextField}
-                                label="Days"
-                                type="number"
-                                defaultValue="N/A"
-                                InputLabelProps={{
-                                    shrink: true,
-                                    classes: {
-                                        root: classes.restrictionFieldRoot,
-                                        focused: classes.restrictionFieldRoot
-                                    }
-                                }}
-                                InputProps={{ classes: { root: classes.restrictionFieldRoot } }}
-                                variant="outlined"
-                                name="restrictionDaysPerWeek"
-                                value={this.state.restrictionDaysPerWeek}
-                                onChange={this.handleChange}
-                            />
-                        </div>
-                        <div className={classes.changeRestrictionsRestriction}>
                             <div className={classes.restrictionLabel}>Days per month: </div>
                             <TextField
                                 id="outlined-required"
@@ -280,7 +260,9 @@ class ChangeRestrictionForTeamMemberDialog extends React.Component {
                     <Button
                         className={classes.actionButton}
                         classes={{ label: classes.popUpButtonLabel }}
-                        onClick={this.handleListItemClick}>
+                        onClick={this.handleListItemClick}
+                        disabled={this.state.selectedUser == null}
+                        >
                         Change member restrictions
                     </Button>
                 </div>
@@ -827,7 +809,7 @@ class Team extends React.Component {
             openRemoveTeamMemberDialog: false,
             openReassignTeamMemberDialog: false,
             openTopicsByTeamDialog: false,
-            selectedTeamId: this.props.teamTree.items.$id,
+            selectedTeamId: 0,
             selectedTeamManagerId: 0,
             teamMemberTreeContent: null,
             teamTopicsManagerName: "",
@@ -880,7 +862,8 @@ class Team extends React.Component {
 
         this.props.changeRestrictionsForTeam(this.props.token.accessToken, data)
             .then(() => {
-                this.props.fetchTeamTree(this.props.token.accessToken);
+                this.props.fetchTeamTree(this.props.token.accessToken)
+                    .then(() => this.setState({teamMemberTreeContent: this.renderTree(this.props.teamTree.items, this.state.selectedTeamId)}));
             });
     }
 
@@ -893,8 +876,13 @@ class Team extends React.Component {
 
         this.props.changeGlobalRestrictions(this.props.token.accessToken, data)
             .then(() => {
-                this.props.fetchTeamTree(this.props.token.accessToken);
+                this.props.fetchTeamTree(this.props.token.accessToken)
+                    .then(() => this.setState({teamMemberTreeContent: this.renderTree(this.props.teamTree.items, this.state.selectedTeamId)}));
             });
+    }
+
+    onRestrictionsUpdate = () => {
+        this.setState({teamMemberTreeContent: this.renderTree(this.props.teamTree.items, this.state.selectedTeamId)});
     }
 
     renderTree = (nodes, nodeId) => {
@@ -1040,13 +1028,13 @@ class Team extends React.Component {
                                         Add new team member
                                         <AddIcon className={classes.popUpButtonPicture} />
                                     </Button>
-                                    <Button className={classes.removeMemberButton}
+                                    {/* <Button className={classes.removeMemberButton}
                                         classes={{ label: classes.popUpButtonLabel }}
                                         name="openRemoveTeamMemberDialog"
                                         onClick={this.handleOpenDialog}>
                                         Remove team member
                                         <CloseIcon className={classes.popUpButtonPicture} />
-                                    </Button>
+                                    </Button> */}
                                     <Button className={classes.reassignMemberButton}
                                         classes={{ label: classes.popUpButtonLabel }}
                                         name="openReassignTeamMemberDialog"
@@ -1085,28 +1073,6 @@ class Team extends React.Component {
                                                 variant="outlined"
                                                 name="teamRestrictionConsecutiveDays"
                                                 value={this.state.teamRestrictionConsecutiveDays}
-                                                onChange={this.handleChange}
-                                            />
-                                        </div>
-                                        <div className={classes.restriction}>
-                                            <div className={classes.restrictionLabel}>Days per week: </div>
-                                            <TextField
-                                                id="outlined-required"
-                                                className={classes.restrictionTextField}
-                                                label="Days"
-                                                type="number"
-                                                defaultValue="N/A"
-                                                InputLabelProps={{
-                                                    shrink: true,
-                                                    classes: {
-                                                        root: classes.restrictionFieldRoot,
-                                                        focused: classes.restrictionFieldRoot
-                                                    }
-                                                }}
-                                                InputProps={{ classes: { root: classes.restrictionFieldRoot } }}
-                                                variant="outlined"
-                                                name="teamRestrictionDaysPerWeek"
-                                                value={this.state.teamRestrictionDaysPerWeek}
                                                 onChange={this.handleChange}
                                             />
                                         </div>
@@ -1193,28 +1159,6 @@ class Team extends React.Component {
                                             />
                                         </div>
                                         <div className={classes.restriction}>
-                                            <div className={classes.restrictionLabel}>Days per week: </div>
-                                            <TextField
-                                                id="outlined-required"
-                                                className={classes.restrictionTextField}
-                                                label="Days"
-                                                type="number"
-                                                defaultValue="N/A"
-                                                InputLabelProps={{
-                                                    shrink: true,
-                                                    classes: {
-                                                        root: classes.restrictionFieldRoot,
-                                                        focused: classes.restrictionFieldRoot
-                                                    }
-                                                }}
-                                                InputProps={{ classes: { root: classes.restrictionFieldRoot } }}
-                                                variant="outlined"
-                                                name="globalRestrictionDaysPerWeek"
-                                                value={this.state.globalRestrictionDaysPerWeek}
-                                                onChange={this.handleChange}
-                                            />
-                                        </div>
-                                        <div className={classes.restriction}>
                                             <div className={classes.restrictionLabel}>Days per month: </div>
                                             <TextField
                                                 id="outlined-required"
@@ -1285,7 +1229,7 @@ class Team extends React.Component {
 
 
                 </div>
-                <ChangeRestrictionForTeamMemberDialog open={this.state.openChangeRestrictionForTeamMemberDialog} patchFunc={this.props.changeRestrictionsForUser} token={this.props.token} teams={this.props.teamTree.items} teamId={this.state.selectedTeamId} updateTreeFunc={this.props.fetchTeamTree} />
+                <ChangeRestrictionForTeamMemberDialog open={this.state.openChangeRestrictionForTeamMemberDialog} patchFunc={this.props.changeRestrictionsForUser} token={this.props.token} teams={this.props.teamTree.items} teamId={this.state.selectedTeamId} updateTreeFunc={this.props.fetchTeamTree} updateFunc={this.onRestrictionsUpdate} />
                 <AddNewTeamMemberDialog open={this.state.openAddTeamMemberDialog} addFunc={this.props.addTeamMember} currentUser={this.props.teamTree.items.This} token={this.props.token} />
                 <DeleteTeamMemberDialog open={this.state.openRemoveTeamMemberDialog} />
                 <ReassignTeamMemberDialog open={this.state.openReassignTeamMemberDialog} reassignFunc={this.props.reassignTeamMember} teams={this.props.teamTree.items} teamId={this.state.selectedTeamId} error={this.props.teamTree.error} updateTreeFunc={this.props.fetchTeamTree} token={this.props.token} />

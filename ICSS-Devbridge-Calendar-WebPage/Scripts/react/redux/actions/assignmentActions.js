@@ -4,7 +4,6 @@ import axios from "axios";
 
 
 export const fetchAssignments = (accessToken) => dispatch => {
-    console.log(baseApiUrl); 
 
     const config = {
         headers: { Authorization: `Bearer ${accessToken}`}
@@ -21,7 +20,6 @@ export const fetchAssignments = (accessToken) => dispatch => {
 }
 
 export const fetchSubordinateAssignments = (accessToken) => dispatch => {
-    console.log(baseApiUrl); 
 
     const config = {
         headers: { Authorization: `Bearer ${accessToken}`}
