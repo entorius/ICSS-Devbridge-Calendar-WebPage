@@ -3,28 +3,6 @@ div.custom_container {
     background-color: #242424;
 }
 
-/*g {
-    fill: #F3F3FF;
-    stroke: #2593B8;
-    stroke-width: 1.5px;
-}
-
-g {
-    font-size: 11px;
-    background-color: #444;
-    fill: #F4F4F4;
-    text-shadow: 0 1px 4px black;
-}
-
-g {
-    cursor: pointer;
-}
-
-path[class="link"] {
-    fill: none;
-    stroke: #2593B8;
-    stroke-width: 1.5px;
-}*/
 //Page Styles
 .mainPage {
     height: 100%;
@@ -46,9 +24,8 @@ path[class="link"] {
     justify-content:center;
 }
 .title {
+    display:flex;
     width: 98%;
-    //background-color: #13BC75;
-    //text-align: center;
     padding-top: 7px;
     height: 50px;
     font-family: ROBOTO;
@@ -57,6 +34,14 @@ path[class="link"] {
     color: #eeeeee;
     margin: 10px 0 !important;
     margin-bottom: 20px !important;
+}
+.subtitle1 {
+    width: 20%;
+    min-width: 200px;
+}
+.subtitle2 {
+    width: 80%;
+    min-width: 200px;
 }
 .graphPart {
     margin-right: 1%;
@@ -157,9 +142,19 @@ path[class="link"] {
 .selectTreeTypeButton {
     margin-left: 35% !important;
 }
-//Learning tree on node clisk dialog styles
+//Learning tree on node click dialog styles
 .nodeMembersLearnedTopicsMemberLabel {
     font-size: 15px !important;
+    display:flex !important;
+}
+.nodeDialogStyles {
+    width: 500px !important;
+}
+.listItemNameStyle {
+    width: 70% !important;
+}
+.listItemRoleStyle {
+    font-weight: 100;
 }
 
 //Select team dialog
@@ -190,6 +185,10 @@ path[class="link"] {
 }
 .popUpButtonLabel {
     font-size: 12px !important
+}
+//Users node popup
+.usersListGrid{
+    max-width: 100% !important;
 }
 //Popup buttons
 .actionButton {

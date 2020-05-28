@@ -42,7 +42,6 @@ export const changeRestrictionsForTeam = (accessToken, teamData) => dispatch => 
         headers: { Authorization: `Bearer ${accessToken}` }
     }
 
-    console.log(teamData)
 
     const data = {
         ConsecLimit: teamData.consecLimit,
@@ -71,8 +70,6 @@ export const addTeamMember = (accessToken, userObject, managerId) => dispatch =>
     const config = {
         headers: { Authorization: `Bearer ${accessToken}` }
     }
-    console.log("userObject");
-    console.log(userObject);
 
     const user = {
         FirstName: userObject.name,
@@ -81,8 +78,6 @@ export const addTeamMember = (accessToken, userObject, managerId) => dispatch =>
         Role: userObject.role,
         ManagerId: managerId
     }
-    console.log("user");
-    console.log(user);
 
     return axios.post(baseApiUrl + `/api/users`, user, config);
 }
