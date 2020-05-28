@@ -1,6 +1,6 @@
 ﻿import {
     LEARNING_TREE, LEARNING_SELECTED_USERS, FETCH_USER_LEARNED_TOPICS, FETCH_TEAM_LEARNED_TOPICS,
-    FETCH_DESCENDANT_MANAGERS, SELECT_MANAGER, FETCH_ALL_TOPICS} from "../actions/types";
+    FETCH_DESCENDANT_MANAGERS, SELECT_MANAGER, FETCH_ALL_TOPICS, RESET_DATA} from "../actions/types";
 
 const initialState = {
     learningTree: {
@@ -52,6 +52,21 @@ export default function (state = initialState, action) {
                 ...state,
                 allTopics: action.payload
             }
+        case RESET_DATA: {
+            return {
+                ...state,
+                learningTree: {
+                    nodes: [{ id: 'Root', x: 500, y: 500, level: 'true', symbolType: 'square', color: 'lightgreen', parent: null }],
+                    links: []
+                },
+                learningTreeSelectedUsers: [],
+                fetchedUserTopic: [],
+                fetchedTeamTopics: [],
+                fetchedDescendantManagers: [],
+                selectedManager: {},
+                allTopics: []
+            }
+        }
         default:
             return state;
     }

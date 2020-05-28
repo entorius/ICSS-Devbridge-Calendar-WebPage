@@ -7,7 +7,7 @@ import { checkIfRedirectToLoginPage } from '../functions/LocalStorageFunctions';
 import { connect } from 'react-redux';
 import {
     generateLearningTree, setSelectedLearningTreeUsers, fetchUserLearnedTopics, fetchTeamLearnedTopics,
-    fetchDescendantManagers, selectManager, fetchAllTopics
+    fetchDescendantManagers, selectManager, fetchAllTopics, resetData
 } from '../redux/actions/learningTreeActions';
 import PropTypes from 'prop-types';
 //Material UI components
@@ -53,15 +53,10 @@ function myCustomLabelBuilder(node) {
     }
     return label;
 }
-function generateX(node) {
-    return node.y
-}
 
 const myConfig = {
     nodeHighlightBehavior: true,
     staticGraphWithDragAndDrop: true,
-    directed: false,
-    collapsible: false,
     width: '100%',
     height: 680,
     d3: {
@@ -290,7 +285,7 @@ class LearningTree extends React.Component {
         };
     }
     async componentDidMount() {
-       
+        this.props.resetData();
         await this.props.fetchDescendantManagers(this.props.token.accessToken);
         this.props.selectManager(this.props.learningTree.fetchedDescendantManagers[0]);
         await this.props.fetchUserLearnedTopics(this.props.token.accessToken, this.props.learningTree.selectedManager.UserId);
@@ -460,6 +455,7 @@ LearningTree.propTypes = {
     fetchDescendantManagers: PropTypes.func.isRequired,
     selectManager: PropTypes.func.isRequired,
     fetchAllTopics: PropTypes.func.isRequired,
+    resetData: PropTypes.func.isRequired
 }
 
 const mapStateToProps = state => ({
@@ -470,5 +466,5 @@ const mapStateToProps = state => ({
 
 export default connect(mapStateToProps, {
     generateLearningTree, setSelectedLearningTreeUsers, fetchUserLearnedTopics, fetchTeamLearnedTopics, fetchDescendantManagers,
-    selectManager, fetchAllTopics
+    selectManager, fetchAllTopics, resetData
 })(LearningTree);

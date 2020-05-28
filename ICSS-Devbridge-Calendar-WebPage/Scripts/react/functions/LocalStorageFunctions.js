@@ -16,6 +16,5 @@ export function checkIfRedirectToLoginPage(props){
 }
 
 export function Delete() {
-    console.log("clearing storage");
     localStorage.clear();
 }

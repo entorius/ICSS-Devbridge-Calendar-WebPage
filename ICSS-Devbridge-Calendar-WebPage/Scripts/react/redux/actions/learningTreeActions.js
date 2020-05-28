@@ -1,6 +1,6 @@
 ﻿import {
     LEARNING_TREE, LEARNING_SELECTED_USERS, FETCH_ALL_TOPICS, FETCH_USER_LEARNED_TOPICS, FETCH_TEAM_LEARNED_TOPICS,
-    FETCH_DESCENDANT_MANAGERS, SELECT_MANAGER
+    FETCH_DESCENDANT_MANAGERS, SELECT_MANAGER, RESET_DATA
 } from "./types";
 import { baseApiUrl } from "../config";
 import axios from "axios";
@@ -68,6 +68,12 @@ export const selectManager = (user) => dispatch =>{
         payload: user
     })
 }
+export const resetData = () => dispatch => {
+    dispatch({
+        type: RESET_DATA,
+        payload: {}
+    })
+}
 
 export const generateLearningTree = (newUsersData, newTopicsData) => dispatch => {
     newTopicsData = addObjLevels(newTopicsData);
@@ -127,6 +133,8 @@ function createNodeObject(obj, treeHeight, levelSize, usersData) {
         user.Topics.map(topic =>
             topic.TopicId == obj.TopicId ? learnedUsers = learnedUsers + 1 : null));
     var color = learnedUsers > 0 ? "#33eb91" : "#00b0ff";
+    console.log(levelSize.thisNodePlace);
+    console.log(treeHeight - ((levelSize.level) * 100));
     var node = [{
         id: obj.TopicId,
         x: levelSize.thisNodePlace,
