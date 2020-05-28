@@ -23,6 +23,14 @@ const styles = theme => ({
     root: {
         minHeight: '100vh',
         display: 'flex'
+    },
+    alert: {
+        "& .MuiAlert-icon": {
+            fontSize: 25
+        },
+        "& .MuiAlert-message": {
+            fontSize: 15
+        }
     }
 });
 

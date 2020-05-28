@@ -66,6 +66,10 @@ const styles = theme => ({
 class CreateTopicDialog extends React.Component {
     constructor(props) {
         super(props);
+        this.state = {
+            isSaving: false
+        }
+        this.onSubmit = this.onSubmit.bind(this)
     }
 
     async componentDidUpdate(prevProps) {
@@ -77,10 +81,15 @@ class CreateTopicDialog extends React.Component {
         }
     }
 
-    onSubmit = (values, { resetForm }) => {
-        this.props.createTopic(this.props.token.accessToken, values);
-        this.props.onClose()
-        this.props.createTopicSuccess();
+    onSubmit(values) {
+        this.setState({ isSaving: true })
+        this.props.createTopic(this.props.token.accessToken, values)
+            .then(() => {
+                this.setState({ isSaving: false })
+                this.props.onClose()
+                this.props.createTopicSuccess();
+            })
+        this.onSubmit = this.onSubmit.bind(this)
     }
 
     render() {
@@ -207,6 +216,7 @@ class CreateTopicDialog extends React.Component {
                                     onClick={handleSubmit}
                                     variant="contained"
                                     className={classes.buttonWhiteColorText}
+                                    disabled={this.state.isSaving}
                                     size="medium"
                                     classes={{
                                         root: classes.saveButton,

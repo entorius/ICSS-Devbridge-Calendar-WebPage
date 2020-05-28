@@ -11,7 +11,7 @@ import InputLabel from '@material-ui/core/InputLabel';
 import MenuItem from '@material-ui/core/MenuItem';
 import Select from '@material-ui/core/Select';
 import Input from '@material-ui/core/Input';
-import { withStyles, createMuiTheme, MuiThemeProvider } from '@material-ui/core/styles';
+import { withStyles } from '@material-ui/core/styles';
 import { indigo } from '@material-ui/core/colors';
 import { Formik } from 'formik';
 import * as Yup from 'yup';
@@ -66,6 +66,10 @@ const styles = theme => ({
 class EditTopicDialog extends React.Component {
     constructor(props) {
         super(props);
+        this.state = {
+            isSaving: false
+        }
+        this.onSubmit = this.onSubmit.bind(this)
     }
 
     async componentDidUpdate(prevProps) {
@@ -77,10 +81,14 @@ class EditTopicDialog extends React.Component {
         }
     }
 
-    onSubmit = (values, { resetForm }) => {
-        this.props.updateTopic(this.props.token.accessToken, values, this.props.topic.TopicId);
-        this.props.onClose()
-        this.props.updateTopicSuccess();
+    onSubmit(values) {
+        this.setState({ isSaving: true })
+        this.props.updateTopic(this.props.token.accessToken, values, this.props.topic.TopicId)
+            .then(() => {
+                this.setState({ isSaving: false })
+                this.props.onClose()
+                this.props.updateTopicSuccess();
+            })
     }
 
     render() {
@@ -206,12 +214,13 @@ class EditTopicDialog extends React.Component {
                                     variant="outlined"
                                     size="medium">
                                     Cancel
-                                    </Button>
+                                </Button>
                                 <Button
                                     onClick={handleSubmit}
                                     variant="contained"
                                     className={classes.buttonWhiteColorText}
                                     size="medium"
+                                    disabled={this.state.isSaving}
                                     classes={{
                                         root: classes.saveButton,
                                         focus: classes.saveButton
