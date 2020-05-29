@@ -143,6 +143,8 @@
     <Content Include="Scripts\bootstrap.min.js" />
     <Content Include="Content\Team.less" />
     <Content Include="Content\LearningTree.less" />
+    <Content Include="Content\Topics.less" />
+    <None Include="Properties\PublishProfiles\DevbridgeLearningApp.pubxml" />
     <None Include="Scripts\jquery-3.4.1.intellisense.js" />
     <Content Include="Scripts\jquery-3.4.1.js" />
     <Content Include="Scripts\jquery-3.4.1.min.js" />
@@ -157,7 +159,9 @@
     <Content Include="Scripts\react\app.js" />
     <Content Include="Scripts\react\Application.js" />
     <Content Include="Scripts\react\components\AddLearningDayDialog.js" />
+    <Content Include="Scripts\react\components\assignmentDialogs\CreateNewAssignmentDialog.js" />
     <Content Include="Scripts\react\components\Calendar.js" />
+    <Content Include="Scripts\react\components\DatePickerFomik.js" />
     <Content Include="Scripts\react\components\EmployeesByTopicDialog.js" />
     <Content Include="Scripts\react\components\TeamsByTopicDialog.js" />
     <Content Include="Scripts\react\components\Topic.js" />
@@ -170,18 +174,24 @@
     <Content Include="Scripts\react\containers\LearningTree.js" />
     <Content Include="Scripts\react\containers\Register.js" />
     <Content Include="Scripts\react\containers\SettingsPage.js" />
+    <Content Include="Scripts\react\dist\bundle.js" />
+    <Content Include="Scripts\react\functions\LocalStorageFunctions.js" />
     <Content Include="Scripts\react\redux\actions\assignmentActions.js" />
     <Content Include="Scripts\react\redux\actions\learningTreeActions.js" />
     <Content Include="Scripts\react\redux\actions\learntTopicsActions.js" />
     <Content Include="Scripts\react\redux\actions\teamActions.js" />
     <Content Include="Scripts\react\redux\actions\loginActions.js" />
+    <Content Include="Scripts\react\redux\actions\topicActions.js" />
     <Content Include="Scripts\react\redux\actions\types.js" />
+    <Content Include="Scripts\react\redux\actions\userActions.js" />
     <Content Include="Scripts\react\redux\reducers\index.js" />
     <Content Include="Scripts\react\redux\reducers\assignmentReducer.js" />
     <Content Include="Scripts\react\redux\reducers\learningTreeReducer.js" />
     <Content Include="Scripts\react\redux\reducers\learntTopicsReducer.js" />
     <Content Include="Scripts\react\redux\reducers\teamReducer.js" />
     <Content Include="Scripts\react\redux\reducers\loginReducer.js" />
+    <Content Include="Scripts\react\redux\reducers\topicReducer.js" />
+    <Content Include="Scripts\react\redux\reducers\userReducer.js" />
     <Content Include="Scripts\react\redux\store.js" />
     <Content Include="Scripts\react\containers\CalendarPage.js" />
     <Content Include="Scripts\react\containers\Directory.js" />
@@ -219,7 +229,6 @@
   <ItemGroup>
     <Folder Include="App_Data\" />
     <Folder Include="Models\" />
-    <Folder Include="Scripts\react\dist\" />
     <Folder Include="Scripts\react\static\" />
   </ItemGroup>
   <ItemGroup>

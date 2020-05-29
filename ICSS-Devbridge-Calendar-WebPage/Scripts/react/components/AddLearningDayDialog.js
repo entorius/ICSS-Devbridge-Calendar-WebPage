@@ -20,6 +20,9 @@ import {
     KeyboardDatePicker,
 } from '@material-ui/pickers';
 import AddLearningDayTopicsDialog from "./AddLearningDayTopicsDialog";
+import { connect } from 'react-redux';
+import PropTypes from 'prop-types';
+import { postNewAssignment } from '../redux/actions/assignmentActions'
 
 const styles = theme => ({
     root: {
@@ -56,16 +59,22 @@ class AddLearningDayDialog extends Component {
             date: new Date(),
             comment: "",
             links: "",
-            topics: ["Topic1", "Subtopic1"],
+            topic: null,
             openAddLearningDayTopicsDialog: false
         }
     }
 
-    updateTopics = (selectedToptics) => {
-        this.setState({ topics: selectedToptics })
+    updateTopics = (selectedTopic) => {
+        this.setState({ topic: selectedTopic })
     };
 
-    handleClose = () => {
+    handleClose = (action) => {
+        if(action == 'Create'){
+            const postData = { userId: this.props.currentUser.UserId, topicId: this.state.topic.id, comments: this.state.comment, date: this.state.date };
+            this.props.postNewAssignment(this.props.token.accessToken, postData);
+        }
+
+        this.state.topic = null;
         this.props.onClose();
     };
 
@@ -91,7 +100,7 @@ class AddLearningDayDialog extends Component {
         return (
             <MuiPickersUtilsProvider utils={DateFnsUtils}>
                 <Dialog aria-labelledby="add-learning-day"
-                    onClose={this.props.onClose}
+                    onClose={() => {this.handleClose()}}
                     open={this.props.open}
                     fullWidth="true"
                     PaperProps={{
@@ -169,22 +178,21 @@ class AddLearningDayDialog extends Component {
                                     variant="outlined"
                                     fullWidth
                                 />
+                                <Typography variant="h5" style={{marginBottom: 10}}>{this.state.topic == undefined ? "" : "Topic selected: " + this.state.topic.name}</Typography>
+                                <Button
+                                    onClick={this.handleOpenTopicsDialog}
+                                    variant="contained"
+                                    className={[classes.button, classes.buttonWhiteColorText].join(' ')}
+                                    color="primary">
+                                    Choose topic
+                                </Button>
+                                <AddLearningDayTopicsDialog
+                                    updateTopics={this.updateTopics}
+                                    open={this.state.openAddLearningDayTopicsDialog}
+                                    onClose={this.handleCloseTopicsDialog} 
+                                    topics={this.props.topics}
+                                    />
                             </Grid>
-                            <List
-                                style={{ width: 250, border: "2px solid grey", height: 320, maxHeight: 320, overflow: 'auto' }}>
-                                    {
-                                        this.state.topics.map(topic => {
-                                            return (
-                                                <ListItem>
-                                                        <Typography variant="h5">{topic}</Typography>
-                                                    <IconButton disableRipple size="small">
-                                                            <CloseIcon />
-                                                        </IconButton>
-                                                </ListItem>
-                                            )
-                                        })
-                                    }
-                            </List>
                         </Grid>
                     </DialogContent>
                     <DialogActions>
@@ -197,36 +205,19 @@ class AddLearningDayDialog extends Component {
                             <Grid
                                 container
                                 direction="row"
-                                justify="flex-end"
-                                style={{marginBottom: 10}}>
-                                <Button
-                                    onClick={this.handleOpenTopicsDialog}
-                                    variant="contained"
-                                    className={[classes.button, classes.buttonWhiteColorText].join(' ')}
-                                    color="primary">
-                                    Edit topic
-                               </Button>
-                                <AddLearningDayTopicsDialog
-                                    updateTopics={this.updateTopics}
-                                    topics={this.state.topics}
-                                    open={this.state.openAddLearningDayTopicsDialog}
-                                    onClose={this.handleCloseTopicsDialog} />
-                            </Grid>
-                            <Grid
-                                container
-                                direction="row"
                                 justify="space-between"
                                 alignItems="flex-start">
                                 <Button
-                                    onClick={this.props.onClose}
+                                    onClick={() => {this.handleClose('Cancel')}}
                                     variant="outlined"
                                     className={classes.button}>
                                     Cancel
                                </Button>
                                 <Button
-                                    onClick={this.props.onClose}
+                                    onClick={() => {this.handleClose('Create')}}
                                     variant="contained"
                                     className={[classes.button, classes.buttonWhiteColorText].join(' ')}
+                                    disabled={this.state.topic == null ? true : false}
                                     color="secondary">
                                     Create
                                </Button>
@@ -237,7 +228,15 @@ class AddLearningDayDialog extends Component {
             </MuiPickersUtilsProvider>
         )
     }
-
 }
 
-export default withStyles(styles)(AddLearningDayDialog);
+AddLearningDayDialog.propTypes = {
+    postNewAssignment: PropTypes.func.isRequired
+}
+
+const mapStateToProps = state => ({
+    token: state.login.token,
+    currentUser: state.users.user
+});
+
+export default connect(mapStateToProps, { postNewAssignment })(withStyles(styles)(AddLearningDayDialog));

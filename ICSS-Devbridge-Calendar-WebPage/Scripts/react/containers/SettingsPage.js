@@ -18,6 +18,7 @@ import InputAdornment from '@material-ui/core/InputAdornment';
 import FormHelperText from '@material-ui/core/FormHelperText';
 import { Formik } from 'formik';
 import * as Yup from 'yup';
+import { checkIfRedirectToLoginPage } from '../functions/LocalStorageFunctions';
 
 const styles = theme => ({
     root: {
@@ -79,6 +80,10 @@ class SettingsPage extends Component {
         confirmPassword: Yup.string()
             .required('Please enter a last name')
     });
+
+    componentDidMount(){
+        checkIfRedirectToLoginPage(this.props);
+    }
 
     handleClickShowPassword = (name) => {
         this.setState(prevState => ({

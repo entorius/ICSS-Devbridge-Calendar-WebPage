@@ -17,13 +17,14 @@
     flex-wrap: wrap;
     flex-direction: column;
     min-width: 980px !important;
+    background-color: #f5f5f5;
 }
 
 
 .title {
-    width: 100%; 
-    text-align: center; 
-    font-size: 30px; 
+    padding-left: 3%;
+    width: 100%;
+    font-size: 30px;
     margin-top: 30px
 }
 
@@ -37,7 +38,6 @@
 
 .teamInfo {
     width: 60%; 
-    border-right: solid; 
     margin-left: 5%; 
     display: flex; 
     flex-wrap: wrap; 
@@ -49,8 +49,9 @@
 .teamTitle {
     width: 100%;
     margin-bottom: 40px;
-    font-size: 20px;
-    text-align: center;
+    font-size: 23px;
+    padding: 20px 0 0 20px;
+    color: #1a237e;
 }
 
 
@@ -70,9 +71,23 @@
 
 
 .popUpButtonsGroup {
-    width: 40%
+    width: 36%;
+    margin: 0 2%;
 }
 
+.popUpButtonsGroupTitle {
+    height: 15%;
+    font-size: 23px;
+    padding: 20px 0 0 20px;
+    color: #1a237e;
+}
+.popUpButtonsGroupButtons {
+    display: flex;
+    align-content: center;
+    justify-content: center;
+    flex-wrap: wrap;
+    height: 70%;
+}
 //Buttons
 .popUpButton {
     width: 40%;
@@ -94,6 +109,11 @@
     border: solid #00B7B1 !important;
     background-color: #13BC75 !important;
 }
+.addAssingmentForTeamMember {
+    .popUpButton;
+    border: solid #00B7B1 !important;
+    background-color: #13BC75 !important;
+}
 .removeMemberButton {
     .popUpButton;
     border: solid #FF004D !important;
@@ -110,29 +130,34 @@
 }
 
 .restrictions {
-    display: flex
+    display: flex;
+    margin-top: 20px;
+    margin-bottom: 20px;
 }
 
 
 .teamRestrictions {
-    width: 48%; 
+    width: 46%; 
     margin-left: 5%
 }
 
 
 .globalRestrictions {
-    width: 47%
+    margin: 0 2%;
+    width: 45%
 }
 
 
 .restrictionsHeader {
-    font-size: 20px;
-    text-align: center;
+    padding: 20px 0 20px 20px;
+    color: #1a237e;
+    font-size: 23px;
     margin-bottom: 15px;
 }
 
 
 .restrictionsBody {
+    padding: 0 0 0 20px;
     display: flex;
     flex-wrap: wrap;
     width: 50%;
@@ -255,13 +280,21 @@
     justify-content: space-around;
     display: flex;
 }
-.addMemberEmail{
-    width:250px;
-}
 .resize {
     font-size: 15px !important;
 }
-
+.formControl {
+    margin: 2px !important;
+    align-self: center;
+    margin-bottom: 25px !important;
+}
+.textBoxIcon {
+    font-size: 25px;
+}
+.inputTextBox {
+    width: 300px;
+    font-size: 20px;
+}
 //************************************
 //REMOVE TEAM MEMBER
 //************************************

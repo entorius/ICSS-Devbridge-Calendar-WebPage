@@ -1,4 +1,4 @@
-﻿import { FETCH_TEAM_TREE, UPDATE_MANAGER } from "./types";
+﻿import { FETCH_TEAM_TREE, UPDATE_MANAGER, CHANGE_USER_RESTRICTIONS, SELECT_CURRENT_TEAM } from "./types";
 import { baseApiUrl } from "../config";
 import axios from "axios";
 
@@ -30,7 +30,11 @@ export const changeRestrictionsForUser = (accessToken, userData) => dispatch => 
     }
 
     return axios.patch(baseApiUrl + `/api/users/restrictions/${userData.id}`, data, config)
-        .then(response => console.log(response));
+        .then(response => {
+            dispatch({
+                type: CHANGE_USER_RESTRICTIONS,
+                payload: response.data
+            }) });
 }
 
 export const changeRestrictionsForTeam = (accessToken, teamData) => dispatch => {
@@ -38,7 +42,6 @@ export const changeRestrictionsForTeam = (accessToken, teamData) => dispatch => 
         headers: { Authorization: `Bearer ${accessToken}` }
     }
 
-    console.log(teamData)
 
     const data = {
         ConsecLimit: teamData.consecLimit,
@@ -63,16 +66,16 @@ export const changeGlobalRestrictions = (accessToken, restrictions) => dispatch 
     return axios.patch(baseApiUrl + `/api/users/restrictions/global`, data, config);
 }
 
-export const addTeamMember = (accessToken, userEmail, managerId) => dispatch => {
+export const addTeamMember = (accessToken, userObject, managerId) => dispatch => {
     const config = {
         headers: { Authorization: `Bearer ${accessToken}` }
     }
 
     const user = {
-        FirstName: "null",
-        LastName: "null",
-        Email: userEmail,
-        Role: "null",
+        FirstName: userObject.name,
+        LastName: userObject.surname,
+        Email: userObject.email,
+        Role: userObject.role,
         ManagerId: managerId
     }
 
@@ -104,4 +107,26 @@ export const reassignTeamMember = (accessToken, userData) => dispatch => {
                 error: errors
             });
         });
+}
+export const selectCurrentTeam = (allMembers, managerTeamId) => dispatch => {
+    var selectedteam = selectTeam(allMembers, managerTeamId);
+
+    dispatch({
+        type: SELECT_CURRENT_TEAM,
+        payload: selectedteam
+    })
+}
+
+function selectTeam(allMembers, managerTeamId) {
+    var selectedTeam = null;
+    if (allMembers.$id == managerTeamId) {
+        selectedTeam = allMembers.Children;
+    }
+    else if (Array.isArray(allMembers.Children)) {
+        var selectingTeam = null;
+        allMembers.Children.map(child => selectTeam(child, managerTeamId) != null ? selectingTeam = selectTeam(child, managerTeamId) :null );
+        selectingTeam != null ? selectedTeam = selectingTeam : null
+    }
+    
+    return selectedTeam
 }

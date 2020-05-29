@@ -1,5 +1,6 @@
 ﻿//Jquery
 import $ from 'jquery';
+import { setExpirationTime, checkIfDelete, Delete} from "../functions/LocalStorageFunctions";
 //React components
 import React, { Component } from 'react';
 import { Link, useHistory } from "react-router-dom";
@@ -153,6 +154,12 @@ class Login extends React.Component {
         this.handleErrorSnackBarClose = this.handleErrorSnackBarClose.bind(this);
         this.handleSuccessSnackBarClose = this.handleSuccessSnackBarClose.bind(this);
     }
+    componentDidMount() {
+        var isLoggedIn = localStorage.token !== undefined;
+        isLoggedIn ? checkIfDelete() : null;
+        isLoggedIn = localStorage.token !== undefined;
+        isLoggedIn ? this.props.history.push('/Main/Home') : null;
+    }
     handleChange(evt) {
         
         // check it out: we get the evt.target.name (which will be either "email" or "password")
@@ -279,15 +286,6 @@ class Login extends React.Component {
                                             Sign in
                                     </Button>
                                 {/* </Link> */}
-                            </ThemeProvider>
-                            <ThemeProvider theme={theme}>
-                                <Link to="/Home/Register">
-                                    {/*TODO: add ajax request for login button*/}
-                                    <div className={classes.registerLink}>
-
-                                        Register
-                                    </div>
-                                </Link>
                             </ThemeProvider>
                         </Typography>
                     </Container>

@@ -2,9 +2,13 @@
 import SideBar from "../components/SideBar";
 import { withStyles } from '@material-ui/core/styles';
 import styles from "../../../Content/LearningTree.less";
+import { checkIfRedirectToLoginPage } from '../functions/LocalStorageFunctions';
 //Redux
 import { connect } from 'react-redux';
-import { generateLearningTree, setSelectedLearningTreeUsers } from '../redux/actions/learningTreeActions';
+import {
+    generateLearningTree, setSelectedLearningTreeUsers, fetchUserLearnedTopics, fetchTeamLearnedTopics,
+    fetchDescendantManagers, selectManager, fetchAllTopics, resetData
+} from '../redux/actions/learningTreeActions';
 import PropTypes from 'prop-types';
 //Material UI components
 import Avatar from '@material-ui/core/Avatar';
@@ -42,64 +46,17 @@ import { Graph } from 'react-d3-graph';
 function myCustomLabelBuilder(node) {
     var label;
     if (node.level == 0) {
-        label = node.id;
+        label = "Root";
     }
     else {
         label = node.topic + '\n Learned members: ' + node.learnedMembers;
     }
     return label;
 }
-function generateX(node) {
-    console.log("something")
-    console.log(node)
-    return node.y
-}
-const currentUserData = {
-    users: [
-    { id: '1', name: 'Josh', surname: 'Levinski', learnedTopics: [{ topicId: 1 }, { topicId: 3 }] },
-    ]};
-const usersData = {
 
-    users: [
-        { id: '1', name: 'Josh', surname: 'Levinski',   learnedTopics: [{ topicId: 1 }, { topicId: 2 }] },
-        { id: '2', name: 'Hana', surname: 'Meredi',     learnedTopics: [{ topicId: 1 }, { topicId: 2 }] },
-        { id: '3', name: 'Lama', surname: 'Savinski',   learnedTopics: [{ topicId: 1 }, { topicId: 2 }] },
-        { id: '4', name: 'Tor',  surname: 'Kasparowski',learnedTopics: [{ topicId: 1 }, { topicId: 2 }] },
-        { id: '5', name: 'Josh', surname: 'Levinski',   learnedTopics: [{ topicId: 1 }, { topicId: 2 }] },
-        { id: '6', name: 'Josh', surname: 'Levinski',   learnedTopics: [{ topicId: 1 }, { topicId: 2 }] },
-        { id: '7', name: 'Josh', surname: 'Levinski',   learnedTopics: [{ topicId: 1 }, { topicId: 2 }] },
-        { id: '8', name: 'Josh', surname: 'Levinski',   learnedTopics: [{ topicId: 1 }, { topicId: 2 }] },
-    ]
-    
-};
-const data = {
-  
-    nodes: [
-        
-        { id: '1', x: 150, y: 400, topic: "C#",   learnedMembers: 0, label: "string",parent:'Root', level: 1},
-        { id: '2', x: 275, y: 400, topic: "Java", learnedMembers: 1, label: "string", parent: 'Root', level: 1 },
-        { id: '3', x: 400, y: 400, topic: "C#", learnedMembers: 2, label: "string", parent: 'Root', level: 1 },
-        { id: '4', x: 525, y: 400, topic: "Java", learnedMembers: 0, label: "string", parent: 'Root', level: 1 },
-        { id: '5', x: 650, y: 400, topic: "Css", learnedMembers: 3, label: "string", parent: 'Root', level: 1 },
-        { id: '6', x: 775, y: 400, topic: "Java", learnedMembers: 1, label: "string", parent: 'Root', level: 1 },
-        { id: '7', x: 900, y: 400, topic: "Html", learnedMembers: 0, label: "string", parent: '1', level: 2 },
-    ],
-    links: [
-        { source: 'Root', target: '1' },
-        { source: 'Root', target: '2' },
-        { source: 'Root', target: '3' },
-        { source: 'Root', target: '4' },
-        { source: 'Root', target: '5' },
-        { source: 'Root', target: '6' },
-        { source: 'Root', target: '7' },
-
-    ]
-};
 const myConfig = {
     nodeHighlightBehavior: true,
     staticGraphWithDragAndDrop: true,
-    directed: false,
-    collapsible: false,
     width: '100%',
     height: 680,
     d3: {
@@ -133,19 +90,19 @@ class TopicLearnedMembersDialog extends React.Component {
             secondary: false,
         }
         this.handleChange = this.handleChange.bind(this);
-        
+
     }
-    
     handleChange(evt) {
         // check it out: we get the evt.target.name 
         // and use it to target the key on our `state` object with the same name, using bracket syntax
         this.setState({ [evt.target.name]: evt.target.value });
     }
+
+    componentDidMount(){
+        checkIfRedirectToLoginPage(this.props);
+    }
+
     componentDidUpdate(prevProps) {
-        console.log("props");
-        console.log(this.props);
-        console.log("prevProps");
-        console.log(prevProps);
         //if props for this class updated open dialog
         if (this.props.open !== prevProps.open) {
 
@@ -167,7 +124,8 @@ class TopicLearnedMembersDialog extends React.Component {
         return (
             <Dialog onClose={handleClose}
                 aria-labelledby="simple-dialog-title"
-                open={this.state.open}>
+                open={this.state.open}
+                classes={{ paper: styles.nodeDialogStyles } }>
                 <DialogTitle
                     id="change-restriction-dialog-title"
                     disableTypography
@@ -176,7 +134,7 @@ class TopicLearnedMembersDialog extends React.Component {
                     <PersonIcon className={styles.popUpButtonPicture} />
                 </DialogTitle>
                 <div>
-                    <Grid item xs={12} md={6}>
+                    <Grid item xs={12} md={6} className={styles.usersListGrid}>
                         <div className={styles.demo}>
                             <List dense={this.state.dense}>
                                 {this.props.currentLearnedUser.map(user =>
@@ -187,10 +145,15 @@ class TopicLearnedMembersDialog extends React.Component {
                                             </Avatar>
                                         </ListItemAvatar>
                                         <ListItemText
-                                            primary={user.name}
-                                            secondary={this.state.secondary ? 'Secondary text' : null}
                                             classes={{ primary: styles.nodeMembersLearnedTopicsMemberLabel}}
-                                        />
+                                        >
+                                            <div className={styles.listItemNameStyle}>
+                                                {user.FirstName} {user.LastName}
+                                            </div>
+                                            <div className={styles.listItemRoleStyle}>
+                                                {user.Role}
+                                            </div>
+                                        </ListItemText>
                                     </ListItem>)}
                             </List>
                         </div>
@@ -216,7 +179,7 @@ class TeamSelectDialog extends React.Component {
         this.state = {
             
             open: props.open,
-            teamName: "",
+            user: 0,
             dense: true,
             secondary: false,
         }
@@ -225,15 +188,12 @@ class TeamSelectDialog extends React.Component {
     }
 
     handleChange(evt) {
-        // check it out: we get the evt.target.name 
-        // and use it to target the key on our `state` object with the same name, using bracket syntax
-        this.setState({ [evt.target.name]: evt.target.value });
+        var name = evt.target.value;
+        this.setState(prevState => ({ ...prevState, [evt.target.name]: name }), () => {
+            
+        });
     }
     componentDidUpdate(prevProps) {
-        console.log("props");
-        console.log(this.props);
-        console.log("prevProps");
-        console.log(prevProps);
         //if props for this class updated open dialog
         if (this.props.open !== prevProps.open) {
 
@@ -252,6 +212,11 @@ class TeamSelectDialog extends React.Component {
             this.setState({ open: false });
         };
         const handleListItemClick = (value) => {
+            this.props.allProps.selectManager(this.state.user);
+            this.props.allProps.fetchTeamLearnedTopics(this.props.allProps.token.accessToken, this.props.allProps.learningTree.selectedManager.UserId)
+                .then(() => {
+                    this.props.allProps.generateLearningTree(this.props.allProps.learningTree.fetchedTeamTopics, this.props.allProps.learningTree.allTopics);
+                });
             this.setState({ open: false })
         };
 
@@ -272,14 +237,14 @@ class TeamSelectDialog extends React.Component {
                     <Select
                         labelId="demo-simple-select-label"
                         id="demo-simple-select"
-                        value={this.state.teamName}
+                        value={this.state.userId}
                         className={styles.selectTeam}
-                        name="teamName"
+                        name="user"
                         input={<Input />}
                         onChange={this.handleChange}>
-                        >{usersData.users.map((user) => (
-                            <MenuItem key={user.name} value={user.name} >
-                                {user.name}
+                        >{this.props.allTeams.map((user) => (
+                            <MenuItem key={user.UserId} value={user} primaryText="${user.LastName}">
+                                {user.FirstName} {user.LastName} {user.Role} Team
                             </MenuItem>
                         ))}
                     </Select>
@@ -314,12 +279,30 @@ class LearningTree extends React.Component {
             openMembersDialog: false,
             openTeamDialog: false,
             radioButtonSelectedGeneratingOption: "self",
-            selectedNode: 0
+            selectedNode: 0,
+            teamState: "My Learning Tree"
 
         };
     }
-    componentDidMount() {
-        this.props.generateLearningTree(data, currentUserData);
+    async componentDidMount() {
+        this.props.resetData();
+        await this.props.fetchDescendantManagers(this.props.token.accessToken);
+        this.props.selectManager(this.props.learningTree.fetchedDescendantManagers[0]);
+        await this.props.fetchUserLearnedTopics(this.props.token.accessToken, this.props.learningTree.selectedManager.UserId);
+        await this.props.fetchAllTopics(this.props.token.accessToken);
+        var userData = [this.props.learningTree.fetchedUserTopic];
+        this.props.setSelectedLearningTreeUsers(userData);
+        this.props.generateLearningTree(userData, this.props.learningTree.allTopics);
+    }
+    componentDidUpdate(prevProps) {
+        if (this.props.learningTree.selectedManager !== prevProps.learningTree.selectedManager) {
+
+            if (this.state.radioButtonSelectedGeneratingOption === "team") {
+                this.setState({ teamState: this.props.learningTree.selectedManager.FirstName + " " + this.props.learningTree.selectedManager.LastName + " Team Learning Tree" });
+            }
+        }
+    
+        
     }
     resetMemberDialogState() {
         this.setState({ ...this.state, openMembersDialog: false }
@@ -328,45 +311,40 @@ class LearningTree extends React.Component {
     onClickNode = nodeId => {
         this.setState({ openMembersDialog: false }, () => {
             var localLearnedUsers = [];
-            console.log("nodeId: ");
-            console.log(nodeId);
             if (this.state.radioButtonSelectedGeneratingOption == "team") {
-                usersData.users.map(user =>
-                    user.learnedTopics.map((top) => {
-                        top.topicId == nodeId ? localLearnedUsers.push(user) : "nothing";
+                this.props.learningTree.fetchedTeamTopics.map(user =>
+                    user.Topics.map((top) => {
+                        top.TopicId == nodeId ? localLearnedUsers.push(user.User) : "nothing";
                     }));
-                console.log(localLearnedUsers);
             }
             else if (this.state.radioButtonSelectedGeneratingOption == "self") {
-                currentUserData.users.map(user =>
-                    user.learnedTopics.map((top) => {
-                        top.topicId == nodeId ? localLearnedUsers.push(user) : "nothing";
-                    }));
-                console.log(localLearnedUsers);
+                this.props.learningTree.fetchedUserTopic.Topics.map((top) => {
+                    top.TopicId == nodeId ? localLearnedUsers.push(this.props.learningTree.fetchedUserTopic.User) : "nothing";
+                });
             }
             this.props.setSelectedLearningTreeUsers(localLearnedUsers);
-            console.log(this.props);
             this.setState({
                 selectedNode: nodeId,
                 openMembersDialog: true
             });
         })
-        
-        
-       
-        console.log("ending onClickNode state")
     };
-    handleChange = evt => {
-        console.log("evt changing");
-        console.log(evt);
+    handleChange = async evt => {
         // check it out: we get the evt.target.name (which will be either "email" or "password")
         // and use it to target the key on our `state` object with the same name, using bracket syntax
+        var userData = [this.props.learningTree.fetchedUserTopic];
         this.setState({ radioButtonSelectedGeneratingOption: evt.target.value }, () => {
             if (this.state.radioButtonSelectedGeneratingOption === "self") {
-                this.props.generateLearningTree(data, currentUserData);
+                this.props.generateLearningTree(userData, this.props.learningTree.allTopics);
+                this.setState({ teamState: "My Learning Tree" });
             }
             else if (this.state.radioButtonSelectedGeneratingOption === "team") {
-                this.props.generateLearningTree(data, usersData);
+                this.props.fetchTeamLearnedTopics(this.props.token.accessToken, this.props.learningTree.selectedManager.UserId)
+                    .then(() => {
+                        this.props.generateLearningTree(this.props.learningTree.fetchedTeamTopics, this.props.learningTree.allTopics);
+                        this.setState({ teamState: this.props.learningTree.selectedManager.FirstName + " " + this.props.learningTree.selectedManager.LastName + " Team Learning Tree" });
+                    });
+                    
             }
         });
     }
@@ -374,8 +352,6 @@ class LearningTree extends React.Component {
         this.setState({ openTeamDialog: false }, () => {
             this.setState({ openTeamDialog: true })
         });
-        
-        console.log('onClick');
     }
     
     render() {
@@ -384,7 +360,12 @@ class LearningTree extends React.Component {
                 <SideBar />
                 <div className={styles.LearningTreePageStyle}>
                     <div className={styles.title}>
-                        Learning Tree
+                        <div className={styles.subtitle1}>
+                            Learning Tree
+                        </div>
+                        <div className={styles.subtitle2}>
+                            {this.state.teamState}
+                        </div>
                     </div>
                     <div className={styles.mainTreePart}>
                         <Paper className={styles.graphPart}>
@@ -460,7 +441,7 @@ class LearningTree extends React.Component {
                     </div>
                 </div>
                 <TopicLearnedMembersDialog open={this.state.openMembersDialog} currentLearnedUser={this.props.learningTree.learningTreeSelectedUsers} selectedNodeId={this.state.selectedNode} />
-                <TeamSelectDialog open={this.state.openTeamDialog} allTeams={usersData}/>
+                <TeamSelectDialog open={this.state.openTeamDialog} allTeams={this.props.learningTree.fetchedDescendantManagers} allProps={this.props}/>
             </div>
         );
     }
@@ -469,12 +450,21 @@ LearningTree.propTypes = {
     generateLearningTree: PropTypes.func.isRequired,
     setSelectedLearningTreeUsers: PropTypes.func.isRequired,
     learningTree: PropTypes.array.isRequired,
+    fetchUserLearnedTopics: PropTypes.func.isRequired,
+    fetchTeamLearnedTopics: PropTypes.func.isRequired,
+    fetchDescendantManagers: PropTypes.func.isRequired,
+    selectManager: PropTypes.func.isRequired,
+    fetchAllTopics: PropTypes.func.isRequired,
+    resetData: PropTypes.func.isRequired
 }
 
 const mapStateToProps = state => ({
     learningTree: state.learningTree,
-    token: state.login,
-    learningTreeSelectedUsers: state.learningTreeSelectedUsers
+    token: state.login.token,
+    learningTreeSelectedUsers: state.learningTreeSelectedUsers,
 })
 
-export default connect(mapStateToProps, { generateLearningTree, setSelectedLearningTreeUsers})(LearningTree);
+export default connect(mapStateToProps, {
+    generateLearningTree, setSelectedLearningTreeUsers, fetchUserLearnedTopics, fetchTeamLearnedTopics, fetchDescendantManagers,
+    selectManager, fetchAllTopics, resetData
+})(LearningTree);
