@@ -64,8 +64,7 @@ class ChangeRestrictionForTeamMemberDialog extends React.Component {
             restrictionDaysPerMonth: null,
             restrictionDaysPerYear: null,
             users: [],
-            selectedUser: null,
-            teamTopicsManagerName: 0
+            selectedUser: null
         }
         this.handleChange = this.handleChange.bind(this);
         this.handleSelectChange = this.handleSelectChange.bind(this);
@@ -117,9 +116,9 @@ class ChangeRestrictionForTeamMemberDialog extends React.Component {
         }
 
         var children = [];
-        if(teams.Children != null){
-            for(let child of teams.Children){
-                if(Array.isArray(child.Children)){
+        if (teams.Children != null) {
+            for (let child of teams.Children) {
+                if (Array.isArray(child.Children)) {
                     children = this.getTeam(child, teamId);
                     if (children.length > 0) {
                         break;
@@ -361,7 +360,7 @@ class AddNewTeamMemberDialog extends React.Component {
                             handleChange,
                             handleBlur
                         }) => (
-                            <form>
+                                <form>
 
                                     <FormControl className={classes.formControl}
                                         required
@@ -382,7 +381,7 @@ class AddNewTeamMemberDialog extends React.Component {
                                                         classes: {
                                                             root: classes.resize
                                                         }
-                                                        }}
+                                                    }}
                                                     value={values.email}
                                                     label="Email"
                                                     name="email"
@@ -415,8 +414,8 @@ class AddNewTeamMemberDialog extends React.Component {
                                                         classes: {
                                                             root: classes.resize
                                                         }
-                                                        }}
-                                                        value={values.name}
+                                                    }}
+                                                    value={values.name}
                                                     label="Name"
                                                     name="name"
                                                     onChange={handleChange}
@@ -447,8 +446,8 @@ class AddNewTeamMemberDialog extends React.Component {
                                                         classes: {
                                                             root: classes.resize
                                                         }
-                                                        }}
-                                                        value={values.surname}
+                                                    }}
+                                                    value={values.surname}
                                                     label="Surname"
                                                     name="surname"
                                                     onChange={handleChange}
@@ -479,8 +478,8 @@ class AddNewTeamMemberDialog extends React.Component {
                                                         classes: {
                                                             root: classes.resize
                                                         }
-                                                        }}
-                                                        value={values.role}
+                                                    }}
+                                                    value={values.role}
                                                     label="Role"
                                                     name="role"
                                                     onChange={handleChange}
@@ -492,26 +491,26 @@ class AddNewTeamMemberDialog extends React.Component {
                                             {touched.role ? errors.role : ""}
                                         </FormHelperText>
                                     </FormControl>
-                                <div className={classes.addMemberButtons}>
-                                    <Button
-                                        className={classes.cancelButton}
-                                        classes={{ label: classes.popUpButtonLabel }}
-                                        onClick={() => this.closeDialog(this.state.email)}>
-                                        Cancel
+                                    <div className={classes.addMemberButtons}>
+                                        <Button
+                                            className={classes.cancelButton}
+                                            classes={{ label: classes.popUpButtonLabel }}
+                                            onClick={() => this.closeDialog(this.state.email)}>
+                                            Cancel
                                     </Button>
-                                    {/* TODO: add action to send invitation to email*/}
-                                    <Button
+                                        {/* TODO: add action to send invitation to email*/}
+                                        <Button
                                             className={classes.actionButton}
                                             classes={{ label: classes.popUpButtonLabel }}
                                             onClick={handleSubmit/*this.handleListItemClick*/}>
-                                                            Send invitation
+                                            Send invitation
                                     </Button>
-                                </div>
-                            </form>
+                                    </div>
+                                </form>
                             )
                         }
                     </Formik>
-                    </div>
+                </div>
             </Dialog>
         );
     }
@@ -812,7 +811,9 @@ class Team extends React.Component {
             openTopicsByTeamDialog: false,
             selectedTeamId: 0,
             selectedTeamManagerId: 0,
-            teamMemberTreeContent: null
+            teamMemberTreeContent: null,
+            teamTopicsManagerName: "",
+            teamTopicsManagerId: 0
         };
         this.handleChange = this.handleChange.bind(this);
         this.handleOpenDialog = this.handleOpenDialog.bind(this);
@@ -900,7 +901,7 @@ class Team extends React.Component {
                                 onClick={(e) => {
                                     e.stopPropagation();
                                     this.handleOpenDialog(e);
-                                    this.setState({ teamTopicsManagerName: nodes.This.FirstName + "'s team" });
+                                    this.setState({ teamTopicsManagerName: nodes.This.FirstName + "'s team", teamTopicsManagerId: nodes.This.UserId });
                                 }}>
                                 Learnt topics
                             </Button>
@@ -1232,7 +1233,7 @@ class Team extends React.Component {
                 <AddNewTeamMemberDialog open={this.state.openAddTeamMemberDialog} addFunc={this.props.addTeamMember} currentUser={this.props.teamTree.items.This} token={this.props.token} />
                 <DeleteTeamMemberDialog open={this.state.openRemoveTeamMemberDialog} />
                 <ReassignTeamMemberDialog open={this.state.openReassignTeamMemberDialog} reassignFunc={this.props.reassignTeamMember} teams={this.props.teamTree.items} teamId={this.state.selectedTeamId} error={this.props.teamTree.error} updateTreeFunc={this.props.fetchTeamTree} token={this.props.token} />
-                <TopicsByTeamDialog open={this.state.openTopicsByTeamDialog} managerName={this.state.teamTopicsManagerName} managerId={this.state.selectedTeamManagerId} />
+                <TopicsByTeamDialog open={this.state.openTopicsByTeamDialog} managerName={this.state.teamTopicsManagerName} managerId={this.state.teamTopicsManagerId} />
             </div>
         );
     }
