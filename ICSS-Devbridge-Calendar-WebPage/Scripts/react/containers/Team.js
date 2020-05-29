@@ -6,7 +6,10 @@ import classes from "../../../Content/Team.less";
 //Redux
 import { connect } from 'react-redux';
 import { fetchTeamTree, changeRestrictionsForUser, changeRestrictionsForTeam, changeGlobalRestrictions, addTeamMember, reassignTeamMember } from '../redux/actions/teamActions';
+import { fetchTopics } from '../redux/actions/topicActions';
 import PropTypes from 'prop-types';
+
+
 
 
 // Material UI components
@@ -49,6 +52,9 @@ import * as Yup from 'yup';
 
 //Dialogs
 import TopicsByTeamDialog from '../components/TopicsByTeamDialog';
+import CreateNewAssignmentDialog from '../components/assignmentDialogs/CreateNewAssignmentDialog';
+
+
 import { checkIfRedirectToLoginPage } from '../functions/LocalStorageFunctions';
 
 class ChangeRestrictionForTeamMemberDialog extends React.Component {
@@ -809,6 +815,7 @@ class Team extends React.Component {
             openRemoveTeamMemberDialog: false,
             openReassignTeamMemberDialog: false,
             openTopicsByTeamDialog: false,
+            openAddAssignmentDialog: false,
             selectedTeamId: 0,
             selectedTeamManagerId: 0,
             teamMemberTreeContent: null,
@@ -824,7 +831,8 @@ class Team extends React.Component {
             .then(() => {
                 console.log(this.props.teamTree)
             });
-
+        await this.props.fetchTopics(this.props.token.accessToken);
+        console.log(this.props);
         if (this.state.selectedTeamId != this.props.teamTree.items.$id) {
             this.setState({ selectedTeamId: this.props.teamTree.items.$id, selectedTeamManagerId: this.props.teamTree.items.This.UserId })
         }
@@ -844,6 +852,9 @@ class Team extends React.Component {
         var name = evt.currentTarget.name;
         var value = !this.state[name];
         this.setState({ [name]: value });
+    }
+    handleNewAssignmentClose = (evt) => {
+        this.setState({ openAddAssignmentDialog: false})
     }
 
     onTeamClick = (node) => {
@@ -1026,6 +1037,13 @@ class Team extends React.Component {
                                         name="openAddTeamMemberDialog"
                                         onClick={this.handleOpenDialog}>
                                         Add new team member
+                                        <AddIcon className={classes.popUpButtonPicture} />
+                                    </Button>
+                                    <Button className={classes.addAssingmentForTeamMember}
+                                        classes={{ label: classes.popUpButtonLabel }}
+                                        name="openAddAssignmentDialog"
+                                        onClick={this.handleOpenDialog}>
+                                        Add assingment for team member
                                         <AddIcon className={classes.popUpButtonPicture} />
                                     </Button>
                                     {/* <Button className={classes.removeMemberButton}
@@ -1233,7 +1251,9 @@ class Team extends React.Component {
                 <AddNewTeamMemberDialog open={this.state.openAddTeamMemberDialog} addFunc={this.props.addTeamMember} currentUser={this.props.teamTree.items.This} token={this.props.token} />
                 <DeleteTeamMemberDialog open={this.state.openRemoveTeamMemberDialog} />
                 <ReassignTeamMemberDialog open={this.state.openReassignTeamMemberDialog} reassignFunc={this.props.reassignTeamMember} teams={this.props.teamTree.items} teamId={this.state.selectedTeamId} error={this.props.teamTree.error} updateTreeFunc={this.props.fetchTeamTree} token={this.props.token} />
-                <TopicsByTeamDialog open={this.state.openTopicsByTeamDialog} managerName={this.state.teamTopicsManagerName} managerId={this.state.teamTopicsManagerId} />
+                <TopicsByTeamDialog open={this.state.openTopicsByTeamDialog} managerName={this.state.teamTopicsManagerName} managerId={this.state.teamTopicsManagerId} token={this.props.token} />
+                <CreateNewAssignmentDialog open={this.state.openAddAssignmentDialog} teamMembers={this.props.teamTree.items}
+                    topics={this.props.topics} managerId={this.state.selectedTeamId} token={this.props.token} onClose={this.handleNewAssignmentClose}/>
             </div>
         );
     }
@@ -1246,11 +1266,13 @@ Team.propTypes = {
     changeRestrictionsForTeam: PropTypes.func.isRequired,
     changeGlobalRestrictions: PropTypes.func.isRequired,
     addTeamMember: PropTypes.func.isRequired,
-    reassignTeamMember: PropTypes.func.isRequired
+    reassignTeamMember: PropTypes.func.isRequired,
+    fetchTopics: PropTypes.func.isRequired
 }
 
 const mapStateToProps = state => ({
     teamTree: state.teamTree,
+    topics: state.topics.topics,
     token: state.login.token
 })
 
@@ -1262,6 +1284,7 @@ export default connect(
         changeRestrictionsForTeam,
         changeGlobalRestrictions,
         addTeamMember,
-        reassignTeamMember
+        reassignTeamMember,
+        fetchTopics
     }
 )(Team);

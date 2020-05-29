@@ -1,4 +1,4 @@
-﻿import { FETCH_TEAM_TREE, UPDATE_MANAGER, CHANGE_USER_RESTRICTIONS } from "./types";
+﻿import { FETCH_TEAM_TREE, UPDATE_MANAGER, CHANGE_USER_RESTRICTIONS, SELECT_CURRENT_TEAM } from "./types";
 import { baseApiUrl } from "../config";
 import axios from "axios";
 
@@ -107,4 +107,26 @@ export const reassignTeamMember = (accessToken, userData) => dispatch => {
                 error: errors
             });
         });
+}
+export const selectCurrentTeam = (allMembers, managerTeamId) => dispatch => {
+    var selectedteam = selectTeam(allMembers, managerTeamId);
+
+    dispatch({
+        type: SELECT_CURRENT_TEAM,
+        payload: selectedteam
+    })
+}
+
+function selectTeam(allMembers, managerTeamId) {
+    var selectedTeam = null;
+    if (allMembers.$id == managerTeamId) {
+        selectedTeam = allMembers.Children;
+    }
+    else if (Array.isArray(allMembers.Children)) {
+        var selectingTeam = null;
+        allMembers.Children.map(child => selectTeam(child, managerTeamId) != null ? selectingTeam = selectTeam(child, managerTeamId) :null );
+        selectingTeam != null ? selectedTeam = selectingTeam : null
+    }
+    
+    return selectedTeam
 }

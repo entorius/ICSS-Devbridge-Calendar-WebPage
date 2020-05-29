@@ -1,10 +1,11 @@
 ﻿import {
-    FETCH_TEAM_TREE, UPDATE_MANAGER, CHANGE_USER_RESTRICTIONS } from "../actions/types";
+    FETCH_TEAM_TREE, UPDATE_MANAGER, CHANGE_USER_RESTRICTIONS, SELECT_CURRENT_TEAM } from "../actions/types";
 
 const initialState = {
     items: [],
     user: {},
-    error: []
+    error: [],
+    selectedTeam: []
 }
 
 export default function (state = initialState, action) {
@@ -28,6 +29,11 @@ export default function (state = initialState, action) {
                 ...state,
                 user: action.payload,
                 error: action.error
+            }
+        case SELECT_CURRENT_TEAM:
+            return {
+                ...state,
+                selectedTeam: action.payload
             }
         default:
             return state;
