@@ -9,6 +9,7 @@ import { Link, useHistory } from "react-router-dom";
 import { connect } from 'react-redux';
 import PropTypes from 'prop-types';
 import { getToken } from '../redux/actions/loginActions';
+import { fetchCurrentUser } from '../redux/actions/userActions';
 
 //Styles providers
 import { createMuiTheme, withStyles, makeStyles, ThemeProvider } from '@material-ui/core/styles';
@@ -190,7 +191,10 @@ class Login extends React.Component {
             })
         }
         else {
-            this.props.history.push('/Main/Home')
+            await this.props.fetchCurrentUser(this.props.login.token.accessToken);
+            localStorage.setItem("firstName", this.props.users.user.FirstName);
+            localStorage.setItem("lastName", this.props.users.user.LastName);
+            this.props.history.push('/Main/Home');
         }
        
     }
@@ -279,13 +283,9 @@ class Login extends React.Component {
                                 className={classes.checkBoxRememberMe}
                             />
                             <ThemeProvider theme={theme}>
-                                {/* <Link to="/Main/Home"> */}
-                                    {/*TODO: add ajax request for login button*/}
                                 <Button variant="contained" color="primary" className={classes.loginButton} onClick={this.handleSignInClick} disabled={this.state.signInDisabled}>
-                                        
-                                            Sign in
-                                    </Button>
-                                {/* </Link> */}
+                                    Sign in
+                                </Button>
                             </ThemeProvider>
                         </Typography>
                     </Container>
@@ -307,10 +307,12 @@ class Login extends React.Component {
 }
 
 Login.propTypes = {
-    getToken: PropTypes.func.isRequired
+    getToken: PropTypes.func.isRequired,
+    fetchCurrentUser: PropTypes.func.isRequired,
 }
 const mapStateToProps = state => ({
-    login: state.login
+    login: state.login,
+    users: state.users
 })
 
-export default connect(mapStateToProps, { getToken })(withStyles(styles)(Login));
+export default connect(mapStateToProps, { getToken, fetchCurrentUser })(withStyles(styles)(Login));

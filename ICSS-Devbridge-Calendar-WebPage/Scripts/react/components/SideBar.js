@@ -8,6 +8,10 @@ import Button from '@material-ui/core/Button';
 
 import { Link } from "react-router-dom";
 
+//Redux
+import PropTypes from 'prop-types';
+import { connect } from 'react-redux';
+
 //Icons
 
 import HomeIcon from '@material-ui/icons/Home';
@@ -81,6 +85,15 @@ const styles = theme => ({
 class SideBar extends React.Component {
     constructor(props) {
         super(props);
+        this.state = {
+            nameSurename: "N",
+        };
+    }
+    componentDidMount() {
+        if (localStorage.getItem("firstName") != null) {
+            var forrmatedString = localStorage.getItem("firstName").charAt(0) + localStorage.getItem("lastName").charAt(0);
+            this.setState({ nameSurename: forrmatedString });
+        }
     }
     onLogoutClick() {
         Delete();
@@ -93,7 +106,7 @@ class SideBar extends React.Component {
                     <div className={classes.logo} />
                     <div className={classes.logoName}>DEVBRIDGE</div>
                 </div>
-                <Avatar className={classes.circle}>N</Avatar>
+                <Avatar className={classes.circle}>{this.state.nameSurename}</Avatar>
                 <div className={classes.links}>
                     <Link to="/Main/Home" className={classes.link}>
                         <Button className={classes.linkButton} classes={{ label: classes.linkButtonLabel }}>
@@ -145,5 +158,11 @@ class SideBar extends React.Component {
         );
     }
 }
+SideBar.propTypes = {
+}
 
-export default withStyles(styles)(SideBar);
+const mapStateToProps = state => ({
+    users: state.users,
+})
+
+export default connect(mapStateToProps, {})(withStyles(styles)(SideBar));
