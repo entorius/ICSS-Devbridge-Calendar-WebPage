@@ -88,7 +88,7 @@ export const getCheckRegistered = (registrationToken) => {
         }
     }
 }
-export const finishRegistration = (password, registrationToken) => dispatch => {
+export const finishRegistration = (password, registrationToken) =>{
     var regCredentials = {
         PlainPassword: password,
         RegistrationToken: registrationToken

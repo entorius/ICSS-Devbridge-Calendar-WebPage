@@ -159,6 +159,8 @@
     <Content Include="Scripts\react\app.js" />
     <Content Include="Scripts\react\Application.js" />
     <Content Include="Scripts\react\components\AddLearningDayDialog.js" />
+    <Content Include="Scripts\react\components\assignmentDialogs\CheckMyAssignments.js" />
+    <Content Include="Scripts\react\components\assignmentDialogs\CheckTeamAssignments.js" />
     <Content Include="Scripts\react\components\assignmentDialogs\CreateNewAssignmentDialog.js" />
     <Content Include="Scripts\react\components\Calendar.js" />
     <Content Include="Scripts\react\components\DatePickerFomik.js" />

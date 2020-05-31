@@ -46,6 +46,7 @@ import CompareArrowsIcon from '@material-ui/icons/CompareArrows';
 import PersonIcon from '@material-ui/icons/Person';
 import AssignmentIndIcon from '@material-ui/icons/AssignmentInd';
 import EmailIcon from '@material-ui/icons/Email';
+import AssignmentIcon from '@material-ui/icons/Assignment';
 
 import { Formik } from 'formik';
 import * as Yup from 'yup';
@@ -53,6 +54,7 @@ import * as Yup from 'yup';
 //Dialogs
 import TopicsByTeamDialog from '../components/TopicsByTeamDialog';
 import CreateNewAssignmentDialog from '../components/assignmentDialogs/CreateNewAssignmentDialog';
+import CheckTeamAssignments from '../components/assignmentDialogs/CheckTeamAssignments';
 
 
 import { checkIfRedirectToLoginPage } from '../functions/LocalStorageFunctions';
@@ -816,6 +818,7 @@ class Team extends React.Component {
             openReassignTeamMemberDialog: false,
             openTopicsByTeamDialog: false,
             openAddAssignmentDialog: false,
+            openCheckMyTeamAssignments: false,
             selectedTeamId: 0,
             selectedTeamManagerId: 0,
             teamMemberTreeContent: null,
@@ -855,6 +858,9 @@ class Team extends React.Component {
     }
     handleNewAssignmentClose = (evt) => {
         this.setState({ openAddAssignmentDialog: false})
+    }
+    handleTeamAssignmentsClose = (evt) => {
+        this.setState({ openCheckMyTeamAssignments: false })
     }
 
     onTeamClick = (node) => {
@@ -1045,6 +1051,13 @@ class Team extends React.Component {
                                         onClick={this.handleOpenDialog}>
                                         Add assingment for team member
                                         <AddIcon className={classes.popUpButtonPicture} />
+                                    </Button>
+                                    <Button className={classes.addAssingmentForTeamMember}
+                                        classes={{ label: classes.popUpButtonLabel }}
+                                        name="openCheckMyTeamAssignments"
+                                        onClick={this.handleOpenDialog}>
+                                        Check my team assignments
+                                        <AssignmentIcon className={classes.popUpButtonPicture} />
                                     </Button>
                                     {/* <Button className={classes.removeMemberButton}
                                         classes={{ label: classes.popUpButtonLabel }}
@@ -1253,7 +1266,9 @@ class Team extends React.Component {
                 <ReassignTeamMemberDialog open={this.state.openReassignTeamMemberDialog} reassignFunc={this.props.reassignTeamMember} teams={this.props.teamTree.items} teamId={this.state.selectedTeamId} error={this.props.teamTree.error} updateTreeFunc={this.props.fetchTeamTree} token={this.props.token} />
                 <TopicsByTeamDialog open={this.state.openTopicsByTeamDialog} managerName={this.state.teamTopicsManagerName} managerId={this.state.teamTopicsManagerId} token={this.props.token} />
                 <CreateNewAssignmentDialog open={this.state.openAddAssignmentDialog} teamMembers={this.props.teamTree.items}
-                    topics={this.props.topics} managerId={this.state.selectedTeamId} token={this.props.token} onClose={this.handleNewAssignmentClose}/>
+                    topics={this.props.topics} managerId={this.state.selectedTeamId} token={this.props.token} onClose={this.handleNewAssignmentClose} />
+                <CheckTeamAssignments open={this.state.openCheckMyTeamAssignments} topics={this.props.topics} token={this.props.token}
+                    onClose={this.handleTeamAssignmentsClose} teamMembers={this.props.teamTree.items}/>
             </div>
         );
     }
