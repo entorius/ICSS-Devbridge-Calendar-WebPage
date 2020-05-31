@@ -126,7 +126,7 @@ const styles = theme => ({
         marginRight: 'auto'
     },
     loginLink: {
-       
+
         color: 'blue !important',
         marginLeft: 'auto',
         marginRight: 'auto',
@@ -134,11 +134,11 @@ const styles = theme => ({
         textAlign: 'center',
         fontSize: '12px',
     },
-    
+
     textBoxIcon: {
         fontSize: '25px'
     },
-/*Registered styles*/
+    /*Registered styles*/
     registeredBoxLabel: {
         fontSize: '20px',
         width: '100%',
@@ -208,7 +208,7 @@ class RegisterWithPassword extends React.Component {
     handleRegisterButtonClick = async (values, { resetForm }) => {
         await this.props.allProps.finishRegistration(values.password, this.props.registrationToken);
         this.props.allProps.history.push('/');
-        
+
     }
     render() {
         const { classes } = this.props;
@@ -223,8 +223,8 @@ class RegisterWithPassword extends React.Component {
                     validationSchema={Yup.object().shape({
                         password: Yup.string()
                             .required('This field is required')
-                            .min(7, "Password must contain at least 7 characters")
-                            .matches(/^(?=.*[A-Za-z])(?=.*\d)(?=.*[$@$!%* #+=\(\)\^?&])[A-Za-z\d$@$!%* #+=\(\)\^?&]{3,}$/, {message : "Password must contain at least 1 letter, 1 number and 1 special character"}),
+                            .min(8, "Password must contain at least 8 characters")
+                            .matches(/^(?=.*[A-Za-z])(?=.*\d)(?=.*[$@$!%* #+=\(\)\^?&])[A-Za-z\d$@$!%* #+=\(\)\^?&]{3,}$/, { message: "Password must contain at least 1 letter, 1 number and 1 special character" }),
                         confirmPassword: Yup.string()
                             .required('This field is required')
                             .oneOf([Yup.ref('password'), null], 'Passwords do not match')
@@ -329,7 +329,7 @@ class RegisterWithPassword extends React.Component {
                             </form>
                         )
                     }
-                        </Formik>
+                </Formik>
                 <ThemeProvider theme={theme}>
                     <Link to="/">
                         <div className={classes.loginLink}>
@@ -378,10 +378,10 @@ class Registered extends React.Component {
                 <div className={classes.registeredBoxLabel}>
                     You have already registered or do not have permission to this page!
                     </div>
-                
+
                 <ThemeProvider theme={theme}>
                     <Link to="/">
-                       
+
                         <div className={classes.loginLinkRegistered}>
                             go to Login
                         </div>
@@ -400,10 +400,10 @@ class Register extends React.Component {
         this.state = {
             registrationToken: "",
             password: "",
-            repeatPassword:"",
+            repeatPassword: "",
             checkedRememberMe: true,
             registered: true,
-            
+
         };
         this.handleChange = this.handleChange.bind(this);
         this.handleCheckboxChange = this.handleCheckboxChange.bind(this);
@@ -416,11 +416,11 @@ class Register extends React.Component {
         registrationToken !== null ? await this.props.getCheckRegistered(registrationToken) : null;
         this.props.users.isRegistered !== null ?
             this.setState({ registered: false }) : this.setState({ registered: true });
-        
+
         //getCheckRegistered()
         //finishRegistration
     }
-    
+
     handleChange(evt) {
 
         // check it out: we get the evt.target.name (which will be either "email" or "password")
@@ -450,7 +450,7 @@ class Register extends React.Component {
                         </Typography>
                     </Container>
                 </React.Fragment>
-                
+
             </div>
         );
     }
@@ -464,4 +464,4 @@ const mapStateToProps = state => ({
     users: state.users,
 })
 
-export default connect(mapStateToProps, { getCheckRegistered, finishRegistration})(withStyles(styles)(Register));
+export default connect(mapStateToProps, { getCheckRegistered, finishRegistration })(withStyles(styles)(Register));
