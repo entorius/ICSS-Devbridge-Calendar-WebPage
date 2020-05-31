@@ -4,6 +4,7 @@ import Topic from "../components/Topic";
 import { withStyles, createMuiTheme, MuiThemeProvider } from '@material-ui/core/styles';
 import CreateTopicDialog from '../components/topicDialogs/CreateTopicDialog';
 import EditTopicDialog from '../components/topicDialogs/EditTopicDialog';
+import CheckMyAssignments from '../components/assignmentDialogs/CheckMyAssignments';
 import { grey, indigo, green } from '@material-ui/core/colors';
 import Grid from '@material-ui/core/Grid';
 import Button from '@material-ui/core/Button';
@@ -11,6 +12,7 @@ import Typography from '@material-ui/core/Typography';
 import IconButton from '@material-ui/core/IconButton';
 import ArrowForwardIcon from '@material-ui/icons/ArrowForward';
 import AddIcon from '@material-ui/icons/Add';
+import AssignmentIcon from '@material-ui/icons/Assignment';
 import CircularProgress from '@material-ui/core/CircularProgress';
 import { checkIfRedirectToLoginPage } from '../functions/LocalStorageFunctions';
 import { connect } from 'react-redux';
@@ -58,12 +60,14 @@ class Topics extends React.Component {
             openCreateTopic: false,
             path: [{ name: "Main topics", id: null }],
             showAlertSuccess: false,
-            alertSuccesMessage: ""
+            alertSuccesMessage: "",
+            openMyAssignments: false
         };
         this.handleLoadSubtopics = this.handleLoadSubtopics.bind(this);
         this.handleEditTopicDialogOpen = this.handleEditTopicDialogOpen.bind(this);
         this.handleEditTopicDialogClose = this.handleEditTopicDialogClose.bind(this);
         this.handleDialogCreateTopic = this.handleDialogCreateTopic.bind(this);
+        this.handleDialogMyAssignments = this.handleDialogMyAssignments.bind(this);
     };
 
     handleShowAlert = (message) => {
@@ -86,6 +90,9 @@ class Topics extends React.Component {
 
     handleDialogCreateTopic() {
         this.setState({ openCreateTopic: !this.state.openCreateTopic });
+    };
+    handleDialogMyAssignments() {
+        this.setState({ openMyAssignments: !this.state.openMyAssignments });
     };
 
     async getTopics() {
@@ -139,18 +146,34 @@ class Topics extends React.Component {
                             justify="flex-end"
                             alignItems="center"
                         >
-                            <Typography
-                                variant="h4"
-                                color="primary"
-                            >
-                                Create New Topic
-                                </Typography>
-                            <IconButton className={classes.addButtonStyle}
-                                onClick={this.handleDialogCreateTopic}>
-                                <AddIcon style={{ fontSize: 30 }}
-                                    color="primary" />
-                            </IconButton>
+                            <Grid>
+                                <Typography
+                                    variant="h4"
+                                    color="primary"
+                                >
+                                    Create New Topic
+                                    </Typography>
+                                <IconButton className={classes.addButtonStyle}
+                                    onClick={this.handleDialogCreateTopic}>
+                                    <AddIcon style={{ fontSize: 30 }}
+                                        color="primary" />
+                                </IconButton>
+                            </Grid>
+                            <Grid style={{ marginLeft: 30 }}>
+                                <Typography
+                                    variant="h4"
+                                    color="primary"
+                                >
+                                    Check My Assignments
+                                    </Typography>
+                                <IconButton className={classes.addButtonStyle}
+                                    onClick={this.handleDialogMyAssignments}>
+                                    <AssignmentIcon style={{ fontSize: 30}}
+                                        color="primary" />
+                                </IconButton>
+                            </Grid>
                         </Grid>
+
                         <Grid
                             container
                             direction="row"
@@ -213,6 +236,11 @@ class Topics extends React.Component {
                         open={this.state.openCreateTopic}
                         onClose={this.handleDialogCreateTopic}
                         createTopicSuccess={() => this.createUpdateTopicSuccess("Successfully created")} />
+                    <CheckMyAssignments
+                        open={this.state.openMyAssignments}
+                        onClose={this.handleDialogMyAssignments}
+                        topics={this.props.topics}
+                        />
                     <Snackbar open={this.state.showAlertSuccess} autoHideDuration={3000} onClose={this.handleShowAlert}>
                         <MuiAlert
                             elevation={6}
