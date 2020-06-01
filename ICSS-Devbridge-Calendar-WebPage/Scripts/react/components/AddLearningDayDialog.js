@@ -64,6 +64,12 @@ class AddLearningDayDialog extends Component {
         }
     }
 
+    componentDidMount(){
+        let formattedDate = this.state.date;
+        formattedDate = (formattedDate.getMonth() + 1) + "/" + formattedDate.getDate() + "/" + formattedDate.getFullYear();
+        this.setState({date: formattedDate})
+    }
+
     updateTopics = (selectedTopic) => {
         this.setState({ topic: selectedTopic })
     };
@@ -83,6 +89,7 @@ class AddLearningDayDialog extends Component {
             this.setState({ [name]: event.target.value });
         }
         else {
+            event = (event.getMonth() + 1) + "/" + event.getDate() + "/" + event.getFullYear();
             this.setState({ [name]: event });
         }
     };
