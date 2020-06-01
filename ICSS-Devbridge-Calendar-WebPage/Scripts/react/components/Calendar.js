@@ -92,26 +92,28 @@ class Calendar extends Component {
             currentMonth: new Date(),
             learningDays: [],
             openShowAllLearningTopics: false,
-            showAllLearningTopicsDate: null
+            showAllLearningTopicsDate: null,
+            hasLearningDays: true
         }
     }
 
     componentDidMount() {
-        this.props.fetchAssignments(this.props.token.accessToken)
-            .then(() => {
-                this.setState({learningDays: this.formatAssignmentsAsDays(this.props.assignments)});
-            });
-        
-        this.props.fetchSubordinateAssignments(this.props.token.accessToken)
-            .then(() => {
-                let learningDays = this.state.learningDays;
-                const teamLearningDays = this.formatAssignmentsAsDays(this.props.teamAssignments);
-                learningDays = learningDays.concat(teamLearningDays);
-                this.setState({learningDays: learningDays});
-            });
         this.props.fetchTopics(this.props.token.accessToken);
         this.props.fetchTeamTree(this.props.token.accessToken);
         this.props.fetchCurrentUser(this.props.token.accessToken);
+
+        this.props.fetchAssignments(this.props.token.accessToken)
+            .then(() => {
+                this.props.fetchSubordinateAssignments(this.props.token.accessToken)
+                    .then(() => {
+                        let learningDays = this.formatAssignmentsAsDays(this.props.assignments);
+                        const teamLearningDays = this.formatAssignmentsAsDays(this.props.teamAssignments);
+                        learningDays = learningDays.concat(teamLearningDays);
+                        this.setState({learningDays: learningDays});
+                        if(learningDays.length == 0)
+                            this.setState({hasLearningDays: false});
+                    });
+            });
     }
 
     formatAssignmentsAsDays(assignments){
@@ -170,7 +172,7 @@ class Calendar extends Component {
     };
     
     render() {
-        if(this.props.topics.length == 0 || this.props.teamTree.items.length == 0 || this.props.assignments.length == 0 || this.props.teamAssignments.length == 0){
+        if(this.props.topics.length == 0 || this.props.teamTree.items.length == 0 || (this.state.learningDays.length == 0 && this.state.hasLearningDays)){
             return <CircularProgress></CircularProgress>
         }
         const { classes } = this.props;
@@ -226,7 +228,9 @@ class Calendar extends Component {
                         const user = this.findUserInTree(this.props.teamTree.items, learningDay.createdBy);
                         if (learningDay.createdBy == this.props.currentUser.UserId && this.props.showPersonalCalender) {
                             learningDayInfo.push(<LearningDayInfoPopover
+                                key={learningDay.date + " " + learningDay.topic + " " + learningDay.createdBy}
                                 topic={topic != null ? topic : null}
+                                user={user.FirstName + ' ' + user.LastName}
                                 width="120px"
                                 date={format(learningDay.date, "MM/dd/yyyy")}
                                 color={green[500]}
@@ -234,8 +238,9 @@ class Calendar extends Component {
                                 assignment={learningDay.id}
                             />)
                         }
-                        if (learningDay.createdBy != this.props.currentUser.UserId && this.props.showTeamCalender) {
+                        else if (learningDay.createdBy != this.props.currentUser.UserId && this.props.showTeamCalender) {
                             learningDayInfo.push(<LearningDayInfoPopover
+                                key={learningDay.date + " " + learningDay.topic + " " + learningDay.createdBy}
                                 topic={topic != null ? topic : null}
                                 user={user.FirstName + ' ' + user.LastName}
                                 width="120px"
@@ -312,9 +317,13 @@ class Calendar extends Component {
                     </TableBody>
                 </Table>
                 <ViewAllLearningDayTopicsDialog
-                    yearMonth={format(this.state.currentMonth, "yyyy MMMM")}
+                    yearMonth={format(this.state.currentMonth, "yyyy/MM")}
                     day={this.state.showAllLearningTopicsDate}
                     open={this.state.openShowAllLearningTopics}
+                    learningDays={this.state.learningDays}
+                    teamTree={this.props.teamTree.items}
+                    topics={this.props.topics}
+                    user={this.props.currentUser}
                     onClose={this.handleCloseDialog} />
             </Paper>
         );

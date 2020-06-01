@@ -66,6 +66,12 @@ class EditLearningDayDialog extends Component {
             links: ""
         }
     }
+    
+    componentDidMount(){
+        let formattedDate = new Date(this.state.date);
+        formattedDate = (formattedDate.getMonth() + 1) + "/" + formattedDate.getDate() + "/" + formattedDate.getFullYear();
+        this.setState({date: formattedDate})
+    }
 
     handleClose = () => {
         this.props.onClose();
@@ -76,6 +82,7 @@ class EditLearningDayDialog extends Component {
             this.setState({ [name]: event.target.value });
         }
         else {
+            event = (event.getMonth() + 1) + "/" + event.getDate() + "/" + event.getFullYear();
             this.setState({ [name]: event });
         }
     };
