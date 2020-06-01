@@ -23,6 +23,12 @@ import AddLearningDayTopicsDialog from "./AddLearningDayTopicsDialog";
 import { connect } from 'react-redux';
 import PropTypes from 'prop-types';
 import { postNewAssignment } from '../redux/actions/assignmentActions'
+import Snackbar from '@material-ui/core/Snackbar';
+import MuiAlert from '@material-ui/lab/Alert';
+
+function Alert(props) {
+    return <MuiAlert elevation={6} variant="filled" {...props} />;
+}
 
 const styles = theme => ({
     root: {
@@ -60,18 +66,33 @@ class AddLearningDayDialog extends Component {
             comment: "",
             links: "",
             topic: null,
-            openAddLearningDayTopicsDialog: false
+            openAddLearningDayTopicsDialog: false,
+            openErrorSnackbar: false,
+            errorMessage: ""
         }
+        this.handleErrorSnackBarClose = this.handleErrorSnackBarClose.bind(this);
+    }
+
+    componentDidMount(){
+        let formattedDate = this.state.date;
+        formattedDate = (formattedDate.getMonth() + 1) + "/" + formattedDate.getDate() + "/" + formattedDate.getFullYear();
+        this.setState({date: formattedDate})
     }
 
     updateTopics = (selectedTopic) => {
         this.setState({ topic: selectedTopic })
     };
 
-    handleClose = (action) => {
+    handleClose = async (action) => {
         if(action == 'Create'){
             const postData = { userId: this.props.currentUser.UserId, topicId: this.state.topic.id, comments: this.state.comment, date: this.state.date };
-            this.props.postNewAssignment(this.props.token.accessToken, postData);
+            await this.props.postNewAssignment(this.props.token.accessToken, postData);
+            if (this.props.assignments.error != null) {
+                this.setState({
+                    openErrorSnackbar: true,
+                    errorMessage: this.props.assignments.error.message
+                })
+            }
         }
 
         this.state.topic = null;
@@ -83,6 +104,7 @@ class AddLearningDayDialog extends Component {
             this.setState({ [name]: event.target.value });
         }
         else {
+            event = (event.getMonth() + 1) + "/" + event.getDate() + "/" + event.getFullYear();
             this.setState({ [name]: event });
         }
     };
@@ -94,6 +116,10 @@ class AddLearningDayDialog extends Component {
     handleCloseTopicsDialog = () => {
         this.setState({ openAddLearningDayTopicsDialog: false })
     };
+    handleErrorSnackBarClose(evt) {
+        this.setState({ openErrorSnackbar: false });
+    }
+
 
     render() {
         const { classes } = this.props;
@@ -225,6 +251,11 @@ class AddLearningDayDialog extends Component {
                         </Grid>
                     </DialogActions>
                 </Dialog>
+                <Snackbar open={this.state.openErrorSnackbar} autoHideDuration={6000} name="openErrorSnackbar" onClose={this.handleErrorSnackBarClose}>
+                    <Alert onClose={this.handleErrorSnackBarClose} name="openErrorSnackbar" severity="error">
+                        {this.state.errorMessage}
+                    </Alert>
+                </Snackbar>
             </MuiPickersUtilsProvider>
         )
     }
@@ -236,7 +267,8 @@ AddLearningDayDialog.propTypes = {
 
 const mapStateToProps = state => ({
     token: state.login.token,
-    currentUser: state.users.user
+    currentUser: state.users.user,
+    assignments: state.assignments
 });
 
 export default connect(mapStateToProps, { postNewAssignment })(withStyles(styles)(AddLearningDayDialog));
