@@ -24,7 +24,9 @@ export const fetchCurrentUser = (accessToken) => dispatch => {
         });
 }
 export const getCheckRegistered = (registrationToken) => {
-
+    var wrapper = {
+        RegistrationToken: registrationToken
+    }
     console.log("getting request");
     return async function (dispatch) {
         let errorHandled = false;
@@ -34,7 +36,7 @@ export const getCheckRegistered = (registrationToken) => {
         });
         try {
             let getResponse = null;
-            await axios.get(baseApiUrl + `/api/users/regToken?token=${registrationToken}`)
+            await axios.post(baseApiUrl + `/api/users/regToken`, wrapper)
                 .then(userResponse => {
                     getResponse = userResponse;
                 }).catch(error => {
