@@ -9,6 +9,9 @@ import {
     generateLearningTree, setSelectedLearningTreeUsers, fetchUserLearnedTopics, fetchTeamLearnedTopics,
     fetchDescendantManagers, selectManager, fetchAllTopics, resetData
 } from '../redux/actions/learningTreeActions';
+import {
+    fetchCurrentUser
+} from '../redux/actions/userActions';
 import PropTypes from 'prop-types';
 //Material UI components
 import Avatar from '@material-ui/core/Avatar';
@@ -287,7 +290,8 @@ class LearningTree extends React.Component {
     async componentDidMount() {
         this.props.resetData();
         await this.props.fetchDescendantManagers(this.props.token.accessToken);
-        this.props.selectManager(this.props.learningTree.fetchedDescendantManagers[0]);
+        await this.props.fetchCurrentUser(this.props.token.accessToken);
+        this.props.selectManager(this.props.users.user);
         await this.props.fetchUserLearnedTopics(this.props.token.accessToken, this.props.learningTree.selectedManager.UserId);
         await this.props.fetchAllTopics(this.props.token.accessToken);
         var userData = [this.props.learningTree.fetchedUserTopic];
@@ -455,16 +459,18 @@ LearningTree.propTypes = {
     fetchDescendantManagers: PropTypes.func.isRequired,
     selectManager: PropTypes.func.isRequired,
     fetchAllTopics: PropTypes.func.isRequired,
-    resetData: PropTypes.func.isRequired
+    resetData: PropTypes.func.isRequired,
+    fetchCurrentUser: PropTypes.func.isRequired
 }
 
 const mapStateToProps = state => ({
     learningTree: state.learningTree,
     token: state.login.token,
     learningTreeSelectedUsers: state.learningTreeSelectedUsers,
+    users: state.users
 })
 
 export default connect(mapStateToProps, {
     generateLearningTree, setSelectedLearningTreeUsers, fetchUserLearnedTopics, fetchTeamLearnedTopics, fetchDescendantManagers,
-    selectManager, fetchAllTopics, resetData
+    selectManager, fetchAllTopics, resetData, fetchCurrentUser
 })(LearningTree);

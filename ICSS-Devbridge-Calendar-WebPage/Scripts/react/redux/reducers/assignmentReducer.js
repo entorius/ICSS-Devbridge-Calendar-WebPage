@@ -1,8 +1,10 @@
-﻿import { FETCH_ASSIGNMENTS, FETCH_TEAM_ASSIGNMENTS } from "../actions/types";
+﻿import { FETCH_ASSIGNMENTS, FETCH_TEAM_ASSIGNMENTS, NEW_ASSIGNMENT } from "../actions/types";
 
 const initialState = {
     items: [],
-    teamAssignments: []
+    teamAssignments: [],
+    error: null,
+    newAssignment: null
 }
 
 export default function (state = initialState,action) {
@@ -17,6 +19,13 @@ export default function (state = initialState,action) {
                 ...state,
                 teamAssignments: action.payload
             }
+        case NEW_ASSIGNMENT: {
+            return {
+                ...state,
+                newAssignment: action.payload,
+                error: action.error
+            }
+        }
         default:
             return state;
     }
