@@ -26,11 +26,7 @@ class ViewAllLearningDayTopicsDialog extends Component {
     constructor(props) {
         super(props);
         this.state = {
-            topics: [
-                { date: new Date('2020-05-20'), topic: 'subtopic1', createdBy: "Employee2" },
-                { date: new Date('2020-05-20'), topic: 'topic2', createdBy: "Me" },
-                { date: new Date('2020-05-20'), topic: 'topic1', createdBy: "Me" }
-            ],
+            learningDays: this.props.learningDays
         }
     }
 
@@ -38,8 +34,40 @@ class ViewAllLearningDayTopicsDialog extends Component {
         this.props.onClose();
     };
 
+    findUserInTree(teams, userId){
+        if(teams.This.UserId == userId){
+            return teams.This;
+        }
+
+        var child = null;
+        if(teams.Children != null){
+            for(let _child of teams.Children){
+                child = this.findUserInTree(_child, userId);
+                if(child != null){
+                    break;
+                }
+            }
+        }
+
+        return child;
+    }
+
     render() {
         const { classes } = this.props;
+
+        const learningDays = this.state.learningDays.filter(day => day.date.getTime() == new Date(this.props.yearMonth + '/' + this.props.day).getTime());
+
+        let learningDaysInfo = [];
+
+        learningDays.forEach(day => {
+            let info = {};
+            info.user = this.findUserInTree(this.props.teamTree, day.createdBy);
+            info.topic = this.props.topics.find((topic) => topic.TopicId == day.topic);
+            info.learningDay = day;
+
+            learningDaysInfo.push(info);
+        });
+        
         return (
                 <Dialog aria-labelledby="show-all-learning-topics"
                     onClose={this.props.onClose}
@@ -54,7 +82,7 @@ class ViewAllLearningDayTopicsDialog extends Component {
                     <DialogTitle id="show-all-learning-topics"
                         disableTypography="true"
                         classes={{ root: classes.dialogTitle }} >
-                            {this.props.yearMonth} {this.props.day}
+                            {this.props.yearMonth}/{this.props.day}
                     </DialogTitle>
 
                 <DialogContent>
@@ -64,12 +92,16 @@ class ViewAllLearningDayTopicsDialog extends Component {
                         justify="center"
                         alignItems="center"
                     >
-                        {this.state.topics.map(topic => {
+                        {learningDaysInfo.map(info => {
                             return <LearningDayInfoPopover
-                                topic={topic.topic}
+                                key={info.learningDay.date + " " + info.learningDay.topic + " " + info.learningDay.createdBy}
+                                topic={info.topic != null ? info.topic : null}
+                                user={info.user.FirstName + ' ' + info.user.LastName}
                                 width="160px"
-                                date={format(topic.date, "MM/dd/yyyy")}
-                                color={topic.createdBy == "Me" ? green[500] : blue[500]}
+                                color={info.learningDay.createdBy == this.props.user.UserId ? green[500] : blue[500]}
+                                comment={info.learningDay.comment}
+                                assignment={info.learningDay.id}
+                                date={format(info.learningDay.date, "MM/dd/yyyy")}
                             />
                         })}  
                     </Grid>
