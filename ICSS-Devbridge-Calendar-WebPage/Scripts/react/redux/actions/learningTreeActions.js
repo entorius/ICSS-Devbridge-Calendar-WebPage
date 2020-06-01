@@ -128,10 +128,11 @@ export const setSelectedLearningTreeUsers = (users) => dispatch => {
 
 function createNodeObject(obj, treeHeight, levelSize, usersData) {
     var learnedUsers = 0;
-    
-    usersData.map(user =>
-        user.Topics.map(topic =>
-            topic.TopicId == obj.TopicId ? learnedUsers = learnedUsers + 1 : null));
+    if (Array.isArray(usersData)) {
+        usersData.map(user =>
+            user.Topics.map(topic =>
+                topic.TopicId == obj.TopicId ? learnedUsers = learnedUsers + 1 : null));
+    }
     var color = learnedUsers > 0 ? "#33eb91" : "#00b0ff";
     var node = [{
         id: obj.TopicId,
