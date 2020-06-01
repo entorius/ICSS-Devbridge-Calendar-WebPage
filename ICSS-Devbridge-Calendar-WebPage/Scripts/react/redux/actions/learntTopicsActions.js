@@ -67,3 +67,21 @@ export const fetchPlannedTopicsByTeam = (accessToken, managerId) => dispatch => 
             })
         });
 }
+
+export const addLearntTopic = (accessToken, topicId) => dispatch => {
+    const config = {
+        headers: { Authorization: `Bearer ${accessToken}` }
+    }
+
+    const data = {}
+
+    return axios.post(baseApiUrl + `/api/topics/${topicId}/learnt`, data, config)
+}
+
+export const deleteLearntTopic = (accessToken, topicId) => dispatch => {
+    const config = {
+        headers: { Authorization: `Bearer ${accessToken}` }
+    }
+
+    return axios.delete(baseApiUrl + `/api/topics/${topicId}/learnt`, config)
+}

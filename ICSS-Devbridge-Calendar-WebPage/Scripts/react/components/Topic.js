@@ -11,6 +11,10 @@ import CardContent from '@material-ui/core/CardContent';
 import CardActions from '@material-ui/core/CardActions';
 import Divider from '@material-ui/core/Divider';
 import { withStyles, createMuiTheme, MuiThemeProvider } from '@material-ui/core/styles';
+import DoneIcon from '@material-ui/icons/Done';
+import ClearIcon from '@material-ui/icons/Clear';
+import IconButton from '@material-ui/core/IconButton';
+import ConfirmMarkTopicAsLearntDialog from './topicDialogs/ConfirmMarkTopicAsLearntDialog';
 
 const styles = theme => ({
     cardRoot: {
@@ -24,6 +28,9 @@ const styles = theme => ({
     divider: {
         marginTop: 5,
         marginBottom: 5
+    },
+    icon: {
+        marginLeft: "auto"
     }
 });
 
@@ -46,6 +53,8 @@ class Topic extends React.Component {
         this.state = {
             openEmployeesByTopicDialog: false,
             openTeamsByTopicDialog: false,
+            openConfirmMarkTopicAsLearntDialog: false,
+            dialogAction: "",
             urlRegex: /((?:(?:http|ftp|https):\/\/)*(?:[\w_-]+(?:(?:\.[\w_-]+)+))([\w.,@?^=%&:~+#-]*[\w@?^=%&~+#-])?)/g
         }
     }
@@ -69,6 +78,10 @@ class Topic extends React.Component {
         this.setState({ [name]: false })
     };
 
+    setLearntTopicDialogAction = (dialogAction) => {
+        this.setState({ dialogAction: dialogAction })
+    }
+
     render() {
         const { classes } = this.props;
         return (
@@ -76,9 +89,32 @@ class Topic extends React.Component {
                 <MuiThemeProvider theme={theme}>
                     <Card className={classes.cardRoot}>
                         <CardContent style={{ marginBottom: 0, paddingBottom: 0 }}>
-                            <Typography variant="h4" color="primary" align="center">
-                                {this.props.topic.Name}
-                            </Typography>
+                            <Grid
+                                container
+                                direction="row"
+                                justify="space-between"
+                                alignItems="center"
+                            >
+                                <Typography variant="h4" color="primary">
+                                    {this.props.topic.Name}
+                                </Typography>
+                                {
+                                    !this.props.isTopicLearnt ?
+                                        <IconButton
+                                            onClick={(e) => { this.setLearntTopicDialogAction("add"); this.handleOpenDialog(e) }}
+                                            name="openConfirmMarkTopicAsLearntDialog">
+                                            <DoneIcon style={{ fontSize: 30 }}
+                                                color="primary" />
+                                        </IconButton> :
+                                        <IconButton
+                                            onClick={(e) => { this.setLearntTopicDialogAction("delete"); this.handleOpenDialog(e) }}
+                                            name="openConfirmMarkTopicAsLearntDialog">
+                                            <ClearIcon style={{ fontSize: 30 }}
+                                                color="primary" />
+                                        </IconButton>
+                                }
+
+                            </Grid>
                             <Divider className={classes.divider} />
                             <Typography variant="h6" color="textSecondary">
                                 {
@@ -136,6 +172,12 @@ class Topic extends React.Component {
                     onClose={() => this.handleCloseDialog("openTeamsByTopicDialog")}
                     topic={this.props.topic.Name}
                     topicId={this.props.topic.TopicId} />
+                <ConfirmMarkTopicAsLearntDialog
+                    markTopicAsLearnt={this.props.markTopicAsLearnt}
+                    topicId={this.props.topic.TopicId}
+                    dialogAction={this.state.dialogAction}
+                    open={this.state.openConfirmMarkTopicAsLearntDialog}
+                    onClose={() => this.handleCloseDialog("openConfirmMarkTopicAsLearntDialog")} />
             </React.Fragment>
         );
     }

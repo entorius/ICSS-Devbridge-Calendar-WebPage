@@ -1,4 +1,4 @@
-//Assignments
+﻿//Assignments
 export const FETCH_ASSIGNMENTS = "FETCH_ASSIGNMENTS";
 export const FETCH_TEAM_ASSIGNMENTS = "FETCH_TEAM_ASSIGNMENTS";
 export const NEW_ASSIGNMENT = "NEW_ASSIGNMENT";

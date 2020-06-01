@@ -17,6 +17,8 @@ import CircularProgress from '@material-ui/core/CircularProgress';
 import { checkIfRedirectToLoginPage } from '../functions/LocalStorageFunctions';
 import { connect } from 'react-redux';
 import { fetchTopics } from '../redux/actions/topicActions';
+import { fetchUserLearnedTopics } from '../redux/actions/learningTreeActions';
+import { fetchCurrentUser } from '../redux/actions/userActions';
 import PropTypes from 'prop-types';
 import Snackbar from '@material-ui/core/Snackbar';
 import MuiAlert from '@material-ui/lab/Alert';
@@ -53,7 +55,8 @@ class Topics extends React.Component {
         super(props);
         this.state = {
             topics: [],
-            isLoading: false,
+            isLoadingTopics: true,
+            isLoadingLearntTopics: true,
             pageName: "Main topics",
             topicToUpdate: {},
             openEditTopic: false,
@@ -97,13 +100,20 @@ class Topics extends React.Component {
 
     async getTopics() {
         checkIfRedirectToLoginPage(this.props);
-        this.setState({ isLoading: true })
         await this.props.fetchTopics(this.props.token.accessToken)
             .then(() => {
                 console.log("topics: " + this.props.topics)
                 let mainTopics = this.props.topics.filter(t => t.ParentTopicId === null)
-                this.setState({ topics: mainTopics, isLoading: false })
+                this.setState({ topics: mainTopics, isLoadingTopics: false })
             });
+        await this.props.fetchCurrentUser(this.props.token.accessToken)
+            .then(() => {
+                this.props.fetchUserLearnedTopics(this.props.token.accessToken, this.props.currentUser.UserId)
+                    .then(() => {
+                        console.log("learnt topica: " + JSON.stringify(this.props.learntTopics))
+                        this.setState({ isLoadingLearntTopics: false })
+                    })
+            })
     }
 
     componentDidMount() {
@@ -125,6 +135,10 @@ class Topics extends React.Component {
         this.getTopics();
         this.setState({ alertSuccesMessage: message })
         this.handleShowAlert();
+    }
+
+    markTopicAsLearnt = () => {
+        this.getTopics();
     }
 
     render() {
@@ -168,7 +182,7 @@ class Topics extends React.Component {
                                     </Typography>
                                 <IconButton className={classes.addButtonStyle}
                                     onClick={this.handleDialogMyAssignments}>
-                                    <AssignmentIcon style={{ fontSize: 30}}
+                                    <AssignmentIcon style={{ fontSize: 30 }}
                                         color="primary" />
                                 </IconButton>
                             </Grid>
@@ -213,14 +227,23 @@ class Topics extends React.Component {
                             style={{ width: "100%", marginTop: 15 }}
                         >
                             {
-                                this.state.isLoading ? <CircularProgress /> :
+                                this.state.isLoadingTopics || this.state.isLoadingLearntTopics ? <CircularProgress /> :
 
                                     <React.Fragment>{
-                                        this.state.topics.map(topic =>
-                                            <Topic topic={topic}
+                                        this.state.topics.map(topic => {
+                                            let learntTopic = null
+                                            let isTopicLearnt = false
+                                            learntTopic = this.props.learntTopics.Topics.find(t => t.TopicId == topic.TopicId)
+                                            if (learntTopic != null) {
+                                                isTopicLearnt = true
+                                            }
+
+                                            return <Topic topic={topic}
+                                                markTopicAsLearnt={this.markTopicAsLearnt}
+                                                isTopicLearnt={isTopicLearnt}
                                                 onLoadSubtopics={this.handleLoadSubtopics}
                                                 onEditTopic={this.handleEditTopicDialogOpen} />
-                                        )
+                                        })
                                     }
                                     </React.Fragment>
 
@@ -240,7 +263,7 @@ class Topics extends React.Component {
                         open={this.state.openMyAssignments}
                         onClose={this.handleDialogMyAssignments}
                         topics={this.props.topics}
-                        />
+                    />
                     <Snackbar open={this.state.showAlertSuccess} autoHideDuration={3000} onClose={this.handleShowAlert}>
                         <MuiAlert
                             elevation={6}
@@ -258,14 +281,18 @@ class Topics extends React.Component {
 }
 
 Topics.propTypes = {
-    fetchTopics: PropTypes.func.isRequired
+    fetchTopics: PropTypes.func.isRequired,
+    fetchCurrentUser: PropTypes.func.isRequired,
+    fetchUserLearnedTopics: PropTypes.func.isRequired
 }
 
 const mapStateToProps = state => ({
     topics: state.topics.topics,
-    token: state.login.token
+    token: state.login.token,
+    currentUser: state.users.user,
+    learntTopics: state.learningTree.fetchedUserTopic
 })
 
 const TopicsStyled = withStyles(styles)(Topics);
 
-export default connect(mapStateToProps, { fetchTopics })(TopicsStyled);
+export default connect(mapStateToProps, { fetchTopics, fetchCurrentUser, fetchUserLearnedTopics })(TopicsStyled);
