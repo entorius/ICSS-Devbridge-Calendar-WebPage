@@ -22,7 +22,7 @@
     "@material-ui/icons": "^4.9.1",
     "@material-ui/lab": "^4.0.0-alpha.49",
     "@material-ui/pickers": "^3.2.10",
-    "axios": "^0.19.2",
+    "axios": "^0.21.1",
     "babel-loader": "^8.0.6",
     "d3-drag": "^1.2.5",
     "d3-force": "^2.0.1",
